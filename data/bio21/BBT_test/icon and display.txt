@@ -1,0 +1,64 @@
+button:
+    - connection: pb # T1 # On/Off
+    - connection: pb # T2 # ProBake
+    - connection: pb # T3 # AutoBake
+    - connection: pb # T4 # PlusMenu
+    - connection: pb # T5 # light
+    - connection: pb # T6 # Start
+
+
+icon:
+    - connection: pb # 0 Regime (System)    	
+    - connection: pb # 1 WiFi
+    - connection: pb # 2 Remote 
+    - connection: pb # 3 Step 2
+    - connection: pb # 4 Gentle MISSING DOCUMENTATION
+    - connection: pb # 5 Step 1 
+    - connection: pb # 6 Fish
+    - connection: pb # 7 Chicken
+    - connection: pb # 8 Gratin
+    - connection: pb # 9 Pizza
+    - connection: pb # 10 Snowflake on a plate
+    - connection: pb # 11 Settings
+    - connection: pb # 12 Alarm
+    - connection: pb # 13 Probe
+    - connection: pb # 14 Clock
+    - connection: pb # 15 Finish
+    - connection: pb # 16 Steam
+    - connection: pb # 17 Warming
+    - connection: pb # 18 Plate warming
+    - connection: pb # 19 Preheat
+    - connection: pb # 20 Defrost
+    - connection: pb # 21 Pyro
+    - connection: pb # 22 Clean
+    - connection: pb # 23 Kg
+    - connection: pb # 24 °C
+    - connection: pb # 25 W
+    - connection: pb # 26 Progress bar
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index:
+          0: [H1_3]
+          1: [H2_2]
+          2: [H3_3]
+          3: [H4_1]
+          4: [H5_1]
+          5: [H6_1]
+          6: [H7_1]
+          7: [H8_1]
+          8: [H9_1]
+          9: [H10_1]
+          10: [H11_3]
+          11: [H12_2]
+          12: [H13_3]
+    - connection: pb # 27 Regime indicator
+    - connection: pb # 28 Auto indicator
+    - connection: pb # 29 Plus indicator
+ 
+display:  
+	display[0]:# time display
+      	  format: "88:88"
+  	display[1]:# temperature display     
+      	  format: "18.88"
+     

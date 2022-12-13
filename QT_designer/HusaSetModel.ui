@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>372</width>
+    <height>398</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QPushButton" name="MODEL_5">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>300</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M5</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>220</y>
+     <width>191</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>SET PB MODEL</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="MODEL_2">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>260</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M2</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="MODEL_7">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>340</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M7</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="MODEL_3">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>260</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M3</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="M1_LB">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>140</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M1</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="MODEL_8">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>340</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M8</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="MODEL_6">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>300</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M6</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="M5_LB">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>180</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M5</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="M2_LB">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>140</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M2</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="M3_LB">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>140</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M3</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="M6_LB">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>180</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M6</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="M4_LB">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>180</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="mouseTracking">
+    <bool>true</bool>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>M4</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="MODEL_9">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>340</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M9</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>90</y>
+     <width>181</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>SET LB MODEL</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="MODEL_1">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>260</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M1</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="MODEL_4">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>300</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="mouseTracking">
+    <bool>true</bool>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>M4</string>
+   </property>
+  </widget>
+  <widget class="QTextBrowser" name="textBrowser">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>351</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;SET LB MODEL&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;-set only LB model. PB model stay the same.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;SET PB MODEL&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;-when you set PB model LB model avtomatic set to correct model.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <zorder>textBrowser</zorder>
+  <zorder>MODEL_5</zorder>
+  <zorder>label_2</zorder>
+  <zorder>MODEL_2</zorder>
+  <zorder>MODEL_7</zorder>
+  <zorder>MODEL_3</zorder>
+  <zorder>M1_LB</zorder>
+  <zorder>MODEL_8</zorder>
+  <zorder>MODEL_6</zorder>
+  <zorder>M5_LB</zorder>
+  <zorder>M2_LB</zorder>
+  <zorder>M3_LB</zorder>
+  <zorder>M6_LB</zorder>
+  <zorder>M4_LB</zorder>
+  <zorder>MODEL_9</zorder>
+  <zorder>MODEL_1</zorder>
+  <zorder>MODEL_4</zorder>
+  <zorder>label_3</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

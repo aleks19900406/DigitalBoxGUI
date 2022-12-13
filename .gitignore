@@ -1,0 +1,8 @@
+**/__pycache__/*
+*.pyc
+# Notebook Checkpoints
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+__pycache__/
+*.vscode
+BOX_MARKS/

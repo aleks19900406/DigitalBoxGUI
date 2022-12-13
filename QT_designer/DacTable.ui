@@ -1,0 +1,922 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>884</width>
+    <height>625</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="DacMax2">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>20</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>max</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMin0">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>500</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>min</string>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdNumber_dac_pot0">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>530</y>
+     <width>71</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+     <strikeout>false</strikeout>
+    </font>
+   </property>
+   <property name="digitCount">
+    <number>3</number>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdNumber_dac_pot3">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>530</y>
+     <width>71</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+     <strikeout>false</strikeout>
+    </font>
+   </property>
+   <property name="digitCount">
+    <number>3</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMax0">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>20</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>max</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMax1">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>20</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>max</string>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdNumber_dac_pot2">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>530</y>
+     <width>71</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+     <strikeout>false</strikeout>
+    </font>
+   </property>
+   <property name="digitCount">
+    <number>3</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMin2">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>500</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>min</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelDac0">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>580</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Table1</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="dac_pot0">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>30</y>
+     <width>41</width>
+     <height>481</height>
+    </rect>
+   </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="minimum">
+    <number>-50</number>
+   </property>
+   <property name="maximum">
+    <number>500</number>
+   </property>
+   <property name="singleStep">
+    <number>1</number>
+   </property>
+   <property name="pageStep">
+    <number>1</number>
+   </property>
+   <property name="value">
+    <number>30</number>
+   </property>
+   <property name="sliderPosition">
+    <number>30</number>
+   </property>
+   <property name="tracking">
+    <bool>true</bool>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="invertedAppearance">
+    <bool>false</bool>
+   </property>
+   <property name="invertedControls">
+    <bool>false</bool>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TicksBothSides</enum>
+   </property>
+   <property name="tickInterval">
+    <number>50</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelDac3">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>580</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Table4</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelDac1">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>580</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Table2</string>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdNumber_dac_pot1">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>530</y>
+     <width>71</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+     <strikeout>false</strikeout>
+    </font>
+   </property>
+   <property name="digitCount">
+    <number>3</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMax3">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>20</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>max</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelDac2">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>580</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Table3</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMin1">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>500</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>min</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="dac_pot2">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>30</y>
+     <width>41</width>
+     <height>481</height>
+    </rect>
+   </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="inputMethodHints">
+    <set>Qt::ImhPreferNumbers</set>
+   </property>
+   <property name="minimum">
+    <number>-50</number>
+   </property>
+   <property name="maximum">
+    <number>500</number>
+   </property>
+   <property name="singleStep">
+    <number>1</number>
+   </property>
+   <property name="pageStep">
+    <number>1</number>
+   </property>
+   <property name="value">
+    <number>30</number>
+   </property>
+   <property name="sliderPosition">
+    <number>30</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TicksBothSides</enum>
+   </property>
+   <property name="tickInterval">
+    <number>50</number>
+   </property>
+  </widget>
+  <widget class="QSlider" name="dac_pot3">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>30</y>
+     <width>41</width>
+     <height>481</height>
+    </rect>
+   </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="inputMethodHints">
+    <set>Qt::ImhPreferNumbers</set>
+   </property>
+   <property name="minimum">
+    <number>-50</number>
+   </property>
+   <property name="maximum">
+    <number>500</number>
+   </property>
+   <property name="singleStep">
+    <number>1</number>
+   </property>
+   <property name="pageStep">
+    <number>1</number>
+   </property>
+   <property name="value">
+    <number>30</number>
+   </property>
+   <property name="sliderPosition">
+    <number>30</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TicksBothSides</enum>
+   </property>
+   <property name="tickInterval">
+    <number>50</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMin3">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>500</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>min</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="dac_pot1">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>30</y>
+     <width>41</width>
+     <height>481</height>
+    </rect>
+   </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="inputMethodHints">
+    <set>Qt::ImhPreferNumbers</set>
+   </property>
+   <property name="minimum">
+    <number>-50</number>
+   </property>
+   <property name="maximum">
+    <number>500</number>
+   </property>
+   <property name="singleStep">
+    <number>1</number>
+   </property>
+   <property name="pageStep">
+    <number>1</number>
+   </property>
+   <property name="value">
+    <number>30</number>
+   </property>
+   <property name="sliderPosition">
+    <number>30</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TicksBothSides</enum>
+   </property>
+   <property name="tickInterval">
+    <number>50</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMax4">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>20</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>max</string>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdNumber_dac_pot5">
+   <property name="geometry">
+    <rect>
+     <x>580</x>
+     <y>530</y>
+     <width>71</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+     <strikeout>false</strikeout>
+    </font>
+   </property>
+   <property name="digitCount">
+    <number>3</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelDac4">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>580</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Table5</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="dac_pot4">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>30</y>
+     <width>41</width>
+     <height>481</height>
+    </rect>
+   </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="inputMethodHints">
+    <set>Qt::ImhPreferNumbers</set>
+   </property>
+   <property name="minimum">
+    <number>-50</number>
+   </property>
+   <property name="maximum">
+    <number>500</number>
+   </property>
+   <property name="singleStep">
+    <number>1</number>
+   </property>
+   <property name="pageStep">
+    <number>1</number>
+   </property>
+   <property name="value">
+    <number>30</number>
+   </property>
+   <property name="sliderPosition">
+    <number>30</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TicksBothSides</enum>
+   </property>
+   <property name="tickInterval">
+    <number>50</number>
+   </property>
+  </widget>
+  <widget class="QSlider" name="dac_pot5">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>30</y>
+     <width>41</width>
+     <height>481</height>
+    </rect>
+   </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="inputMethodHints">
+    <set>Qt::ImhPreferNumbers</set>
+   </property>
+   <property name="minimum">
+    <number>-50</number>
+   </property>
+   <property name="maximum">
+    <number>500</number>
+   </property>
+   <property name="singleStep">
+    <number>1</number>
+   </property>
+   <property name="pageStep">
+    <number>1</number>
+   </property>
+   <property name="value">
+    <number>30</number>
+   </property>
+   <property name="sliderPosition">
+    <number>30</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TicksBothSides</enum>
+   </property>
+   <property name="tickInterval">
+    <number>50</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMin4">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>500</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>min</string>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdNumber_dac_pot4">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>530</y>
+     <width>71</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+     <strikeout>false</strikeout>
+    </font>
+   </property>
+   <property name="digitCount">
+    <number>3</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMin5">
+   <property name="geometry">
+    <rect>
+     <x>570</x>
+     <y>500</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>min</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMax5">
+   <property name="geometry">
+    <rect>
+     <x>570</x>
+     <y>20</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>max</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelDac5">
+   <property name="geometry">
+    <rect>
+     <x>580</x>
+     <y>580</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Table6</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMax6">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>20</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>max</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelDac6">
+   <property name="geometry">
+    <rect>
+     <x>680</x>
+     <y>580</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Table7</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMax7">
+   <property name="geometry">
+    <rect>
+     <x>780</x>
+     <y>20</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>max</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="dac_pot6">
+   <property name="geometry">
+    <rect>
+     <x>700</x>
+     <y>30</y>
+     <width>41</width>
+     <height>481</height>
+    </rect>
+   </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="inputMethodHints">
+    <set>Qt::ImhPreferNumbers</set>
+   </property>
+   <property name="minimum">
+    <number>-50</number>
+   </property>
+   <property name="maximum">
+    <number>500</number>
+   </property>
+   <property name="singleStep">
+    <number>1</number>
+   </property>
+   <property name="pageStep">
+    <number>1</number>
+   </property>
+   <property name="value">
+    <number>30</number>
+   </property>
+   <property name="sliderPosition">
+    <number>30</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TicksBothSides</enum>
+   </property>
+   <property name="tickInterval">
+    <number>50</number>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdNumber_dac_pot6">
+   <property name="geometry">
+    <rect>
+     <x>680</x>
+     <y>530</y>
+     <width>71</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+     <strikeout>false</strikeout>
+    </font>
+   </property>
+   <property name="digitCount">
+    <number>3</number>
+   </property>
+  </widget>
+  <widget class="QSlider" name="dac_pot7">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>30</y>
+     <width>41</width>
+     <height>481</height>
+    </rect>
+   </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="inputMethodHints">
+    <set>Qt::ImhPreferNumbers</set>
+   </property>
+   <property name="minimum">
+    <number>-50</number>
+   </property>
+   <property name="maximum">
+    <number>500</number>
+   </property>
+   <property name="singleStep">
+    <number>1</number>
+   </property>
+   <property name="pageStep">
+    <number>1</number>
+   </property>
+   <property name="value">
+    <number>30</number>
+   </property>
+   <property name="sliderPosition">
+    <number>30</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TicksBothSides</enum>
+   </property>
+   <property name="tickInterval">
+    <number>50</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMin6">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>500</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>min</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelDac7">
+   <property name="geometry">
+    <rect>
+     <x>790</x>
+     <y>580</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Table8</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DacMin7">
+   <property name="geometry">
+    <rect>
+     <x>780</x>
+     <y>500</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>min</string>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdNumber_dac_pot7">
+   <property name="geometry">
+    <rect>
+     <x>790</x>
+     <y>530</y>
+     <width>71</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+     <strikeout>false</strikeout>
+    </font>
+   </property>
+   <property name="digitCount">
+    <number>3</number>
+   </property>
+  </widget>
+  <zorder>DacMax2</zorder>
+  <zorder>DacMin0</zorder>
+  <zorder>lcdNumber_dac_pot0</zorder>
+  <zorder>lcdNumber_dac_pot3</zorder>
+  <zorder>DacMax0</zorder>
+  <zorder>DacMax1</zorder>
+  <zorder>lcdNumber_dac_pot2</zorder>
+  <zorder>DacMin2</zorder>
+  <zorder>labelDac0</zorder>
+  <zorder>dac_pot0</zorder>
+  <zorder>labelDac3</zorder>
+  <zorder>labelDac1</zorder>
+  <zorder>lcdNumber_dac_pot1</zorder>
+  <zorder>DacMax3</zorder>
+  <zorder>labelDac2</zorder>
+  <zorder>DacMin1</zorder>
+  <zorder>dac_pot2</zorder>
+  <zorder>DacMin3</zorder>
+  <zorder>dac_pot1</zorder>
+  <zorder>dac_pot3</zorder>
+  <zorder>DacMax4</zorder>
+  <zorder>lcdNumber_dac_pot5</zorder>
+  <zorder>labelDac4</zorder>
+  <zorder>dac_pot5</zorder>
+  <zorder>DacMin4</zorder>
+  <zorder>lcdNumber_dac_pot4</zorder>
+  <zorder>DacMax5</zorder>
+  <zorder>labelDac5</zorder>
+  <zorder>dac_pot4</zorder>
+  <zorder>DacMax6</zorder>
+  <zorder>labelDac6</zorder>
+  <zorder>DacMax7</zorder>
+  <zorder>dac_pot6</zorder>
+  <zorder>lcdNumber_dac_pot6</zorder>
+  <zorder>dac_pot7</zorder>
+  <zorder>labelDac7</zorder>
+  <zorder>lcdNumber_dac_pot7</zorder>
+  <zorder>DacMin5</zorder>
+  <zorder>DacMin6</zorder>
+  <zorder>DacMin7</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

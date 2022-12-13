@@ -1,0 +1,468 @@
+connections:
+  pb:
+    type: socket | packer(hisense) | coder(crc) | topic
+    parameters:
+      - baudrate: 115200
+      - {}
+      - method: lte16
+      - topic_length: 2
+    setup:
+      - ["\\x03\\x00", "\\x01"]
+    teardown:
+      - ["\\x03\\x00", "\\x00"]
+entities:
+  display:
+    - connection: pb
+      type: "led"
+      format: "888"
+      grab:
+        command: "\\x05\\x00"
+        index: 0
+    - connection: pb
+      type: "led"
+      format: "18:88"
+      grab:
+        command: "\\x05\\x00"
+        index: 1
+  button:
+    - connection: pb # 0
+      control:
+        command: "\\x08\\x00"
+        index: 0
+    - connection: pb # 1
+      control:
+        command: "\\x08\\x00"
+        index: 10
+    - connection: pb # 2
+      control:
+        command: "\\x08\\x00"
+        index: 1
+    - connection: pb # 3
+      control:
+        command: "\\x08\\x00"
+        index: 2
+    - connection: pb # 4
+      control:
+        command: "\\x08\\x00"
+        index: 3
+    - connection: pb # 5
+      control:
+        command: "\\x08\\x00"
+        index: 4
+    - connection: pb # 6
+      control:
+        command: "\\x08\\x00"
+        index: 5
+    - connection: pb # 7
+      control:
+        command: "\\x08\\x00"
+        index: 6
+    - connection: pb # 8
+      control:
+        command: "\\x08\\x00"
+        index: 7
+    - connection: pb # 9
+      control:
+        command: "\\x08\\x00"
+        index: 8
+    - connection: pb # 10
+      control:
+        command: "\\x08\\x00"
+        index: 9
+    - connection: pb # 11
+      control:
+        command: "\\x08\\x00"
+        index: 11
+    - connection: pb # 12
+      control:
+        command: "\\x08\\x00"
+        index: 12
+    - connection: pb # 13
+      control:
+        command: "\\x08\\x00"
+        index: 13
+    - connection: pb # 14
+      control:
+        command: "\\x08\\x00"
+        index: 14
+    - connection: pb # 15
+      control:
+        command: "\\x08\\x00"
+        index: 15
+    - connection: pb # 16
+      control:
+        command: "\\x08\\x00"
+        index: 16
+    - connection: pb # 17
+      control:
+        command: "\\x08\\x00"
+        index: 17
+    - connection: pb # 18
+      control:
+        command: "\\x08\\x00"
+        index: 31
+    - connection: pb # 19
+      control:
+        command: "\\x08\\x00"
+        index: 19
+    - connection: pb # 20
+      control:
+        command: "\\x08\\x00"
+        index: 20
+    - connection: pb # 21
+      control:
+        command: "\\x08\\x00"
+        index: 21
+    - connection: pb # 22
+      control:
+        command: "\\x08\\x00"
+        index: 28
+    - connection: pb # 23
+      control:
+        command: "\\x08\\x00"
+        index: 22
+    - connection: pb # 24
+      control:
+        command: "\\x08\\x00"
+        index: 23
+    - connection: pb # 25
+      control:
+        command: "\\x08\\x00"
+        index: 24
+    - connection: pb # 26
+      control:
+        command: "\\x08\\x00"
+        index: 29
+    - connection: pb # 27
+      control:
+        command: "\\x08\\x00"
+        index: 25
+    - connection: pb # 28
+      control:
+        command: "\\x08\\x00"
+        index: 26
+    - connection: pb # 29
+      control:
+        command: "\\x08\\x00"
+        index: 27
+    - connection: pb # 30
+      control:
+        command: "\\x08\\x00"
+        index: 18
+    - connection: pb # 31
+      control:
+        command: "\\x08\\x00"
+        index: 32
+    - connection: pb # 32
+      control:
+        command: "\\x08\\x00"
+        index: 30
+  icon:
+    - connection: pb # 0 start
+      grab:
+        command: "\\x04\\x00"
+        index: 10
+    - connection: pb # 1 programs
+      grab:
+        command: "\\x04\\x00"
+        index:
+          "0": 4
+          "1": 5
+          "2": 8
+          "3": 9
+          "4": 11
+          "5": 12
+          "6": 15
+          "7": 16
+          "8": 17
+          "9": 18
+          "10": 21
+          "11": 22
+    - connection: pb # 2
+      grab:
+        command: "\\x04\\x00"
+        index: 0
+    - connection: pb # 3
+      grab:
+        command: "\\x04\\x00"
+        index: 43
+    - connection: pb # 4
+      grab:
+        command: "\\x04\\x00"
+        index: 3
+    - connection: pb # 5
+      grab:
+        command: "\\x04\\x00"
+        index: 23
+    - connection: pb # 6
+      grab:
+        command: "\\x04\\x00"
+        index: 24
+    - connection: pb # 7
+      grab:
+        command: "\\x04\\x00"
+        index: 27
+    - connection: pb # 8
+      grab:
+        command: "\\x04\\x00"
+        index: 30
+    - connection: pb # 9
+      grab:
+        command: "\\x04\\x00"
+        index: 31
+    - connection: pb # 10
+      grab:
+        command: "\\x04\\x00"
+        index: 32
+    - connection: pb # 11
+      grab:
+        command: "\\x04\\x00"
+        index: 37
+    - connection: pb # 12
+      grab:
+        command: "\\x04\\x00"
+        index: 38
+    - connection: pb # 13
+      grab:
+        command: "\\x04\\x00"
+        index: 39
+    - connection: pb # 14
+      grab:
+        command: "\\x04\\x00"
+        index: 40
+    - connection: pb # 15
+      grab:
+        command: "\\x04\\x00"
+        index: 48
+    - connection: pb # 16
+      grab:
+        command: "\\x04\\x00"
+        index: 49
+    - connection: pb # 17
+      grab:
+        command: "\\x04\\x00"
+        index: 50
+    - connection: pb # 18
+      grab:
+        command: "\\x04\\x00"
+        index: 55
+    - connection: pb # 19
+      grab:
+        command: "\\x04\\x00"
+        index: 56
+    - connection: pb # 20
+      grab:
+        command: "\\x04\\x00"
+        index: 58
+    - connection: pb # 21
+      grab:
+        command: "\\x04\\x00"
+        index: 59
+    - connection: pb # 22
+      grab:
+        command: "\\x04\\x00"
+        index: 60
+    - connection: pb # 23
+      grab:
+        command: "\\x04\\x00"
+        index: 29
+    - connection: pb # 24
+      grab:
+        command: "\\x04\\x00"
+        index: 36
+    - connection: pb # 25
+      grab:
+        command: "\\x04\\x00"
+        index: 51
+    - connection: pb # 26
+      grab:
+        command: "\\x04\\x00"
+        index: 57
+    - connection: pb # 27
+      grab:
+        command: "\\x04\\x00"
+        index: 46
+    - connection: pb # 28
+      grab:
+        command: "\\x04\\x00"
+        index: 47
+    - connection: pb # 29
+      grab:
+        command: "\\x04\\x00"
+        index: 61
+    - connection: pb # 30
+      grab:
+        command: "\\x04\\x00"
+        index: 65
+    - connection: pb # 31
+      grab:
+        command: "\\x04\\x00"
+        index: 66
+    - connection: pb # 32
+      grab:
+        command: "\\x04\\x00"
+        index: 71
+    - connection: pb # 33
+      grab:
+        command: "\\x04\\x00"
+        index: 76
+    - connection: pb # 34
+      grab:
+        command: "\\x04\\x00"
+        index: 86
+    - connection: pb # 35
+      grab:
+        command: "\\x04\\x00"
+        index: 87
+    - connection: pb # 36
+      grab:
+        command: "\\x04\\x00"
+        index: 75
+    - connection: pb # 37 #start/stop
+      grab:
+        command: "\\x04\\x00"
+        index: 80
+    - connection: pb # 38
+      grab:
+        command: "\\x04\\x00"
+        index: 84
+    - connection: pb # 39
+      grab:
+        command: "\\x04\\x00"
+        index: 85
+    - connection: pb # 40
+      grab:
+        command: "\\x04\\x00"
+        index: 79
+    - connection: pb # 41 WARM ZONE GROOP
+      grab:
+        command: "\\x04\\x00"
+
+        index:
+         #"0": 23 # IC5
+          "0": 24 # IC6
+          "1": 46 # IC27
+          "2": 47 # IC28
+    - connection: pb # 42 SELF AND STEAM CLEAN GROOP
+      grab:
+        command: "\\x04\\x00"
+
+        index:
+          "0": 71 # IC32
+          "1": 61 # IC29
+    - connection: pb # 43 WARM DRAWER GROOP
+      grab:
+        command: "\\x04\\x00"
+
+        index:
+          "0": 65 # IC30
+          "1": 66 # IC31
+          "2": 87 # IC35
+          "3": 86 # IC34
+
+    - connection: pb # 44 AM/PM AND TIME GROOP
+      grab:
+        command: "\\x04\\x00"
+
+        index:
+          "0": 38 # TIME
+          "1": 39 # AM
+          "2": 58 # PM
+    
+    - connection: pb # 45 defrost/warm
+      grab:
+        command: "\\x04\\x00"
+        index:
+          "0": 0 # DEFROST
+          "1": 3 # WARM
+  
+    - connection: pb # 46 timer/duration/delay time
+      grab:
+        command: "\\x04\\x00"
+
+        index:
+          "0": 40 # timer
+          "1": 59 # duration
+          "2": 60 # delay time
+    
+    - connection: pb # 47 center icon
+      grab:
+        command: "\\x04\\x00"
+
+        index:
+          "0": 30 # door
+          "1": 31 # lock
+          "2": 32 # crisp
+          "3": 37 # end at
+          "4": 38 # time
+          "5": 39 # am
+          "6": 48 # °f
+          "7": 49 # °C
+          "8": 50 # sabbath
+          "9": 55 # F probe
+          "10": 56 # C probe
+          "11": 58 # pm
+    
+    - connection: pb # 48 proof
+      grab:
+        command: "\\x04\\x00"
+        index:
+          "0": 4 # 
+          "1": 5 # 
+    - connection: pb # 49 pizza
+      grab:
+        command: "\\x04\\x00"
+        index:
+          "0": 5 # 
+          "1": 8 # 
+    - connection: pb # 50 broil
+      grab:
+        command: "\\x04\\x00"
+        index:
+          "0": 8 # 
+          "1": 9 # 
+    - connection: pb # 51 bake
+      grab:
+        command: "\\x04\\x00"
+        index:
+          "0": 11 # 
+          "1": 12 # 
+    - connection: pb # 52 conv bake
+      grab:
+        command: "\\x04\\x00"
+        index:
+          "0": 12 # 
+          "1": 15 #  
+    - connection: pb # 53 conv roast
+      grab:
+        command: "\\x04\\x00"
+        index:
+          "0": 15 # 
+          "1": 16 #  
+    - connection: pb # 54 frozen bake
+      grab:
+        command: "\\x04\\x00"
+        index:
+          "0": 17 # 
+          "1": 18 # 
+    - connection: pb # 55 airfry
+      grab:
+        command: "\\x04\\x00"
+        index:
+          "0": 18 # 
+          "1": 21 # 
+    - connection: pb # 56 dehydrate
+      grab:
+        command: "\\x04\\x00"
+        index:
+          "0": 21 # 
+          "1": 22 # 
+
+    - connection: pb # 57 up/down time/temp
+      grab:
+        command: "\\x04\\x00"
+        index:
+          "0": 29 # 
+          "1": 36 #
+          "2": 51 # 
+          "3": 57 #

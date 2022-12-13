@@ -1,0 +1,91 @@
+connections:
+  pb:
+    type: socket | packer(hisense) | coder(checksum) | topic
+    parameters:
+      - baudrate: 115200
+      - {}
+      - byte_width: 2
+        endianess: big
+      - topic_length: 2
+
+entities:
+  display:
+    - connection: pb
+      type: "led"
+      format: "88:88"
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index:
+          [
+            [S1_A, S1_B, S1_C, S1_D, S1_E, S1_F, S1_G],
+            [S2_A, S2_B, S2_C, S2_D, S2_E, S2_F, S2_G],
+            [DV],
+            [S3_A, S3_B, S3_C, S3_D, S3_E, S3_F, S3_G],
+            [S4_A, S4_B, S4_C, S4_D, S4_E, S4_F, S4_G],
+          ]
+  icon:
+    - connection: pb # 1 Left bar
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [T1_1, T1_2]
+    - connection: pb # 2 Duration
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [SIMBOL_DURATION]
+    - connection: pb # 3 Alarm
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [SIMBOL_ALARM]
+    - connection: pb # 4 Meat probe
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [SIMBOL_PROBE]
+    - connection: pb # 5 Progress bar
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index:
+          0: [BAR_1_1, BAR_1_2]
+          1: [BAR_2_1, BAR_2_2]
+          2: [BAR_3_1, BAR_3_2]
+    - connection: pb # 6 Finish
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [SIMBOL_ENDTIME]
+    - connection: pb # 7 Right bar
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [T5_1, T5_2]
+  button:
+    - connection: pb # Steam
+      control:
+        topic: "\\x04\\x00"
+        board: 0
+        index: 0
+    - connection: pb # Left
+      control:
+        topic: "\\x04\\x00"
+        board: 0
+        index: 1
+    - connection: pb # MultiTime
+      control:
+        topic: "\\x04\\x00"
+        board: 0
+        index: 2
+    - connection: pb # Right
+      control:
+        topic: "\\x04\\x00"
+        board: 0
+        index: 3
+    - connection: pb # Start/Stop
+      control:
+        topic: "\\x04\\x00"
+        board: 0
+        index: 4

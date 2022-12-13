@@ -1,0 +1,28 @@
+####################################################################################################
+!!!Dont get anything from PWM read !!!
+Solution:
+-- Check digital box version or hardware problems with ADC read
+####################################################################################################
+Traceback (most recent call last):
+  File "BOX_GUI.py", line 252, in check_all_input
+    self.read_pwm()
+  File "BOX_GUI.py", line 753, in read_pwm
+    self.ReadPwm2.display(read_pwm_all[1]['f'])
+  File "C:\Users\aleksander.gresak\Documents\Automatic_test_UI\DigitalBoxGUI\package\tester\_clients\das.py", line 157, in __getitem__
+    value = self._get_executor(item)
+  File "C:\Users\aleksander.gresak\Documents\Automatic_test_UI\DigitalBoxGUI\package\tester\_clients\das.py", line 884, in _get_pwm_in
+    return self._get_request(
+  File "C:\Users\aleksander.gresak\Documents\Automatic_test_UI\DigitalBoxGUI\package\tester\_clients\templates.py", line 210, in _get_request
+    response = self._request(request)
+  File "C:\Users\aleksander.gresak\Documents\Automatic_test_UI\DigitalBoxGUI\package\tester\_clients\templates.py", line 197, in _request
+    response = self._client.request(request)
+  File "C:\Users\aleksander.gresak\Documents\Automatic_test_UI\DigitalBoxGUI\package\tester\_clients\request_response_client.py", line 112, in request
+    self.send_request(data_out)
+  File "C:\Users\aleksander.gresak\Documents\Automatic_test_UI\DigitalBoxGUI\package\tester\_clients\request_response_client.py", line 18, in wrapper
+    return f(self, *args, **kwargs)
+  File "C:\Users\aleksander.gresak\Documents\Automatic_test_UI\DigitalBoxGUI\package\tester\_clients\request_response_client.py", line 78, in send_request
+    self.empty()
+  File "C:\Users\aleksander.gresak\Documents\Automatic_test_UI\DigitalBoxGUI\package\tester\_clients\request_response_client.py", line 54, in empty
+    i, _, _ = select.select(inputs, [], [], 0.0)
+ValueError: file descriptor cannot be a negative integer (-1)
+####################################################################################################

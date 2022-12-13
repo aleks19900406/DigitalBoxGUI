@@ -1,0 +1,1 @@
+pyuic5 -x DIGITAL_BOX_LAYOUT.ui -o DIGITAL_BOX_LAYOUT.py

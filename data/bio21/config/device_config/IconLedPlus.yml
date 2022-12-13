@@ -1,0 +1,290 @@
+connections:
+  pb:
+    type: socket | hisense
+    parameters:
+      - baudrate: 115200
+      - device_family:
+          !!python/object/apply:stream.specializations.hisense.DeviceFamily
+          - 0x27
+        checksum_type:
+          !!python/object/apply:stream.specializations.hisense.ChecksumType
+          - 1
+entities:
+  display:
+    - connection: pb
+      type: "led"
+      format: "88:88"
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index:
+          [
+            [S1_A, S1_B, S1_C, S1_D, S1_E, S1_F, S1_G],
+            [S2_A, S2_B, S2_C, S2_D, S2_E, S2_F, S2_G],
+            [E7_1],
+            [S3_A, S3_B, S3_C, S3_D, S3_E, S3_F, S3_G],
+            [S4_A, S4_B, S4_C, S4_D, S4_E, S4_F, S4_G],
+          ]
+    - connection: pb
+      type: "led"
+      format: "18.88"
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index:
+          [
+            [S5_A, S5_B],
+            [S6_A, S6_B, S6_C, S6_D, S6_E, S6_F, S6_G],
+            [G1_1],
+            [S7_A, S7_B, S7_C, S7_D, S7_E, S7_F, S7_G],
+            [S8_A, S8_B, S8_C, S8_D, S8_E, S8_F, S8_G],
+          ]
+  icon:
+    - connection: pb # 0 Regime (System)
+      class: !!python/name:tester._device._bio21._icon_led_plus.entities.SystemIcon
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index:
+          frame: [A4_3, A3_3, A2_3, A1_3]
+          top: [A8_2]
+          bottom: [A15_2]
+          small_grill: [A9_2]
+          large_grill: [A10_2]
+          vent: [A11_2, A12_2]
+          convection: [A14_4]
+          microwave: [A7_4]
+          steam: [A5_3, A6_3]
+    - connection: pb # 1 WiFi
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [C1_2]
+    - connection: pb # 2 Remote
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [B2_2]
+    - connection: pb # 3 Step 2
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [B1_1]
+    - connection: pb # 4 Gentle MISSING DOCUMENTATION
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [B2_1]
+    - connection: pb # 5 Step 1
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [B3_1]
+    - connection: pb # 6 GentleBake
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [C5_2]
+    - connection: pb # 7 AirFry
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [C4_2]
+    - connection: pb # 8 Gratin
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [B6_3]
+    - connection: pb # 9 Pizza
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [C2_2]
+    - connection: pb # 10 FrozenBake
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [C3_2]
+    - connection: pb # 11 Settings
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [E6_1]
+    - connection: pb # 12 Alarm
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [E5_1]
+    - connection: pb # 13 Probe
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [E4_1]
+    - connection: pb # 14 Clock
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [E1_1]
+    - connection: pb # 15 Finish
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [E3_1]
+    - connection: pb # 16 Steam
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [E2_3]
+    - connection: pb # 17 Warming
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [F5_2]
+    - connection: pb # 18 Plate warming
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [F4_2]
+    - connection: pb # 19 Preheat
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [F6_3]
+    - connection: pb # 20 Defrost
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [F1_2]
+    - connection: pb # 21 Pyro
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [F2_1]
+    - connection: pb # 22 Clean
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [F3_2]
+    - connection: pb # 23 Kg
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [G4_1]
+    - connection: pb # 24 °C
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [G3_1]
+    - connection: pb # 25 W
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [G2_1]
+    - connection: pb # 26 Progress bar
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index:
+          0: [H1_3]
+          1: [H2_2]
+          2: [H3_3]
+          3: [H4_1]
+          4: [H5_1]
+          5: [H6_1]
+          6: [H7_1]
+          7: [H8_1]
+          8: [H9_1]
+          9: [H10_1]
+          10: [H11_3]
+          11: [H12_2]
+          12: [H13_3]
+    - connection: pb # 27 Regime indicator
+      grab:
+        topic: "\\0x01\\0x00"
+        command: "\\xff\\xff"
+        index: [I1_1]
+    - connection: pb # 28 Auto indicator
+      grab:
+        topic: "\\0x01\\0x00"
+        command: "\\xff\\xff"
+        index: [I2_1]
+    - connection: pb # 29 Plus indicator
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index: [I3_1]
+    - connection: pb # 30 group icons
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index:
+          0: [B3_1] # step1
+          1: [B1_1] # step2
+          2: [B6_3] # gratin
+          3: [F6_3] # preheat
+          4: [G3_1] # °C
+          5: [G2_1] # W
+          6: [E1_1] # Clock
+
+    - connection: pb # 31 AutoBake
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index:
+          0: [C3_2] # FrozenBake
+          1: [C2_2] # pizza
+          2: [C5_2] # gentleBake
+          3: [C4_2] # AirFry
+
+    - connection: pb # 32 ExtraBake
+      grab:
+        topic: "\\x01\\x00"
+        command: "\\xff\\xff"
+        index:
+          0: [F3_2] # Clean
+          1: [F2_1] # Pyro
+          2: [F1_2] # Defrost
+          3: [F5_2] # Warming
+          4: [F4_2] # Plate warming
+
+  button:
+    - connection: pb # On/Off
+      control:
+        topic: "\\x00\\xf0"
+        address: 0x00001590 # Icon led plus PHASE1
+        #address: 0x00000ee8 # Icon led plus PHASE 2
+        index: 0
+    - connection: pb # ProBake
+      control:
+        topic: "\\x00\\xf0"
+        address: 0x00001590 # Icon led plus PHASE1
+        #address: 0x00000ee8 # Icon led plus PHASE 2
+        index: 1
+    - connection: pb # AutoBake
+      control:
+        topic: "\\x00\\xf0"
+        address: 0x00001590 # Icon led plus PHASE1
+        #address: 0x00000ee8 # Icon led plus PHASE 2
+        index: 2
+    - connection: pb # ExtraBake
+      control:
+        topic: "\\x00\\xf0"
+        address: 0x00001590 # Icon led plus PHASE1
+        #address: 0x00000ee8 # Icon led plus PHASE 2
+        index: 3
+    - connection: pb # Light
+      control:
+        topic: "\\x00\\xf0"
+        address: 0x00001590 # Icon led plus PHASE1
+        #address: 0x00000ee8 # Icon led plus PHASE 2
+        index: 4
+    - connection: pb # Start
+      control:
+        topic: "\\x00\\xf0"
+        address: 0x00001590 # Icon led plus PHASE1
+        #address: 0x00000ee8 # Icon led plus PHASE 2
+        index: 5
+  encoder:
+    - connection: pb
+      control:
+        topic: "\\x07\\x00"
