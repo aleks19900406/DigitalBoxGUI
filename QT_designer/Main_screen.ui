@@ -2,1087 +2,59 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="windowModality">
-   <enum>Qt::WindowModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1477</width>
-    <height>1034</height>
+    <width>1581</width>
+    <height>984</height>
    </rect>
-  </property>
-  <property name="font">
-   <font>
-    <pointsize>8</pointsize>
-    <weight>50</weight>
-    <italic>false</italic>
-    <bold>false</bold>
-   </font>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <property name="inputMethodHints">
-   <set>Qt::ImhNone</set>
-  </property>
-  <property name="toolButtonStyle">
-   <enum>Qt::ToolButtonIconOnly</enum>
-  </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="labelDigitalPot1">
+   <widget class="QDoubleSpinBox" name="SetVoltage2">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>660</y>
-      <width>70</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>digital_pot1.2</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="OUT1">
-    <property name="geometry">
-     <rect>
-      <x>740</x>
-      <y>750</y>
-      <width>61</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>out1</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_23">
-    <property name="geometry">
-     <rect>
-      <x>510</x>
-      <y>880</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN23</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_11">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>810</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN11</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="on_off">
-    <property name="geometry">
-     <rect>
-      <x>1330</x>
-      <y>160</y>
+      <x>980</x>
+      <y>310</y>
       <width>81</width>
-      <height>81</height>
+      <height>41</height>
      </rect>
     </property>
-    <property name="text">
-     <string>BOX ON/OFF</string>
-    </property>
-   </widget>
-   <widget class="QSlider" name="digital_pot0">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>200</y>
-      <width>41</width>
-      <height>401</height>
-     </rect>
-    </property>
-    <property name="tabletTracking">
-     <bool>false</bool>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
-     <string/>
+     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="minimum">
-     <number>-50</number>
+    <property name="decimals">
+     <number>1</number>
     </property>
     <property name="maximum">
-     <number>500</number>
+     <double>5.000000000000000</double>
     </property>
     <property name="singleStep">
-     <number>1</number>
-    </property>
-    <property name="pageStep">
-     <number>1</number>
-    </property>
-    <property name="value">
-     <number>30</number>
-    </property>
-    <property name="sliderPosition">
-     <number>30</number>
-    </property>
-    <property name="tracking">
-     <bool>true</bool>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-    <property name="invertedAppearance">
-     <bool>false</bool>
-    </property>
-    <property name="invertedControls">
-     <bool>false</bool>
-    </property>
-    <property name="tickPosition">
-     <enum>QSlider::TicksBothSides</enum>
-    </property>
-    <property name="tickInterval">
-     <number>50</number>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_20">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>880</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="mouseTracking">
-     <bool>true</bool>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string>IN20</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_12">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>810</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="mouseTracking">
-     <bool>true</bool>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string>IN12</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="OUT5">
-    <property name="geometry">
-     <rect>
-      <x>740</x>
-      <y>850</y>
-      <width>61</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>out5</string>
-    </property>
-   </widget>
-   <widget class="QLCDNumber" name="lcdNumber_digital_pot1">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>610</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="digitCount">
-     <number>3</number>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_10">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>810</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN10</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="OUT2">
-    <property name="geometry">
-     <rect>
-      <x>820</x>
-      <y>750</y>
-      <width>61</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>out2</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="OUT4">
-    <property name="geometry">
-     <rect>
-      <x>660</x>
-      <y>850</y>
-      <width>61</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>out4</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_17">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>880</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN17</string>
-    </property>
-   </widget>
-   <widget class="QLCDNumber" name="lcdNumber_digital_pot0">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>610</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="digitCount">
-     <number>3</number>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="OUT0">
-    <property name="geometry">
-     <rect>
-      <x>660</x>
-      <y>750</y>
-      <width>61</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>out0</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_14">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>810</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN14</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_19">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>880</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN19</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_5">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>740</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN5</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_7">
-    <property name="geometry">
-     <rect>
-      <x>510</x>
-      <y>740</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN7</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="OUT6">
-    <property name="geometry">
-     <rect>
-      <x>820</x>
-      <y>850</y>
-      <width>61</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>out6</string>
-    </property>
-   </widget>
-   <widget class="Line" name="line_2">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>170</y>
-      <width>20</width>
-      <height>761</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_15">
-    <property name="geometry">
-     <rect>
-      <x>510</x>
-      <y>810</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN15</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="OUT7">
-    <property name="geometry">
-     <rect>
-      <x>900</x>
-      <y>850</y>
-      <width>61</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>out7</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="RefreshingConnection">
-    <property name="geometry">
-     <rect>
-      <x>1360</x>
-      <y>30</y>
-      <width>61</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>refresh</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_1">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>740</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN1</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="OUT3">
-    <property name="geometry">
-     <rect>
-      <x>900</x>
-      <y>750</y>
-      <width>61</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>out3</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_6">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>740</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN6</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_18">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>880</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN18</string>
-    </property>
-   </widget>
-   <widget class="Line" name="line">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>700</y>
-      <width>1441</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_0">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>740</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="mouseTracking">
-     <bool>true</bool>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string>IN0</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_16">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>880</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="mouseTracking">
-     <bool>true</bool>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string>IN16</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_8">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>810</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="mouseTracking">
-     <bool>true</bool>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string>IN8</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_22">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>880</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN22</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_2">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>740</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="inputMethodHints">
-     <set>Qt::ImhNone</set>
-    </property>
-    <property name="text">
-     <string>IN2</string>
-    </property>
-    <property name="autoExclusive">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_9">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>810</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN9</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_13">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>810</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN13</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_4">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>740</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="mouseTracking">
-     <bool>true</bool>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string>IN4</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_21">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>880</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN21</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelDigitalPot0">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>660</y>
-      <width>71</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>digital_pot1.1</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="INPUT_3">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>740</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IN3</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="BoxConnect">
-    <property name="geometry">
-     <rect>
-      <x>1140</x>
-      <y>10</y>
-      <width>201</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="frame">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="BoxMarks">
-    <property name="geometry">
-     <rect>
-      <x>1140</x>
-      <y>90</y>
-      <width>201</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_marks">
-    <property name="geometry">
-     <rect>
-      <x>1000</x>
-      <y>80</y>
-      <width>81</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>SELECT MARKS:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_connect">
-    <property name="geometry">
-     <rect>
-      <x>1000</x>
-      <y>0</y>
-      <width>81</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
-    </property>
-    <property name="text">
-     <string>BOX CONNECT:</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelDigitalPot2">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>660</y>
-      <width>70</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>digital_pot2.1</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelDigitalPot3">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>660</y>
-      <width>70</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>digital_pot2.2</string>
-    </property>
-   </widget>
-   <widget class="QLCDNumber" name="lcdNumber_digital_pot3">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>610</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="digitCount">
-     <number>3</number>
-    </property>
-   </widget>
-   <widget class="QLCDNumber" name="lcdNumber_digital_pot2">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>610</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="digitCount">
-     <number>3</number>
-    </property>
-   </widget>
-   <widget class="QLCDNumber" name="lcdNumber_digital_pot4">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>610</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="digitCount">
-     <number>3</number>
-    </property>
-   </widget>
-   <widget class="QLCDNumber" name="lcdNumber_digital_pot5">
-    <property name="geometry">
-     <rect>
-      <x>520</x>
-      <y>610</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="digitCount">
-     <number>3</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelDigitalPot4">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>660</y>
-      <width>70</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>digital_pot3.1</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelDigitalPot5">
-    <property name="geometry">
-     <rect>
-      <x>520</x>
-      <y>660</y>
-      <width>70</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>digital_pot3.2</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="SelectPotTable">
-    <property name="geometry">
-     <rect>
-      <x>1140</x>
-      <y>50</y>
-      <width>201</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_digital_pot">
-    <property name="geometry">
-     <rect>
-      <x>1000</x>
-      <y>40</y>
-      <width>111</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>DIGITAL_POT_TABLE:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>1250</x>
-      <y>880</y>
-      <width>171</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/novaPredpona/hisense.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>../../../../Downloads/MicrosoftTeams-image (2).png</pixmap>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QSlider" name="digital_pot1">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>200</y>
-      <width>41</width>
-      <height>401</height>
-     </rect>
-    </property>
-    <property name="tabletTracking">
-     <bool>false</bool>
-    </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="inputMethodHints">
-     <set>Qt::ImhPreferNumbers</set>
-    </property>
-    <property name="minimum">
-     <number>-50</number>
-    </property>
-    <property name="maximum">
-     <number>500</number>
-    </property>
-    <property name="singleStep">
-     <number>1</number>
-    </property>
-    <property name="pageStep">
-     <number>1</number>
-    </property>
-    <property name="value">
-     <number>30</number>
-    </property>
-    <property name="sliderPosition">
-     <number>30</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-    <property name="tickPosition">
-     <enum>QSlider::TicksBothSides</enum>
-    </property>
-    <property name="tickInterval">
-     <number>50</number>
-    </property>
-   </widget>
-   <widget class="QSlider" name="digital_pot2">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>200</y>
-      <width>41</width>
-      <height>401</height>
-     </rect>
-    </property>
-    <property name="tabletTracking">
-     <bool>false</bool>
-    </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="inputMethodHints">
-     <set>Qt::ImhPreferNumbers</set>
-    </property>
-    <property name="minimum">
-     <number>-50</number>
-    </property>
-    <property name="maximum">
-     <number>500</number>
-    </property>
-    <property name="singleStep">
-     <number>1</number>
-    </property>
-    <property name="pageStep">
-     <number>1</number>
-    </property>
-    <property name="value">
-     <number>30</number>
-    </property>
-    <property name="sliderPosition">
-     <number>30</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-    <property name="tickPosition">
-     <enum>QSlider::TicksBothSides</enum>
-    </property>
-    <property name="tickInterval">
-     <number>50</number>
-    </property>
-   </widget>
-   <widget class="QSlider" name="digital_pot3">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>200</y>
-      <width>41</width>
-      <height>401</height>
-     </rect>
-    </property>
-    <property name="tabletTracking">
-     <bool>false</bool>
-    </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="inputMethodHints">
-     <set>Qt::ImhPreferNumbers</set>
-    </property>
-    <property name="minimum">
-     <number>-50</number>
-    </property>
-    <property name="maximum">
-     <number>500</number>
-    </property>
-    <property name="singleStep">
-     <number>1</number>
-    </property>
-    <property name="pageStep">
-     <number>1</number>
-    </property>
-    <property name="value">
-     <number>30</number>
-    </property>
-    <property name="sliderPosition">
-     <number>30</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-    <property name="tickPosition">
-     <enum>QSlider::TicksBothSides</enum>
-    </property>
-    <property name="tickInterval">
-     <number>50</number>
+     <double>0.200000000000000</double>
     </property>
    </widget>
    <widget class="QSlider" name="digital_pot4">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>200</y>
+      <x>450</x>
+      <y>210</y>
       <width>41</width>
-      <height>401</height>
+      <height>391</height>
      </rect>
     </property>
     <property name="tabletTracking">
@@ -1131,13 +103,980 @@
      <number>50</number>
     </property>
    </widget>
-   <widget class="QSlider" name="digital_pot5">
+   <widget class="QLabel" name="labelDigitalPot2">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>670</y>
+      <width>70</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>digital_pot2.1</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_21">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>840</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN21</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="BoxMarks">
+    <property name="geometry">
+     <rect>
+      <x>1150</x>
+      <y>120</y>
+      <width>201</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_26">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>890</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN26</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="SelectPotTable">
+    <property name="geometry">
+     <rect>
+      <x>1150</x>
+      <y>80</y>
+      <width>201</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="SetVoltage0">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>220</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+      <strikeout>false</strikeout>
+     </font>
+    </property>
+    <property name="decimals">
+     <number>1</number>
+    </property>
+    <property name="maximum">
+     <double>5.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>0.200000000000000</double>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelSetPwm3_0">
+    <property name="geometry">
+     <rect>
+      <x>1370</x>
+      <y>360</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+      <strikeout>false</strikeout>
+     </font>
+    </property>
+    <property name="text">
+     <string>FREQ(DUTY 50)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_marks_9">
+    <property name="geometry">
+     <rect>
+      <x>1020</x>
+      <y>520</y>
+      <width>101</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>SET PWM2</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="date_and_time">
+    <property name="geometry">
+     <rect>
+      <x>1150</x>
+      <y>10</y>
+      <width>321</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Plain</enum>
+    </property>
+    <property name="text">
+     <string>date_and_time</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line_12">
+    <property name="geometry">
+     <rect>
+      <x>1310</x>
+      <y>170</y>
+      <width>20</width>
+      <height>551</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="SetDuty2">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>640</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="singleStep">
+     <number>5</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT0">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>760</y>
+      <width>61</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>out0</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>700</y>
+      <width>1521</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_marks_5">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>350</y>
+      <width>121</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>READ PWM 1</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_18">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>840</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN18</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line_3">
+    <property name="geometry">
+     <rect>
+      <x>1040</x>
+      <y>720</y>
+      <width>20</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ButtonSetDac">
+    <property name="geometry">
+     <rect>
+      <x>1370</x>
+      <y>610</y>
+      <width>111</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>CREATE DAC TABLE</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_31">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>890</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN31</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="digital_pot0">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>210</y>
+      <width>41</width>
+      <height>391</height>
+     </rect>
+    </property>
+    <property name="tabletTracking">
+     <bool>false</bool>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="minimum">
+     <number>-50</number>
+    </property>
+    <property name="maximum">
+     <number>500</number>
+    </property>
+    <property name="singleStep">
+     <number>1</number>
+    </property>
+    <property name="pageStep">
+     <number>1</number>
+    </property>
+    <property name="value">
+     <number>30</number>
+    </property>
+    <property name="sliderPosition">
+     <number>30</number>
+    </property>
+    <property name="tracking">
+     <bool>true</bool>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+    <property name="invertedAppearance">
+     <bool>false</bool>
+    </property>
+    <property name="invertedControls">
+     <bool>false</bool>
+    </property>
+    <property name="tickPosition">
+     <enum>QSlider::TicksBothSides</enum>
+    </property>
+    <property name="tickInterval">
+     <number>50</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="warningMessagePot">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>331</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>warningMessagePot</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelDigitalPot3">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>670</y>
+      <width>70</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>digital_pot2.2</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_16">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>840</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>IN16</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line_8">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>360</y>
+      <width>691</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_25">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>890</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN25</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_2">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>740</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhNone</set>
+    </property>
+    <property name="text">
+     <string>IN2</string>
+    </property>
+    <property name="autoExclusive">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ButtonDacSet">
+    <property name="geometry">
+     <rect>
+      <x>1380</x>
+      <y>540</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>SET DAC</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcdNumber_digital_pot1">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>620</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="digitCount">
+     <number>5</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+   </widget>
+   <widget class="Line" name="line_2">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>170</y>
+      <width>20</width>
+      <height>771</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelDigitalPot5">
     <property name="geometry">
      <rect>
       <x>530</x>
-      <y>200</y>
+      <y>670</y>
+      <width>70</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>digital_pot3.2</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_12">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>790</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>IN12</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="readADC3">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>310</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="digitCount">
+     <number>3</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+   </widget>
+   <widget class="Line" name="line_11">
+    <property name="geometry">
+     <rect>
+      <x>920</x>
+      <y>180</y>
+      <width>20</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_13">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>790</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN13</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="BoxConnect">
+    <property name="geometry">
+     <rect>
+      <x>1150</x>
+      <y>40</y>
+      <width>201</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="frame">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelSetVoltage2">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>270</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ADC2</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT2">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>760</y>
+      <width>61</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>out2</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMin5">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>600</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>min</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_23">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>840</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN23</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMin4">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>600</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>min</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT1">
+    <property name="geometry">
+     <rect>
+      <x>750</x>
+      <y>760</y>
+      <width>61</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>out1</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT3">
+    <property name="geometry">
+     <rect>
+      <x>910</x>
+      <y>760</y>
+      <width>61</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>out3</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="warningMessageDac">
+    <property name="geometry">
+     <rect>
+      <x>1290</x>
+      <y>670</y>
+      <width>231</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>warningMessageDac</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_9">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>790</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN9</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelSetPwm3_1">
+    <property name="geometry">
+     <rect>
+      <x>1370</x>
+      <y>440</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+      <strikeout>false</strikeout>
+     </font>
+    </property>
+    <property name="text">
+     <string>DUTY(2kHz)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelDigitalPot4">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>670</y>
+      <width>70</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>digital_pot3.1</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_1">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>740</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN1</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>1350</x>
+      <y>900</y>
+      <width>171</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Plain</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>../data/images/other/hisense.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT6">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>860</y>
+      <width>61</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>out6</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_24">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>890</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>IN24</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMax4">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>190</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>max</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ButtonSetPot">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>150</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>CREATE POT TABLE</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+    <property name="default">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT7">
+    <property name="geometry">
+     <rect>
+      <x>910</x>
+      <y>860</y>
+      <width>61</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>out7</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcdNumber_digital_pot4">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>620</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <property name="digitCount">
+     <number>5</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcdNumber_digital_pot5">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>620</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="digitCount">
+     <number>5</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+   </widget>
+   <widget class="QSlider" name="digital_pot5">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>210</y>
       <width>41</width>
-      <height>401</height>
+      <height>391</height>
      </rect>
     </property>
     <property name="tabletTracking">
@@ -1180,31 +1119,89 @@
      <number>50</number>
     </property>
    </widget>
-   <widget class="QPushButton" name="ButtonHusaModel">
+   <widget class="QLabel" name="labelADC2">
     <property name="geometry">
      <rect>
-      <x>1070</x>
-      <y>740</y>
+      <x>660</x>
+      <y>270</y>
       <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ADC2</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMin0">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>600</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>min</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_connect">
+    <property name="geometry">
+     <rect>
+      <x>1010</x>
+      <y>30</y>
+      <width>111</width>
       <height>51</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Plain</enum>
+    </property>
     <property name="text">
-     <string>HUSA SET PB/LB</string>
+     <string>BOX CONNECT:</string>
     </property>
-    <property name="checkable">
-     <bool>false</bool>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QPushButton" name="INPUT_22">
     <property name="geometry">
      <rect>
-      <x>1140</x>
-      <y>700</y>
-      <width>201</width>
+      <x>450</x>
+      <y>840</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN22</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelPwm2_1">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>640</y>
+      <width>151</width>
       <height>31</height>
      </rect>
     </property>
@@ -1217,70 +1214,112 @@
      </font>
     </property>
     <property name="text">
-     <string>ADDITIONAL FUNCTIONS</string>
+     <string>DUTY:</string>
     </property>
    </widget>
-   <widget class="Line" name="line_3">
+   <widget class="QPushButton" name="INPUT_19">
     <property name="geometry">
      <rect>
-      <x>1030</x>
-      <y>720</y>
-      <width>20</width>
-      <height>201</height>
+      <x>240</x>
+      <y>840</y>
+      <width>61</width>
+      <height>31</height>
      </rect>
     </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
+    <property name="text">
+     <string>IN19</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_marks_2">
+   <widget class="QLabel" name="PotMin2">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>700</y>
-      <width>121</width>
-      <height>31</height>
+      <x>220</x>
+      <y>600</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>min</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcdNumber_digital_pot2">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>620</y>
+      <width>71</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="digitCount">
+     <number>5</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMax0">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>190</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
       <weight>50</weight>
       <italic>false</italic>
       <bold>false</bold>
      </font>
     </property>
     <property name="text">
-     <string>DIGITAL INPUT</string>
+     <string>max</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_marks_3">
+   <widget class="QLabel" name="labelDigitalPot1">
     <property name="geometry">
      <rect>
-      <x>760</x>
-      <y>700</y>
-      <width>130</width>
+      <x>130</x>
+      <y>670</y>
+      <width>70</width>
       <height>31</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
     <property name="text">
-     <string>DIGITAL OUTPUT</string>
+     <string>digital_pot1.2</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_marks_4">
+   <widget class="QPushButton" name="INPUT_30">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>150</y>
-      <width>211</width>
+      <x>450</x>
+      <y>890</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN30</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="SetVoltage3">
+    <property name="geometry">
+     <rect>
+      <x>1200</x>
+      <y>310</y>
+      <width>81</width>
       <height>41</height>
      </rect>
     </property>
@@ -1292,16 +1331,46 @@
       <bold>false</bold>
      </font>
     </property>
-    <property name="text">
-     <string>DIGITAL POTENTIOMETER</string>
+    <property name="decimals">
+     <number>1</number>
+    </property>
+    <property name="maximum">
+     <double>5.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>0.200000000000000</double>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcdNumber_digital_pot3">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>620</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="digitCount">
+     <number>5</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
     </property>
    </widget>
    <widget class="Line" name="line_6">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>160</y>
-      <width>1311</width>
+      <width>1521</width>
       <height>21</height>
      </rect>
     </property>
@@ -1309,174 +1378,56 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QPushButton" name="ButtonPyroSystem">
+   <widget class="QPushButton" name="INPUT_28">
     <property name="geometry">
      <rect>
-      <x>1200</x>
-      <y>740</y>
-      <width>101</width>
-      <height>51</height>
+      <x>310</x>
+      <y>890</y>
+      <width>61</width>
+      <height>31</height>
      </rect>
     </property>
-    <property name="text">
-     <string>PYRO SET SYSTEM</string>
-    </property>
-    <property name="autoRepeat">
+    <property name="mouseTracking">
      <bool>true</bool>
     </property>
-    <property name="autoDefault">
+    <property name="autoFillBackground">
      <bool>false</bool>
-    </property>
-    <property name="default">
-     <bool>false</bool>
-    </property>
-    <property name="flat">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QLCDNumber" name="ReadPwm1">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>400</y>
-      <width>81</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="digitCount">
-     <number>4</number>
-    </property>
-    <property name="segmentStyle">
-     <enum>QLCDNumber::Flat</enum>
-    </property>
-   </widget>
-   <widget class="QLCDNumber" name="ReadDuty1">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>470</y>
-      <width>81</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="digitCount">
-     <number>3</number>
-    </property>
-    <property name="segmentStyle">
-     <enum>QLCDNumber::Flat</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_marks_5">
-    <property name="geometry">
-     <rect>
-      <x>670</x>
-      <y>340</y>
-      <width>101</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
     </property>
     <property name="text">
-     <string>READ PWM 1</string>
+     <string>IN28</string>
     </property>
    </widget>
-   <widget class="QLabel" name="labelPwm1_0">
+   <widget class="QLabel" name="PotMax1">
     <property name="geometry">
      <rect>
-      <x>650</x>
-      <y>370</y>
-      <width>151</width>
+      <x>120</x>
+      <y>190</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>max</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_3">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>740</y>
+      <width>61</width>
       <height>31</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
     <property name="text">
-     <string>FREQ:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelPwm1_1">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>440</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>DUTY:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelPwm2_1">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>620</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>DUTY:</string>
+     <string>IN3</string>
     </property>
    </widget>
    <widget class="QLCDNumber" name="ReadDuty2">
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>660</y>
+      <y>670</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -1497,375 +1448,13 @@
     </property>
     <property name="segmentStyle">
      <enum>QLCDNumber::Flat</enum>
-    </property>
-   </widget>
-   <widget class="QLCDNumber" name="ReadPwm2">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>570</y>
-      <width>81</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="digitCount">
-     <number>4</number>
-    </property>
-    <property name="segmentStyle">
-     <enum>QLCDNumber::Flat</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_marks_6">
-    <property name="geometry">
-     <rect>
-      <x>670</x>
-      <y>510</y>
-      <width>101</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>READ PWM 2</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelPwm2_0">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>540</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>FREQ:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_marks_8">
-    <property name="geometry">
-     <rect>
-      <x>1000</x>
-      <y>340</y>
-      <width>101</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>SET PWM1</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_marks_9">
-    <property name="geometry">
-     <rect>
-      <x>1010</x>
-      <y>510</y>
-      <width>101</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>SET PWM2</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelSetPwm2_0">
-    <property name="geometry">
-     <rect>
-      <x>880</x>
-      <y>600</y>
-      <width>111</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>FREQ:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelSetPwm2_1">
-    <property name="geometry">
-     <rect>
-      <x>1130</x>
-      <y>600</y>
-      <width>111</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>DUTY:</string>
-    </property>
-   </widget>
-   <widget class="Line" name="line_7">
-    <property name="geometry">
-     <rect>
-      <x>800</x>
-      <y>360</y>
-      <width>20</width>
-      <height>341</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_8">
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>350</y>
-      <width>691</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_10">
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>520</y>
-      <width>691</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_11">
-    <property name="geometry">
-     <rect>
-      <x>910</x>
-      <y>170</y>
-      <width>20</width>
-      <height>181</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelSetPwm1_0">
-    <property name="geometry">
-     <rect>
-      <x>880</x>
-      <y>410</y>
-      <width>111</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>FREQ:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelSetPwm1_1">
-    <property name="geometry">
-     <rect>
-      <x>1120</x>
-      <y>410</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>DUTY:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_marks_7">
-    <property name="geometry">
-     <rect>
-      <x>1050</x>
-      <y>150</y>
-      <width>111</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>SET VOLTAGE</string>
-    </property>
-   </widget>
-   <widget class="Line" name="line_12">
-    <property name="geometry">
-     <rect>
-      <x>1300</x>
-      <y>160</y>
-      <width>20</width>
-      <height>551</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="QLCDNumber" name="readADC2">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>300</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="digitCount">
-     <number>3</number>
-    </property>
-    <property name="segmentStyle">
-     <enum>QLCDNumber::Flat</enum>
-    </property>
-    <property name="intValue" stdset="0">
-     <number>0</number>
-    </property>
-   </widget>
-   <widget class="QLCDNumber" name="readADC0">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>220</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="smallDecimalPoint">
-     <bool>false</bool>
-    </property>
-    <property name="digitCount">
-     <number>3</number>
-    </property>
-    <property name="segmentStyle">
-     <enum>QLCDNumber::Flat</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_15">
-    <property name="geometry">
-     <rect>
-      <x>730</x>
-      <y>150</y>
-      <width>91</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>READ ADC</string>
     </property>
    </widget>
    <widget class="QLCDNumber" name="readADC1">
     <property name="geometry">
      <rect>
-      <x>800</x>
-      <y>220</y>
+      <x>810</x>
+      <y>230</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -1892,316 +1481,11 @@
      <enum>QLCDNumber::Flat</enum>
     </property>
    </widget>
-   <widget class="QLCDNumber" name="readADC3">
-    <property name="geometry">
-     <rect>
-      <x>800</x>
-      <y>300</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <italic>false</italic>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="digitCount">
-     <number>3</number>
-    </property>
-    <property name="segmentStyle">
-     <enum>QLCDNumber::Flat</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelADC0">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>190</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>ADC0</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelADC1">
-    <property name="geometry">
-     <rect>
-      <x>800</x>
-      <y>190</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>ADC1</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelADC2">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>260</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>ADC2</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelADC3">
-    <property name="geometry">
-     <rect>
-      <x>800</x>
-      <y>260</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>ADC3</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelSetVoltage0">
-    <property name="geometry">
-     <rect>
-      <x>970</x>
-      <y>170</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>ADC0</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelSetVoltage1">
-    <property name="geometry">
-     <rect>
-      <x>1190</x>
-      <y>170</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>ADC1</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelSetVoltage2">
-    <property name="geometry">
-     <rect>
-      <x>970</x>
-      <y>260</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>ADC2</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelSetVoltage3">
-    <property name="geometry">
-     <rect>
-      <x>1190</x>
-      <y>260</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>ADC3</string>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="SetVoltage0">
-    <property name="geometry">
-     <rect>
-      <x>970</x>
-      <y>210</y>
-      <width>81</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-      <strikeout>false</strikeout>
-     </font>
-    </property>
-    <property name="decimals">
-     <number>1</number>
-    </property>
-    <property name="maximum">
-     <double>5.000000000000000</double>
-    </property>
-    <property name="singleStep">
-     <double>0.200000000000000</double>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="SetVoltage1">
-    <property name="geometry">
-     <rect>
-      <x>1190</x>
-      <y>210</y>
-      <width>81</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-      <strikeout>false</strikeout>
-     </font>
-    </property>
-    <property name="decimals">
-     <number>1</number>
-    </property>
-    <property name="maximum">
-     <double>5.000000000000000</double>
-    </property>
-    <property name="singleStep">
-     <double>0.200000000000000</double>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="SetVoltage2">
-    <property name="geometry">
-     <rect>
-      <x>970</x>
-      <y>300</y>
-      <width>81</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="decimals">
-     <number>1</number>
-    </property>
-    <property name="maximum">
-     <double>5.000000000000000</double>
-    </property>
-    <property name="singleStep">
-     <double>0.200000000000000</double>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="SetVoltage3">
-    <property name="geometry">
-     <rect>
-      <x>1190</x>
-      <y>300</y>
-      <width>81</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="decimals">
-     <number>1</number>
-    </property>
-    <property name="maximum">
-     <double>5.000000000000000</double>
-    </property>
-    <property name="singleStep">
-     <double>0.200000000000000</double>
-    </property>
-   </widget>
    <widget class="QScrollBar" name="SetPwmBar1">
     <property name="geometry">
      <rect>
-      <x>830</x>
-      <y>380</y>
+      <x>840</x>
+      <y>390</y>
       <width>471</width>
       <height>21</height>
      </rect>
@@ -2225,11 +1509,845 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
+   <widget class="QLabel" name="labelADC0">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>200</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ADC0</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="SetFrequency1">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
+      <y>460</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="minimum">
+     <number>0</number>
+    </property>
+    <property name="maximum">
+     <number>10000</number>
+    </property>
+    <property name="singleStep">
+     <number>50</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_27">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>890</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN27</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMax3">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>190</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>max</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMax2">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>190</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>max</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ButtonHusaModel">
+    <property name="geometry">
+     <rect>
+      <x>1080</x>
+      <y>750</y>
+      <width>121</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>HUSA SET PB/LB</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_11">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>790</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN11</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelDigitalPot0">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>670</y>
+      <width>71</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>digital_pot1.1</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="SetFrequencyOld">
+    <property name="geometry">
+     <rect>
+      <x>1380</x>
+      <y>400</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+      <strikeout>false</strikeout>
+     </font>
+    </property>
+    <property name="minimum">
+     <number>0</number>
+    </property>
+    <property name="maximum">
+     <number>10000</number>
+    </property>
+    <property name="singleStep">
+     <number>50</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT4">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>860</y>
+      <width>61</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>out4</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="SetVoltage1">
+    <property name="geometry">
+     <rect>
+      <x>1200</x>
+      <y>220</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+      <strikeout>false</strikeout>
+     </font>
+    </property>
+    <property name="decimals">
+     <number>1</number>
+    </property>
+    <property name="maximum">
+     <double>5.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>0.200000000000000</double>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ButtonPyroSystem">
+    <property name="geometry">
+     <rect>
+      <x>1210</x>
+      <y>750</y>
+      <width>121</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PYRO SET SYSTEM</string>
+    </property>
+    <property name="autoRepeat">
+     <bool>true</bool>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
+    </property>
+    <property name="default">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_marks_8">
+    <property name="geometry">
+     <rect>
+      <x>1010</x>
+      <y>350</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>SET PWM1</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>150</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>READ ADC</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="readADC0">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>230</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="smallDecimalPoint">
+     <bool>false</bool>
+    </property>
+    <property name="digitCount">
+     <number>3</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelSetPwm1_0">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
+      <y>420</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>FREQ:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMin3">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>600</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>min</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="digital_pot2">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>210</y>
+      <width>41</width>
+      <height>391</height>
+     </rect>
+    </property>
+    <property name="tabletTracking">
+     <bool>false</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhPreferNumbers</set>
+    </property>
+    <property name="minimum">
+     <number>-50</number>
+    </property>
+    <property name="maximum">
+     <number>500</number>
+    </property>
+    <property name="singleStep">
+     <number>1</number>
+    </property>
+    <property name="pageStep">
+     <number>1</number>
+    </property>
+    <property name="value">
+     <number>30</number>
+    </property>
+    <property name="sliderPosition">
+     <number>30</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+    <property name="tickPosition">
+     <enum>QSlider::TicksBothSides</enum>
+    </property>
+    <property name="tickInterval">
+     <number>50</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_14">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>790</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN14</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_marks_7">
+    <property name="geometry">
+     <rect>
+      <x>1060</x>
+      <y>150</y>
+      <width>131</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>SET VOLTAGE</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_0">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>740</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>IN0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="warningMessageAddFunction">
+    <property name="geometry">
+     <rect>
+      <x>1150</x>
+      <y>700</y>
+      <width>241</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ADDITIONAL FUNCTIONS</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelSetPwm2_0">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
+      <y>600</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>FREQ:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_marks_2">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>700</y>
+      <width>161</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>DIGITAL INPUT</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_5">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>740</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN5</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="RefreshingConnection">
+    <property name="geometry">
+     <rect>
+      <x>1390</x>
+      <y>60</y>
+      <width>70</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>55</width>
+      <height>55</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="SetDutyOld">
+    <property name="geometry">
+     <rect>
+      <x>1380</x>
+      <y>480</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+      <strikeout>false</strikeout>
+     </font>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="singleStep">
+     <number>5</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelPwm1_1">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>450</y>
+      <width>151</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>DUTY:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_29">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>890</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN29</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line_7">
+    <property name="geometry">
+     <rect>
+      <x>800</x>
+      <y>370</y>
+      <width>20</width>
+      <height>341</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelSetPwm1_1">
+    <property name="geometry">
+     <rect>
+      <x>1130</x>
+      <y>420</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>DUTY:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelADC3">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>270</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ADC3</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_digital_pot">
+    <property name="geometry">
+     <rect>
+      <x>1010</x>
+      <y>70</y>
+      <width>121</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>DIGITAL POT TABLE:</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="digital_pot1">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>210</y>
+      <width>41</width>
+      <height>391</height>
+     </rect>
+    </property>
+    <property name="tabletTracking">
+     <bool>false</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhPreferNumbers</set>
+    </property>
+    <property name="minimum">
+     <number>-50</number>
+    </property>
+    <property name="maximum">
+     <number>500</number>
+    </property>
+    <property name="singleStep">
+     <number>1</number>
+    </property>
+    <property name="pageStep">
+     <number>1</number>
+    </property>
+    <property name="value">
+     <number>30</number>
+    </property>
+    <property name="sliderPosition">
+     <number>30</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+    <property name="tickPosition">
+     <enum>QSlider::TicksBothSides</enum>
+    </property>
+    <property name="tickInterval">
+     <number>50</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_10">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>790</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN10</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_17">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>840</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN17</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="digital_pot3">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>210</y>
+      <width>41</width>
+      <height>391</height>
+     </rect>
+    </property>
+    <property name="tabletTracking">
+     <bool>false</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhPreferNumbers</set>
+    </property>
+    <property name="minimum">
+     <number>-50</number>
+    </property>
+    <property name="maximum">
+     <number>500</number>
+    </property>
+    <property name="singleStep">
+     <number>1</number>
+    </property>
+    <property name="pageStep">
+     <number>1</number>
+    </property>
+    <property name="value">
+     <number>30</number>
+    </property>
+    <property name="sliderPosition">
+     <number>30</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+    <property name="tickPosition">
+     <enum>QSlider::TicksBothSides</enum>
+    </property>
+    <property name="tickInterval">
+     <number>50</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelPwm1_0">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>380</y>
+      <width>151</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>FREQ:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="on_off">
+    <property name="geometry">
+     <rect>
+      <x>1390</x>
+      <y>210</y>
+      <width>70</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-right-color: rgb(85, 255, 127);
+selection-color: rgb(255, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>70</width>
+      <height>67</height>
+     </size>
+    </property>
+   </widget>
    <widget class="QScrollBar" name="SetPwmBar2">
     <property name="geometry">
      <rect>
-      <x>830</x>
-      <y>560</y>
+      <x>840</x>
+      <y>570</y>
       <width>471</width>
       <height>21</height>
      </rect>
@@ -2247,37 +2365,10 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QSpinBox" name="SetFrequency1">
-    <property name="geometry">
-     <rect>
-      <x>880</x>
-      <y>450</y>
-      <width>81</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="minimum">
-     <number>0</number>
-    </property>
-    <property name="maximum">
-     <number>10000</number>
-    </property>
-    <property name="singleStep">
-     <number>50</number>
-    </property>
-   </widget>
    <widget class="QSpinBox" name="SetFrequency2">
     <property name="geometry">
      <rect>
-      <x>880</x>
+      <x>890</x>
       <y>640</y>
       <width>81</width>
       <height>41</height>
@@ -2301,12 +2392,143 @@
      <number>50</number>
     </property>
    </widget>
-   <widget class="QSpinBox" name="SetDuty1">
+   <widget class="QLabel" name="labelADC1">
     <property name="geometry">
      <rect>
-      <x>1120</x>
-      <y>450</y>
+      <x>810</x>
+      <y>200</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ADC1</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="readADC2">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>310</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="digitCount">
+     <number>3</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+    <property name="intValue" stdset="0">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_8">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>790</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>IN8</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="ReadPwm1">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>410</y>
       <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="digitCount">
+     <number>4</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelSetVoltage1">
+    <property name="geometry">
+     <rect>
+      <x>1200</x>
+      <y>180</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ADC1</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line_10">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>530</y>
+      <width>691</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_marks_4">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>150</y>
+      <width>241</width>
       <height>41</height>
      </rect>
     </property>
@@ -2318,20 +2540,43 @@
       <bold>false</bold>
      </font>
     </property>
-    <property name="maximum">
-     <number>100</number>
-    </property>
-    <property name="singleStep">
-     <number>5</number>
+    <property name="text">
+     <string>DIGITAL POTENTIOMETER</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="SetDuty2">
+   <widget class="QPushButton" name="INPUT_7">
     <property name="geometry">
      <rect>
-      <x>1130</x>
-      <y>640</y>
-      <width>81</width>
-      <height>41</height>
+      <x>520</x>
+      <y>740</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN7</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_6">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>740</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IN6</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelSetPwm2_1">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>600</y>
+      <width>111</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -2342,156 +2587,55 @@
       <bold>false</bold>
      </font>
     </property>
-    <property name="maximum">
-     <number>100</number>
-    </property>
-    <property name="singleStep">
-     <number>5</number>
+    <property name="text">
+     <string>DUTY:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="PotMax0">
+   <widget class="QPushButton" name="INPUT_4">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>200</y>
-      <width>47</width>
-      <height>13</height>
+      <x>310</x>
+      <y>740</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>IN4</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_marks">
+    <property name="geometry">
+     <rect>
+      <x>1010</x>
+      <y>110</y>
+      <width>101</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>8</pointsize>
+      <pointsize>7</pointsize>
       <weight>50</weight>
       <italic>false</italic>
       <bold>false</bold>
      </font>
     </property>
     <property name="text">
-     <string>max</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="PotMin0">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>590</y>
-      <width>47</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>min</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="PotMax1">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>200</y>
-      <width>47</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>max</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="PotMin1">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>590</y>
-      <width>47</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>min</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="PotMax2">
-    <property name="geometry">
-     <rect>
-      <x>210</x>
-      <y>200</y>
-      <width>47</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>max</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="PotMin2">
-    <property name="geometry">
-     <rect>
-      <x>210</x>
-      <y>590</y>
-      <width>47</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>min</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="PotMax3">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>200</y>
-      <width>47</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>max</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="PotMin3">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>590</y>
-      <width>47</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>min</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="PotMax4">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>200</y>
-      <width>47</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>max</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="PotMin4">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>590</y>
-      <width>47</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>min</string>
+     <string>SELECT MARKS:</string>
     </property>
    </widget>
    <widget class="QLabel" name="PotMax5">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>200</y>
+      <x>520</x>
+      <y>190</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -2503,11 +2647,32 @@
      <string>max</string>
     </property>
    </widget>
-   <widget class="QLabel" name="PotMin5">
+   <widget class="QLabel" name="label_marks_6">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>590</y>
+      <x>680</x>
+      <y>520</y>
+      <width>121</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>READ PWM 2</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMin1">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>600</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -2516,128 +2681,49 @@
      <string>min</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="ButtonDacSet">
+   <widget class="QLCDNumber" name="lcdNumber_digital_pot0">
     <property name="geometry">
      <rect>
-      <x>1330</x>
-      <y>480</y>
-      <width>101</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>SET DAC</string>
-    </property>
-    <property name="checkable">
-     <bool>false</bool>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelSetPwm2_2">
-    <property name="geometry">
-     <rect>
-      <x>1330</x>
-      <y>280</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-      <strikeout>false</strikeout>
-     </font>
-    </property>
-    <property name="text">
-     <string>FREQ(DUTY 50)</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="SetDutyold">
-    <property name="geometry">
-     <rect>
-      <x>1340</x>
-      <y>410</y>
-      <width>81</width>
+      <x>30</x>
+      <y>620</y>
+      <width>71</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
       <italic>false</italic>
-      <bold>false</bold>
-      <strikeout>false</strikeout>
+      <bold>true</bold>
      </font>
     </property>
-    <property name="maximum">
-     <number>100</number>
-    </property>
-    <property name="singleStep">
+    <property name="digitCount">
      <number>5</number>
     </property>
-   </widget>
-   <widget class="QSpinBox" name="SetFrequencyold">
-    <property name="geometry">
-     <rect>
-      <x>1340</x>
-      <y>320</y>
-      <width>81</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-      <strikeout>false</strikeout>
-     </font>
-    </property>
-    <property name="minimum">
-     <number>0</number>
-    </property>
-    <property name="maximum">
-     <number>10000</number>
-    </property>
-    <property name="singleStep">
-     <number>50</number>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="labelSetPwm2_3">
+   <widget class="QPushButton" name="INPUT_15">
     <property name="geometry">
      <rect>
-      <x>1330</x>
-      <y>380</y>
-      <width>121</width>
+      <x>520</x>
+      <y>790</y>
+      <width>61</width>
       <height>31</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-      <strikeout>false</strikeout>
-     </font>
-    </property>
     <property name="text">
-     <string>DUTY(FREQ 2K)</string>
+     <string>IN15</string>
     </property>
    </widget>
    <widget class="QLabel" name="BOX_VERSION">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>120</y>
-      <width>1271</width>
+      <x>0</x>
+      <y>10</y>
+      <width>1121</width>
       <height>31</height>
      </rect>
     </property>
@@ -2659,153 +2745,416 @@
      <number>-7</number>
     </property>
    </widget>
-   <zorder>PotMin1</zorder>
-   <zorder>PotMin0</zorder>
-   <zorder>PotMax0</zorder>
-   <zorder>line_12</zorder>
-   <zorder>line_10</zorder>
-   <zorder>line_11</zorder>
-   <zorder>line_8</zorder>
-   <zorder>label_4</zorder>
-   <zorder>labelDigitalPot1</zorder>
-   <zorder>OUT1</zorder>
-   <zorder>INPUT_23</zorder>
-   <zorder>INPUT_11</zorder>
-   <zorder>on_off</zorder>
-   <zorder>INPUT_20</zorder>
-   <zorder>INPUT_12</zorder>
-   <zorder>OUT5</zorder>
-   <zorder>lcdNumber_digital_pot1</zorder>
-   <zorder>INPUT_10</zorder>
-   <zorder>OUT2</zorder>
-   <zorder>OUT4</zorder>
-   <zorder>INPUT_17</zorder>
-   <zorder>OUT0</zorder>
-   <zorder>INPUT_14</zorder>
-   <zorder>INPUT_19</zorder>
-   <zorder>INPUT_5</zorder>
-   <zorder>INPUT_7</zorder>
-   <zorder>OUT6</zorder>
-   <zorder>INPUT_15</zorder>
-   <zorder>OUT7</zorder>
-   <zorder>RefreshingConnection</zorder>
-   <zorder>INPUT_1</zorder>
-   <zorder>OUT3</zorder>
-   <zorder>INPUT_6</zorder>
-   <zorder>INPUT_18</zorder>
-   <zorder>line</zorder>
-   <zorder>INPUT_0</zorder>
-   <zorder>INPUT_16</zorder>
-   <zorder>INPUT_8</zorder>
-   <zorder>INPUT_22</zorder>
-   <zorder>INPUT_2</zorder>
-   <zorder>INPUT_9</zorder>
-   <zorder>INPUT_13</zorder>
-   <zorder>INPUT_4</zorder>
-   <zorder>INPUT_21</zorder>
-   <zorder>labelDigitalPot0</zorder>
-   <zorder>INPUT_3</zorder>
-   <zorder>BoxConnect</zorder>
-   <zorder>BoxMarks</zorder>
-   <zorder>label_marks</zorder>
-   <zorder>label_connect</zorder>
+   <widget class="QLabel" name="label_marks_3">
+    <property name="geometry">
+     <rect>
+      <x>770</x>
+      <y>700</y>
+      <width>171</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>DIGITAL OUTPUT</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelSetVoltage3">
+    <property name="geometry">
+     <rect>
+      <x>1200</x>
+      <y>270</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ADC3</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="ReadDuty1">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>480</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="digitCount">
+     <number>3</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelSetVoltage0">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>180</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ADC0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelPwm2_0">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>560</y>
+      <width>151</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>FREQ:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="INPUT_20">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>840</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>IN20</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="SetDuty1">
+    <property name="geometry">
+     <rect>
+      <x>1130</x>
+      <y>460</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="singleStep">
+     <number>5</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT5">
+    <property name="geometry">
+     <rect>
+      <x>750</x>
+      <y>860</y>
+      <width>61</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>out5</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="ReadPwm2">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>590</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="digitCount">
+     <number>4</number>
+    </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Flat</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_marks_10">
+    <property name="geometry">
+     <rect>
+      <x>1380</x>
+      <y>310</y>
+      <width>81</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>OLD BOX</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line_4">
+    <property name="geometry">
+     <rect>
+      <x>1320</x>
+      <y>320</y>
+      <width>211</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_marks_11">
+    <property name="geometry">
+     <rect>
+      <x>1390</x>
+      <y>150</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ON/OFF</string>
+    </property>
+   </widget>
+   <zorder>digital_pot4</zorder>
    <zorder>labelDigitalPot2</zorder>
+   <zorder>INPUT_21</zorder>
+   <zorder>BoxMarks</zorder>
+   <zorder>INPUT_26</zorder>
+   <zorder>SelectPotTable</zorder>
+   <zorder>SetVoltage0</zorder>
+   <zorder>labelSetPwm3_0</zorder>
+   <zorder>date_and_time</zorder>
+   <zorder>line_12</zorder>
+   <zorder>SetDuty2</zorder>
+   <zorder>OUT0</zorder>
+   <zorder>line</zorder>
+   <zorder>label_marks_5</zorder>
+   <zorder>INPUT_18</zorder>
+   <zorder>line_3</zorder>
+   <zorder>ButtonSetDac</zorder>
+   <zorder>INPUT_31</zorder>
+   <zorder>warningMessagePot</zorder>
    <zorder>labelDigitalPot3</zorder>
-   <zorder>lcdNumber_digital_pot3</zorder>
-   <zorder>lcdNumber_digital_pot2</zorder>
+   <zorder>INPUT_16</zorder>
+   <zorder>line_8</zorder>
+   <zorder>INPUT_25</zorder>
+   <zorder>INPUT_2</zorder>
+   <zorder>ButtonDacSet</zorder>
+   <zorder>lcdNumber_digital_pot1</zorder>
+   <zorder>line_2</zorder>
+   <zorder>labelDigitalPot5</zorder>
+   <zorder>INPUT_12</zorder>
+   <zorder>readADC3</zorder>
+   <zorder>line_11</zorder>
+   <zorder>INPUT_13</zorder>
+   <zorder>BoxConnect</zorder>
+   <zorder>labelSetVoltage2</zorder>
+   <zorder>OUT2</zorder>
+   <zorder>PotMin5</zorder>
+   <zorder>INPUT_23</zorder>
+   <zorder>PotMin4</zorder>
+   <zorder>OUT1</zorder>
+   <zorder>OUT3</zorder>
+   <zorder>warningMessageDac</zorder>
+   <zorder>INPUT_9</zorder>
+   <zorder>labelSetPwm3_1</zorder>
+   <zorder>labelDigitalPot4</zorder>
+   <zorder>INPUT_1</zorder>
+   <zorder>OUT6</zorder>
+   <zorder>INPUT_24</zorder>
+   <zorder>PotMax4</zorder>
+   <zorder>OUT7</zorder>
    <zorder>lcdNumber_digital_pot4</zorder>
    <zorder>lcdNumber_digital_pot5</zorder>
-   <zorder>labelDigitalPot4</zorder>
-   <zorder>labelDigitalPot5</zorder>
-   <zorder>SelectPotTable</zorder>
-   <zorder>label_digital_pot</zorder>
-   <zorder>lcdNumber_digital_pot0</zorder>
-   <zorder>ButtonHusaModel</zorder>
-   <zorder>line_3</zorder>
-   <zorder>label_marks_2</zorder>
-   <zorder>label_marks_3</zorder>
-   <zorder>line_6</zorder>
-   <zorder>label_marks_4</zorder>
-   <zorder>line_2</zorder>
-   <zorder>ButtonPyroSystem</zorder>
-   <zorder>ReadPwm1</zorder>
-   <zorder>ReadDuty1</zorder>
-   <zorder>labelPwm1_1</zorder>
-   <zorder>labelPwm2_1</zorder>
-   <zorder>ReadDuty2</zorder>
-   <zorder>ReadPwm2</zorder>
-   <zorder>labelPwm2_0</zorder>
-   <zorder>label_marks_9</zorder>
-   <zorder>labelSetPwm2_0</zorder>
-   <zorder>labelSetPwm2_1</zorder>
-   <zorder>line_7</zorder>
-   <zorder>labelSetPwm1_0</zorder>
-   <zorder>labelSetPwm1_1</zorder>
-   <zorder>readADC2</zorder>
-   <zorder>readADC0</zorder>
-   <zorder>label_15</zorder>
-   <zorder>readADC1</zorder>
-   <zorder>readADC3</zorder>
-   <zorder>labelADC0</zorder>
-   <zorder>labelADC1</zorder>
-   <zorder>labelADC2</zorder>
-   <zorder>labelADC3</zorder>
-   <zorder>label_3</zorder>
-   <zorder>labelSetVoltage0</zorder>
-   <zorder>labelSetVoltage1</zorder>
-   <zorder>labelSetVoltage2</zorder>
-   <zorder>labelSetVoltage3</zorder>
-   <zorder>SetVoltage0</zorder>
-   <zorder>SetVoltage1</zorder>
-   <zorder>label_marks_8</zorder>
-   <zorder>SetFrequency1</zorder>
-   <zorder>SetFrequency2</zorder>
-   <zorder>SetDuty1</zorder>
-   <zorder>SetDuty2</zorder>
-   <zorder>PotMax1</zorder>
-   <zorder>PotMax2</zorder>
-   <zorder>PotMin2</zorder>
-   <zorder>PotMax3</zorder>
-   <zorder>PotMin3</zorder>
-   <zorder>PotMax4</zorder>
-   <zorder>PotMin4</zorder>
-   <zorder>PotMax5</zorder>
-   <zorder>PotMin5</zorder>
-   <zorder>digital_pot0</zorder>
-   <zorder>digital_pot1</zorder>
-   <zorder>digital_pot4</zorder>
    <zorder>digital_pot5</zorder>
-   <zorder>digital_pot2</zorder>
-   <zorder>digital_pot3</zorder>
-   <zorder>SetPwmBar1</zorder>
-   <zorder>SetPwmBar2</zorder>
-   <zorder>ButtonDacSet</zorder>
-   <zorder>SetVoltage2</zorder>
+   <zorder>labelADC2</zorder>
+   <zorder>PotMin0</zorder>
+   <zorder>label_connect</zorder>
+   <zorder>INPUT_22</zorder>
+   <zorder>labelPwm2_1</zorder>
+   <zorder>INPUT_19</zorder>
+   <zorder>PotMin2</zorder>
+   <zorder>lcdNumber_digital_pot2</zorder>
+   <zorder>PotMax0</zorder>
+   <zorder>labelDigitalPot1</zorder>
+   <zorder>INPUT_30</zorder>
    <zorder>SetVoltage3</zorder>
-   <zorder>label_marks_7</zorder>
-   <zorder>label_marks_6</zorder>
-   <zorder>label_marks_5</zorder>
+   <zorder>lcdNumber_digital_pot3</zorder>
+   <zorder>line_6</zorder>
+   <zorder>INPUT_28</zorder>
+   <zorder>PotMax1</zorder>
+   <zorder>INPUT_3</zorder>
+   <zorder>ReadDuty2</zorder>
+   <zorder>readADC1</zorder>
+   <zorder>SetPwmBar1</zorder>
+   <zorder>labelADC0</zorder>
+   <zorder>SetFrequency1</zorder>
+   <zorder>INPUT_27</zorder>
+   <zorder>PotMax3</zorder>
+   <zorder>PotMax2</zorder>
+   <zorder>ButtonHusaModel</zorder>
+   <zorder>INPUT_11</zorder>
+   <zorder>labelDigitalPot0</zorder>
+   <zorder>SetFrequencyOld</zorder>
+   <zorder>OUT4</zorder>
+   <zorder>SetVoltage1</zorder>
+   <zorder>ButtonPyroSystem</zorder>
+   <zorder>label_marks_8</zorder>
+   <zorder>label_15</zorder>
+   <zorder>readADC0</zorder>
+   <zorder>labelSetPwm1_0</zorder>
+   <zorder>PotMin3</zorder>
+   <zorder>digital_pot2</zorder>
+   <zorder>INPUT_14</zorder>
+   <zorder>INPUT_0</zorder>
+   <zorder>warningMessageAddFunction</zorder>
+   <zorder>labelSetPwm2_0</zorder>
+   <zorder>label_marks_2</zorder>
+   <zorder>INPUT_5</zorder>
+   <zorder>RefreshingConnection</zorder>
+   <zorder>SetDutyOld</zorder>
+   <zorder>labelPwm1_1</zorder>
+   <zorder>INPUT_29</zorder>
+   <zorder>line_7</zorder>
+   <zorder>labelSetPwm1_1</zorder>
+   <zorder>labelADC3</zorder>
+   <zorder>label_digital_pot</zorder>
+   <zorder>digital_pot1</zorder>
+   <zorder>INPUT_10</zorder>
+   <zorder>INPUT_17</zorder>
+   <zorder>digital_pot3</zorder>
    <zorder>labelPwm1_0</zorder>
-   <zorder>labelSetPwm2_2</zorder>
-   <zorder>SetDutyold</zorder>
-   <zorder>SetFrequencyold</zorder>
-   <zorder>labelSetPwm2_3</zorder>
+   <zorder>on_off</zorder>
+   <zorder>SetPwmBar2</zorder>
+   <zorder>SetFrequency2</zorder>
+   <zorder>labelADC1</zorder>
+   <zorder>readADC2</zorder>
+   <zorder>INPUT_8</zorder>
+   <zorder>ReadPwm1</zorder>
+   <zorder>labelSetVoltage1</zorder>
+   <zorder>line_10</zorder>
+   <zorder>label_marks_4</zorder>
+   <zorder>INPUT_7</zorder>
+   <zorder>INPUT_6</zorder>
+   <zorder>labelSetPwm2_1</zorder>
+   <zorder>INPUT_4</zorder>
+   <zorder>label_marks</zorder>
+   <zorder>PotMax5</zorder>
+   <zorder>label_marks_6</zorder>
+   <zorder>PotMin1</zorder>
+   <zorder>lcdNumber_digital_pot0</zorder>
+   <zorder>INPUT_15</zorder>
    <zorder>BOX_VERSION</zorder>
+   <zorder>label_marks_3</zorder>
+   <zorder>labelSetVoltage3</zorder>
+   <zorder>ReadDuty1</zorder>
+   <zorder>labelSetVoltage0</zorder>
+   <zorder>labelPwm2_0</zorder>
+   <zorder>INPUT_20</zorder>
+   <zorder>SetDuty1</zorder>
+   <zorder>OUT5</zorder>
+   <zorder>ReadPwm2</zorder>
+   <zorder>ButtonSetPot</zorder>
+   <zorder>label_marks_7</zorder>
+   <zorder>SetVoltage2</zorder>
+   <zorder>label_marks_9</zorder>
+   <zorder>line_4</zorder>
+   <zorder>label_marks_10</zorder>
+   <zorder>label_marks_11</zorder>
+   <zorder>digital_pot0</zorder>
+   <zorder>label</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1477</width>
-     <height>19</height>
+     <width>1581</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources>
-  <include location="../data/images/picture.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
