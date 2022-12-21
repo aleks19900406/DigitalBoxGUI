@@ -1,8 +1,9 @@
+################################## IMPORTS #######################################
 from time import sleep, time
 import serial
 import traceback
 SEND_TIME = 0.1
-
+########################## COMMAND FOR BOX WITH ESP 32 ###########################
 MAIN = "SET_MAIN"
 DIGITAL_IN = "READ_IN_DATA"
 DIGITAL_OUT = "SET_RELAY"
@@ -16,6 +17,7 @@ READ_ADC = "READ_ADC"
 SET_DAC = "SET_TEMP"
 SET_DUTY = "SET_DC_PWM2kHz"
 SET_FREQUENCY = "SET_SIG_f"
+##################################################################################
 CHECK_VERSION = 'VERZIJa'
 errorNumber ='#'*100
 analogOutDict = {
@@ -35,8 +37,8 @@ def Convert(string):
     return list1
 
 def convert_digital_in(read_digital_in):
+
     all_digital_in =[]
-    #print('!!!!!!',read_digital_in)
     if read_digital_in.split(' ')[3] == "":
         read_digital_in=read_digital_in + '0'
         #print('ok')
@@ -52,6 +54,7 @@ def convert_digital_in(read_digital_in):
 
 class SERIALCONNECT():
     def __init__(self,comport):
+        ############################# BEGIN PARAMETERS ##################################
         self.comport = comport
         self._main = 0
         self._digital_in = []
@@ -69,8 +72,11 @@ class SERIALCONNECT():
         self._frequency_out = 0
         self._set_voltage = 0
         self._read_adc = [0,0,0,0]
-        #print('init####################################################')
     def connect(self):
+        """
+        - set baudrate serial communication
+        - when serial is connected check box version
+        """
         try:
             self.ser = serial.Serial()
             self.ser.baudrate = 115200
@@ -95,21 +101,29 @@ class SERIALCONNECT():
         return VERSION
     
     def disconnect(self):
+        """
+        close serial connection
+        """
         self.ser.close()
-
-    ########################## box on/off ########################
+    ######################### main on/off #########################
     @property
     def main(self):
         return self._main
     @main.setter
     def main(self,value):
-        #print('set main')
+        """
+        - set main value
+        -  self.box.main = 0 / 1
+        """
         self.ser.write(f'{MAIN},{value}'.encode())
         self._main = value
         sleep(SEND_TIME)
     @main.getter
     def main(self):
-        #print('get main')
+        """
+        - get main value 
+        - self.box.main
+        """
         return self._main
     ########################## digital_in #########################
     @property
@@ -118,17 +132,30 @@ class SERIALCONNECT():
     
     @digital_in.getter
     def digital_in(self):
-        #print('get digital_in')
+        """
+        -get digital in
+        - self.box.digital_in[:] # get all digital in 
+        - self.box.digital[0,1,2] # get digital in (0,1,2)
+        - return type bool
+        """
         self.ser.write(f'{DIGITAL_IN}'.encode())
         sleep(SEND_TIME)
         return convert_digital_in(self.ser.readline().decode())
     ########################## digital_out #########################
     @property
+
     def digital_out(self):
         return self._digital_out
 
     #@digital_out.setter
     def set_digital_out(self,*parameters):
+        """
+        - number type int or tuple
+        - value type int
+        - self.box.set_digital_out(number,value)
+        - self.box.set_digital_out(0,1) set first output to True
+        - self.box.set_digital_out([0,1,2],0) set output(0,1,2) to False
+        """
         number,value = parameters
         if isinstance(number,tuple):
             for index in number:
@@ -143,7 +170,11 @@ class SERIALCONNECT():
         
     @digital_out.getter
     def digital_out(self):
-        #print('get digital_out')
+        """
+        get digital_out
+        print(self.box.digital_out)
+        return bool
+        """
         return self._digital_out
        
     ######################### Digital potentiometer ########################
@@ -152,6 +183,19 @@ class SERIALCONNECT():
         return self._digital_pot
     #@digital_pot.setter
     def set_digital_pot(self,chip_output_list,chip_value = 10):
+        """_summary_
+
+        Args:
+            chip_output_list (_type_): _description_
+            chip_value (int, optional): _description_. Defaults to 10.
+         
+         
+         
+        - self.box.set_digital_pot([chip_select,chip_output],value)
+        fist list number is chip select = 1
+        other list is chip output
+        - self.box.set_digital_pot([1,0,1],45) on first chip in chip number 0 and 1 set value 45
+        """
         self.LIST_POT_VALUE.insert(0,chip_output_list[0])
         for chip_output in chip_output_list[1:]:
             self.ser.write(f'{SET_DIGITAL_POT},{chip_output_list[0]},{chip_output},{chip_value}'.encode())
@@ -167,13 +211,21 @@ class SERIALCONNECT():
         return self._set_pwm1
     @set_pwm1.setter
     def set_pwm1(self,parameters):
-        # call box.set_pwm1=(1000,20)
+        """
+        - self.box.set_pwm1 = (1000,20) set freq(1000) and duty(20)
+        first argument is frequency
+        second argument is duty
+        """
         frequency,duty = parameters
         self.ser.write(f'{SET_PWM_1},{frequency},{duty}'.encode())
         self._set_pwm1 = [frequency,duty]
         sleep(SEND_TIME)
     @set_pwm1.getter
     def set_pwm1(self):
+        """get pwm1
+        
+        print(self.box.set_pwm1)
+        """
         return self._set_pwm1
     ############################### SET_PWM_2 #############################
     @property
@@ -181,12 +233,21 @@ class SERIALCONNECT():
         return self._set_pwm2
     @set_pwm2.setter
     def set_pwm2(self,parameters):
+        """
+        - self.box.set_pwm2 = (1000,20) set freq(1000) and duty(20)
+        first argument is frequency
+        second argument is duty
+        """
         frequency,duty = parameters
         self.ser.write(f'{SET_PWM_2},{frequency},{duty}'.encode())
         self._set_pwm2 = [frequency,duty]
         sleep(SEND_TIME)
     @set_pwm2.getter
     def set_pwm2(self):
+        """
+        get pwm2
+        print(self.box.set_pwm2)
+        """
         return self._set_pwm2
      ############################### READ_PWM #############################
     @property
@@ -195,6 +256,17 @@ class SERIALCONNECT():
     
     @read_pwm.getter
     def read_pwm(self):
+        """
+        read pwm
+        - self.box.read_pwm  - read pwm1 and pwm2
+        return
+        type dict
+        [{"d":d1,"f":f1,},{"d":d2,"f":f2}]
+        example:
+        read_pwm_all[0]['f'] get frequency form pmw 1
+       
+        read_pwm_all[1]['d'] get duty form pwm 2
+        """
         self.ser.write(f'{READ_PWM},1'.encode())
         sleep(SEND_TIME)
         f1 = self.ser.readline().decode().strip()
@@ -213,8 +285,15 @@ class SERIALCONNECT():
         return self._analog_out
     #@analog_out.setter
     def set_analog_out(self,dac_number,chip_value = 10):
+        """
+        dac_number = int number(0-7) or tuple (0,1,2)
+        value  = int value (0-65535) 
+        self.box.set_analog_out(dac_number,value)
+        example:
+        self.box.set_analog_out(0,40000) set first analog output to value 40000
+        self.box.set_analog_out((0,2,3),1000) set analog output(0,2,3) to value 1000
+        """
         tempList = []
-        t0 = time()
         if type(dac_number) == int:
             setAnalog = analogOutDict[dac_number]
             self.ser.write(f'{SET_DAC},{setAnalog},{chip_value}'.encode())
@@ -227,29 +306,38 @@ class SERIALCONNECT():
                 self.LIST_DAC_VALUE[number]= chip_value
             listToStr = ','.join(map(str, tempList))
             self.ser.write(f'{SET_DAC},{listToStr}'.encode())
-            #print(f'{SET_DAC},{listToStr}')
             self.LIST_DAC_VALUE[number]= chip_value
         sleep(2)
         self._analog_out = self.LIST_DAC_VALUE
-        t1 = time()
     
     @analog_out.getter
     def analog_out(self):
+        """
+            get analog output
+        print(self.box.analog_out)
+        
+        """
         return self._analog_out
 
     ######################### SET_DUTY ####################################
     @property
-    def set_duty_cycle_out(self):
-        return self._set_duty_cycle_out
-    @set_duty_cycle_out.setter
-    def set_duty_cycle_out(self,value):
+    def duty_cycle_out(self):
+        return self._duty_cycle_out
+    @duty_cycle_out.setter
+    def duty_cycle_out(self,value):
+        """
+        self.box.duty_cycle_out = 20 - set duty to 20%
+        """
         self.ser.write(f'{SET_DUTY},{value}'.encode())
-        #print(f'{SET_DUTY},{value}')
-        self._set_duty_cycle_out = value
+        self._duty_cycle_out = value
         sleep(SEND_TIME)
-    @set_duty_cycle_out.getter
-    def set_duty_cycle_out(self):
-        return self._set_duty_cycle_out
+    @duty_cycle_out.getter
+    def duty_cycle_out(self):
+        """
+        get
+        print(self.box.duty_cycle_out)
+        """
+        return self._duty_cycle_out
     
     
     ######################### SET_FREQUENCY ###############################
@@ -258,12 +346,19 @@ class SERIALCONNECT():
         return self._frequency_out
     @frequency_out.setter
     def frequency_out(self,frequency):
+        """
+        self.box.frequency_out = 1500 - set frequency to 1500 Hz
+        """
         self.ser.write(f'{SET_FREQUENCY},{frequency}'.encode())
-        #print(f'{SET_FREQUENCY},{frequency}')
         self._frequency_out = frequency
         sleep(SEND_TIME)
     @frequency_out.getter
     def frequency_out(self):
+        """
+        get
+        print(self.box.frequency_out)
+        
+        """
         return self._frequency_out
     
     ############################## SET_VOLTAGE ##############################
@@ -272,13 +367,27 @@ class SERIALCONNECT():
         return self._set_voltage
     @set_voltage.setter
     def set_voltage(self,parameters):
+        """ 
+        output type int(0-3)
+        value type float(0,5.0)
+        
+        self.box.set_voltage = (output,value)
+        example:
+        self.box.set_voltage = (0,4.3) set first voltage out to 4.3 V
+        
+        """
         output,value = parameters
         self.ser.write(f'{SET_VOLTAGE},{output},{value} '.encode())
-        #print(f'{SET_VOLTAGE},{output},{value}')
         self._set_voltage = [output,value]
         sleep(SEND_TIME)
     @set_voltage.getter
     def set_voltage(self):
+        """
+        get
+        print(self.set_voltage)
+        return
+        list [value0,value1,value2,value3]
+        """
         return self._set_voltage
     ############################## READ_ADC #################################
     @property
@@ -286,36 +395,18 @@ class SERIALCONNECT():
         return self._read_adc
     @read_adc.getter
     def read_adc(self):
+        """
+        self.box.read_adc -read all ADC(0-3)
+        return
+        list [adc0,adc1,adc2,adc3]
+        example:
+        self.box.read_adc[0] get value for first adc input
+        return
+        list [adc0]
+        """
         self.ser.write(f'{READ_ADC}'.encode())
-        #sleep(SEND_TIME*2)
         sleep(SEND_TIME)
         for index in range(4):
             self._read_adc[index] = float(self.ser.readline().decode().strip())
-            #print(self._read_adc[index])
         return self._read_adc
-       
-            
-"""
-box = SERIALCONNECT('COM14')
-box.connect()
-sleep(3)
-counter=0
-t0 =time()
-box.frequency_out = 200
-print(box.read_adc)
-#for index in range(8):
- #   box.set_analog_out(index,30000)
-t1=time()
-print('time:',t1-t0)
-#box.set_pwm1=(1000,20)
-#for a in range(3):
-#box.set_voltage = (2,4.77)
-#box.main = 1
-#for _ in range(20):
- #   box.read_pwm = 1
-  #  print(box.read_pwm)
-#print('one',box.read_adc[0])
-#print('#########')
 
-box.disconnect()
-"""
