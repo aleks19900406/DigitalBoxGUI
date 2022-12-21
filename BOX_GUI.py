@@ -50,7 +50,7 @@ ButtonStyleOn  = ("background-color: lightgreen;"
 ButtonStyleWhite = ("background-color: white;"
                                 "border-style: outset;"
                                 "border-radius: 5px;"
-                                "font: 10px;")
+                                "font: 12px;")
 MainScreenStyle = "background-color: rgb(250,255,250)"
 
 PotSlicerLabelStyle = ("background-color: white;"
@@ -196,8 +196,8 @@ class MainWindow(QMainWindow):
         self.digitalPotIndex = 0
         self.setWindowTitle('DIGITAL BOX MAIN')
         #self.setFixedSize(1920, 1080)
-        
-        self.setSizeIncrement(1920, 1080)
+        self.setGeometry(150, 40, 1530, 984)
+        #self.setSizeIncrement(1920, 1080)
         self.setStyleSheet(MainScreenStyle)
         self.on_off.clicked.connect(self.button_OnOff)
         self.RefreshingConnection.clicked.connect(self.BoxRefreshing)
