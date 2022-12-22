@@ -176,7 +176,7 @@ def listConnection():
             LIST_CONNECT.append(f'{str(USB_PORT)[0:5]} - Arduino Mega 2560') 
         elif'CP210x' in str(USB_PORT) :
             LIST_CONNECT.append(f'{str(USB_PORT)[0:5]} - NodeMCU ESP32')
-    LIST_CONNECT.append("")
+    #LIST_CONNECT.append("")
     for ip_address in range(10,100,10):
         LIST_CONNECT.append(f'RPI - 192.168.1.{ip_address}')
     
@@ -264,6 +264,7 @@ class MainWindow(QMainWindow):
         """
         show the message when you close the application
         """
+        self.DIGITAL_BOX_MAIN.stop()
         close = QMessageBox()
         close.setText("Are you sure you want to close digital box ?")
         close.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
@@ -276,9 +277,12 @@ class MainWindow(QMainWindow):
             PyroSetSystem.close()
             SetDacValue.close()
             PotTableSet.close()
-            DacTableCreate.close()    
+            DacTableCreate.close()
+             
         else:
             event.ignore()
+            if self.index_refreshing == 1:
+                self.DIGITAL_BOX_MAIN.start()
     
     def timerCreatePotDacTable(self):
         """
