@@ -1953,7 +1953,7 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>1150</x>
       <y>700</y>
-      <width>241</width>
+      <width>221</width>
       <height>31</height>
      </rect>
     </property>
@@ -2750,7 +2750,7 @@ selection-color: rgb(255, 170, 0);</string>
      <rect>
       <x>770</x>
       <y>700</y>
-      <width>171</width>
+      <width>161</width>
       <height>31</height>
      </rect>
     </property>

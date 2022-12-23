@@ -27,7 +27,7 @@ SET_DUTY
 SetDuty(2kHz)
 #######################################################################
 Instructions:
-- Create any file_neme.txt  in path ../data/boxMarks
+- Create any file_name.txt  in path ../data/boxMarks
 - Select marks which you needed and enter any name you like.
   example:
 	INPUT

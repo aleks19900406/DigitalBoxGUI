@@ -363,7 +363,7 @@ class DAS(RawClient):
         >>> d.digital_pot[0]  # first parameter [0] is chip select
         >>> d.digital_pot[1]  # first parameter [0] is chip select---Get value of first potentiometer
         >>> d.digital_pot[1,2,0]  # Get a list of potentiometer value--first parameter [0] is chip select
-        >>> d.digital_pot[[0,1]] = 135 # Chip select is 0 set value on second potentiometer
+        >>> d.digital_pot[[1,0]] = 135 # Chip select is 1 set value on second potentiometer
         >>> d.digital_pot[[3,1,3,4]] = 124 # Chip select is 3 set value 1,3,4 potentiometer
        
 
