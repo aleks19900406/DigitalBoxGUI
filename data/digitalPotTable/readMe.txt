@@ -9,3 +9,13 @@
 	- then you can check the saved values by simply open the selected Table
 
 !!! Do not change file name !!!
+
+example --> manual create table:
+
+10.5 14
+23.5 22
+45.4 44
+70   88
+
+10.5 is read box value
+14 is Pot value

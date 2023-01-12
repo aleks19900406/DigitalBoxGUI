@@ -1,0 +1,7 @@
+- in application connected to digital box
+- Save Data:
+	- only xxx.csv file find
+	- select file you want to save (save automation)
+	- you can create your own name and press enter (save automation)
+	- with button save you can stop the data saving(file saved to SaveData)
+	- if button save is orange and then you press button save saving continue 
