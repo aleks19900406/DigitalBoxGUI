@@ -1,0 +1,17 @@
+add comment to console auto-py-to-exe
+pip install auto-py-to-exe
+
+Select in application:
+
+-script location
+C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/BOX_GUI.py
+-one file
+-hide the conzole
+-icon:
+C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Aplication/data/images/other/covid19.ico
+-additional files:
+C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/DigitalBox
+C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/package
+-settings:
+path to save exe file:
+C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Aplication
