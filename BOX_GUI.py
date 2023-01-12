@@ -418,6 +418,7 @@ class MainWindow(QMainWindow):
             self.savingBar.setVisible(False)
             self.backupSave.setVisible(False)
             self.label_errorSaveFile.setText(f"!!! File not saved. Write file name and press enter !!!")
+            print(traceback.print_exc())
     
     def startStopSave(self):
         """
@@ -442,14 +443,15 @@ class MainWindow(QMainWindow):
                 self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
                 self.startStopSaving.setIcon(self.iconSaveData)
                 self.saveDataThread.start(self.saveToCsv)
-                self.savingBar.setVisible(True)
-                self.backupSave.setVisible(True)
-                self.saveBarThread.start()
                 self.timeSave =self.indexSaveData * 0.001     # calculation saving time
-                if (self.timeSave) < 1:
-                    self.worker.setValue(2)
-                else:
-                    self.worker.setValue(self.timeSave)
+                if self.indexSaveData > 3000:
+                    self.savingBar.setVisible(True)
+                    self.backupSave.setVisible(True)
+                    self.saveBarThread.start()
+                    if (self.timeSave) < 1:
+                        self.worker.setValue(2)
+                    else:
+                        self.worker.setValue(self.timeSave)
                
         if self.indexButtonSave >=2:
             self.indexButtonSave =0
@@ -481,7 +483,7 @@ class MainWindow(QMainWindow):
         allParameters = []
         self.label_saveFile.setVisible(True)
         if self.refreshSaving != self.excelRefresh.value():
-            self.refreshSaveData.setInterval(int(self.excelRefresh.value()*1000))
+            self.refreshSaveData.setInterval(int(self.excelRefresh.value()*10))
     
             self.refreshSaving = self.excelRefresh.value()
 
@@ -508,6 +510,7 @@ class MainWindow(QMainWindow):
             RowName.value=name
 
         self.indexSaveData += 1
+        print(self.indexSaveData)
         
     def excelFile(self,file_name):
         """
