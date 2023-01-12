@@ -8,6 +8,7 @@ from package.tester.helpers.fileio import (
     sheet_by_tag,
     tabular_sheet_to_dict,
 )
+from threading import Timer
 ######################## PATH TO THE PARAMETERS ###############################
 HUSA_USER_INTERFACE = join("data", "husa","user_interface")
 BIO21_USER_INTERFACE = join("data", "bio21","digital_box")
@@ -15,6 +16,7 @@ POT_TABLE =os.path.join("data",'digitalPotTable')
 LOOKUP_TABLE = os.path.join(POT_TABLE,'Table')
 DAC_TABLE = os.path.join("data",'dacTable')
 ###############################################################################
+
 def activate_output(self,number,value):
     """
     set selected digital output to the desired value
