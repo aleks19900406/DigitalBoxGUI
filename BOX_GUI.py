@@ -14,6 +14,8 @@ from DigitalBox.dasConnect import SERIALCONNECT
 from DigitalBox.lib import*
 import serial.tools.list_ports
 import traceback
+import openpyxl
+from threading import Thread
 ################## PATH TO DATA FILE ####################################
 QT_DESIGNER_PATH = os.path.join("QT_designer")
 BOX_MARKS_PATH = os.path.join("data","boxMarks")
@@ -21,6 +23,7 @@ BOX_DIGITAL_POT_PATH = os.path.join("data","digitalPotTable")
 BOX_DIGITAL_DAC_PATH = os.path.join("data","dacTable")
 IMAGES_PATH = os.path.join("data","images","system")
 IMAGE_PATH_OTHER =os.path.join("data","images","other")
+DATA_SAVE = os.path.join("data","saveData")
 ###################### BEGIN PARAMETERS #################################
 MAIN_TIME_REFRESHING = 1000
 SPACE = '\n'
@@ -29,8 +32,8 @@ change_input = []
 for input in range(DigitalInput):
     change_input.append(False)
 change_parameters =[0,0,0,0,0,0,0,0,0]
-beginPotValue = [30,30,30,30,30,30]
-beginDacValue = [30,30,30,30,30,30,30,30]
+beginPotValue = [0,0,0,0,0,0]
+beginDacValue = [0,0,0,0,0,0,0,0]
 beginSetVoltage = [0,0,0,0]
 beginSetPot = 0
 beginDacPot = 0
@@ -46,19 +49,51 @@ ButtonStyleOff  = ("background-color: rgb(210,210,210);"
                                 "border-radius: 5px;""font: 10px;")
 ButtonStyleOn  = ("background-color: lightgreen;"
                                 "border-radius: 5px;"
-                                "font: 10px;")                                 
+                                "font: 12px;")                                 
 ButtonStyleWhite = ("background-color: white;"
                                 "border-style: outset;"
                                 "border-radius: 5px;"
                                 "font: 12px;")
 MainScreenStyle = "background-color: rgb(250,255,250)"
-
 PotSlicerLabelStyle = ("background-color: white;"
                                 "border-style: outset;"
                                 "border-radius: 5px;"
                                 "border-color: fusion;"
                                 "font: 12px;")
+
+InputStyleOn  = ("background-color: lightgreen;"
+                                "border-radius: 5px;"
+                                "font: 10px;")                                 
+InputStyleOff =  ("background-color: rgb(210,210,210);"
+                                "border-radius: 5px;""font: 10px;")
 ##########################################################################
+class Worker(QObject):
+    finished = pyqtSignal()
+    stepIncreased = pyqtSignal(int)
+    def __init__(self):
+            super(Worker, self).__init__()
+            self._step = 0
+            self._isRunning = True
+            self._maxSteps = 100
+    
+    def setValue(self,value):
+        self.value = value
+        self.stepIncreased.emit(self._step)
+    
+    def task(self):
+        if not self._isRunning:
+            self._isRunning = True
+            self._step = 0
+        
+        while self._step  < self.value  and self._isRunning == True:
+            self._step += 1
+            self.stepIncreased.emit(self._step)
+            sleep(1)
+        self._step = 0
+        self.finished.emit()
+    def stop(self):
+        self._isRunning = False
+
 def listDigitalDacTable():
     """
     Convert all DacTable file name to list except readMe.txt
@@ -71,15 +106,26 @@ def listDigitalDacTable():
         DigitalPotList.append(file_name.replace('.txt',''))
     return DigitalPotList
 
+def dataFile():
+    """
+    Convert all saveData file name to list but only file with the extension .xlsx
+    """
+    dataSave =[]
+    dataSave.clear()
+    #dataSave.append('')
+    for file_name in os.listdir(DATA_SAVE):
+        if file_name.endswith('.csv'):
+            dataSave.append(file_name.replace('.csv',''))
+    return dataSave
+
 def listBoxMarks():
     """
     Convert all boxMaks file name to list except readMe.txt
     """
     boxMarkList =[]
     boxMarkList.clear()
-    #boxMarkList =['',]
     for file_name in os.listdir(BOX_MARKS_PATH):
-        print(file_name)
+        #print(file_name)
         if file_name == "readMe.txt":
             continue
         boxMarkList.append(file_name.replace('.txt',''))
@@ -99,12 +145,11 @@ def listDigitalPotTable():
 
 def deliteListDigitalPotTable():
     """
-    refresh file and reload
+    - refresh file and reload
     """
     DigitalPotList =[]
     DigitalPotList.clear()
     for file_name in os.listdir(BOX_DIGITAL_POT_PATH):
-        print(os.path.basename(file_name.replace('.txt','')))
         DigitalPotList.append(file_name.replace('.txt',''))
     return DigitalPotList
 
@@ -186,6 +231,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         Window1 = os.path.abspath(f"{QT_DESIGNER_PATH}/Main_screen.ui")
         loadUi(str(Window1),self)
+        self.refreshSaving = 1000
         self.index_on_off = 0
         self.index_out = [0,0,0,0,0,0,0,0]
         self.index_extras = [0,0,0,0,0]
@@ -194,9 +240,13 @@ class MainWindow(QMainWindow):
         self.index_refreshing = 0
         self.digitalPotChange = 0
         self.digitalPotIndex = 0
+        self.indexSaveData = 0
+        self.indexButtonSave = 0
+        self.repeatSaveData = 0
+        self.indexBackup = 0
         self.setWindowTitle('DIGITAL BOX MAIN')
         #self.setFixedSize(1920, 1080)
-        self.setGeometry(150, 40, 1530, 984)
+        self.setGeometry(150, 40, 1520, 990)
         #self.setSizeIncrement(1920, 1080)
         self.setStyleSheet(MainScreenStyle)
         self.on_off.clicked.connect(self.button_OnOff)
@@ -204,7 +254,7 @@ class MainWindow(QMainWindow):
         self.RefreshingConnection.setStyleSheet(ButtonStyleOff2)
         self.SetPwmBar1.valueChanged.connect(self.SetFrequencyBar1)
         self.SetPwmBar2.valueChanged.connect(self.SetFrequencyBar2)
-        ################## ERROR MESSAGE ######################################
+        ################## ERROR MESSAGE #########################################
         self.BOX_VERSION.setVisible(False)
         self.BOX_VERSION.setFont(QFont('Arial', 14))
         self.BOX_VERSION.setStyleSheet("color: red")
@@ -214,7 +264,10 @@ class MainWindow(QMainWindow):
         self.warningMessageDac.setVisible(False)
         self.warningMessageDac.setFont(QFont('Arial', 12))
         self.warningMessageDac.setStyleSheet("color: red")
-        ################## digital output #####################################
+        self.label_errorSaveFile.setVisible(False)
+        self.label_errorSaveFile.setFont(QFont('Arial', 12))
+        self.label_errorSaveFile.setStyleSheet("color: red")
+        ################## DIGITAL OUTPUT #########################################
         self.OUT0.clicked.connect(self.output0)
         self.OUT1.clicked.connect(self.output1)
         self.OUT2.clicked.connect(self.output2)
@@ -223,13 +276,13 @@ class MainWindow(QMainWindow):
         self.OUT5.clicked.connect(self.output5)
         self.OUT6.clicked.connect(self.output6)
         self.OUT7.clicked.connect(self.output7)
-        ###################### open additional screen ##########################
+        ###################### BUTTON OPEN ADDITIONAL SCREEN ######################
         self.ButtonHusaModel.clicked.connect(self.buttonHusaModel)
         self.ButtonPyroSystem.clicked.connect(self.buttonPyroSystem)
         self.ButtonDacSet.clicked.connect(self.buttonDacSet)
         self.ButtonSetPot.clicked.connect(self.buttonSetPot)
         self.ButtonSetDac.clicked.connect(self.buttonSetDac)
-        ###########################box connection##################################
+        ########################### BOX CONNECTED #################################
         self.BoxConnect.activated[str].connect(self.connectBox)
         self.BoxConnect.setEditable(True)
         self.BoxConnect.setStyleSheet(ButtonStyleWhite)
@@ -239,17 +292,36 @@ class MainWindow(QMainWindow):
         self.SelectPotTable.activated[str].connect(self.digitalPotTable)
         self.SelectPotTable.setEditable(True)
         self.SelectPotTable.setStyleSheet(ButtonStyleWhite)
-        ################### TIMER ######################################################
+        ##################### SAVE DATA ##########################################
+        self.ExcelFile.activated[str].connect(self.excelFile)
+        self.ExcelFile.setEditable(True)
+        self.ExcelFile.setStyleSheet(ButtonStyleWhite)
+        self.startStopSaving.clicked.connect(self.startStopSave)
+        self.startStopSaving.setEnabled(False)
+        self.backupSave.setVisible(False)
+        self.backupSave.setStyleSheet("color: red")
+        ################### TIMER ################################################
+        self.saveBarThread = QThread()
+        self.worker = Worker()
+        self.worker.stepIncreased.connect(self.SaveBarShow)
+        self.worker.moveToThread(self.saveBarThread)
+        self.saveBarThread.started.connect(self.worker.task)
         self.DIGITAL_BOX_MAIN = QTimer()
         self.DIGITAL_BOX_MAIN.timeout.connect(self.timerDigitalBox)  # 
         self.DIGITAL_BOX_MAIN.setInterval(MAIN_TIME_REFRESHING)
         self.ReadSetPotDac = QTimer()
         self.ReadSetPotDac.timeout.connect(self.timerCreatePotDacTable)  # 
-        self.ReadSetPotDac.setInterval(1000)
+        self.ReadSetPotDac.setInterval(MAIN_TIME_REFRESHING)
+        self.refreshSaveData = QTimer()
+        self.refreshSaveData.timeout.connect(self.savingData)  # 
+        self.refreshSaveData.setInterval(MAIN_TIME_REFRESHING)
         self.thread_check_input = QThreadPool()
-        ################################################################################
+        self.time_show = QThreadPool()
+        self.saveDataThread = QThreadPool()
+        ###########################################################################
         self.date_and_time.setText("")
-        ############################## BUTTON STYLE ####################################
+        self.savingBar.setVisible(False)
+        ############################## BUTTON STYLE ###############################
         self.on_off.setStyleSheet(ButtonStyleOff2)
         self.iconOff = QtGui.QIcon()
         self.iconOff.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/offButton.png')))
@@ -259,7 +331,323 @@ class MainWindow(QMainWindow):
         self.iconRefresh = QtGui.QIcon()
         self.iconRefresh.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/ButtonRefresh.png')))
         self.RefreshingConnection.setIcon(self.iconRefresh)
+        self.iconSaveData = QtGui.QIcon()
+        self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
+        self.startStopSaving.setIcon(self.iconSaveData)
     
+    def resetExcelParameters(self):
+        """
+        - reset parameters when box connection change or button refresh pressed 
+        """
+        self.repeatSaveData = 0
+        self.indexButtonSave =0
+        self.refreshSaveData.stop()
+        self.ExcelFile.setStyleSheet(ButtonStyleWhite)
+        self.refreshSaveData.stop()
+        self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
+        self.startStopSaving.setIcon(self.iconSaveData)
+     
+    def backup_save(self):
+        """
+        - if user change box connection or click refresh button create a backup file
+        """
+        if self.indexButtonSave == 1: #backup
+            self.indexBackup += 1
+            self.indexButtonSave = 0
+            self.backupSave.setVisible(True)
+            self.ExcelFile.setStyleSheet(ButtonStyleWhite)
+            self.refreshSaveData.stop()
+            sleep(1)
+            self.saveDataThread.start(self.saveToCsv)
+            self.savingBar.setVisible(True)
+            self.backupSave.setVisible(True)
+            self.saveBarThread.start()
+           
+            self.timeSave =self.indexSaveData * 0.001     # calculation saving time
+            if (self.timeSave) < 1:
+                self.worker.setValue(2)
+                
+            else:
+                self.worker.setValue(self.timeSave)
+            self.repeatSaveData = 0
+            self.indexSaveData = 0
+            self.saveBarThread.terminate()
+     
+    def SaveBarShow(self,value):
+        """
+        - calculate have long saving bar showed
+        """
+        if self.timeSave < 1:
+            self.savingBar.setValue(100)  
+        else:
+            self.savingBar.setValue(int(value*(100/self.timeSave)))
+            if int(value*(100/self.timeSave)) > 100:
+                 self.savingBar.setValue(100)
+
+    def saveToCsv(self):
+        """
+        - sava to .csv file
+        """
+        try: 
+            self.startStopSaving.setEnabled(False)
+            if self.repeatSaveData == 0 and self.indexBackup == 0: 
+                self.wb.save(f"{DATA_SAVE}/{self.fileName}.csv")
+            elif self.indexBackup == 1:
+                self.wb.save(f"{DATA_SAVE}/{self.fileName}_backup.csv")
+                self.indexBackup = 0
+            else:
+                self.wb.save(f"{DATA_SAVE}/{self.fileName}_{self.repeatSaveData}.csv")
+            sleep(self.timeSave/10)
+            self.startStopSaving.setEnabled(True)
+            self.savingBar.setVisible(False)
+            self.backupSave.setVisible(False)
+           
+        except PermissionError:
+            self.indexButtonSave = 0
+            self.startStopSaving.setEnabled(True)
+            self.label_errorSaveFile.setVisible(True)
+            self.label_saveFile.setVisible(False)
+            self.savingBar.setVisible(False)
+            self.backupSave.setVisible(False)
+            self.label_errorSaveFile.setText(f"!!! Excel file {self.fileName} is open. Close and try again !!!")
+        except AttributeError:
+            self.indexButtonSave = 0
+            self.startStopSaving.setEnabled(True)
+            self.label_errorSaveFile.setVisible(True)
+            self.label_saveFile.setVisible(False)
+            self.savingBar.setVisible(False)
+            self.backupSave.setVisible(False)
+            self.label_errorSaveFile.setText(f"!!! File not saved. Write file name and press enter !!!")
+    
+    def startStopSave(self):
+        """
+        - start or stop saving parameters to excel
+        """
+        if self.index_refreshing >= 1:
+            self.label_errorSaveFile.setVisible(False)
+            self.indexButtonSave +=1
+            if  self.indexButtonSave == 1:
+                self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
+                self.startStopSaving.setIcon(self.iconSaveData)
+                self.savingBar.setVisible(False)
+                self.ExcelFile.setStyleSheet(ButtonStyleOn)
+                self.refreshSaveData.start()
+                self.saveBarThread.terminate()
+        
+            else:
+                self.repeatSaveData = 0
+                self.ExcelFile.setStyleSheet(ButtonStyleWhite)
+                self.refreshSaveData.stop()
+                sleep(1)
+                self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
+                self.startStopSaving.setIcon(self.iconSaveData)
+                self.saveDataThread.start(self.saveToCsv)
+                self.savingBar.setVisible(True)
+                self.backupSave.setVisible(True)
+                self.saveBarThread.start()
+                self.timeSave =self.indexSaveData * 0.001     # calculation saving time
+                if (self.timeSave) < 1:
+                    self.worker.setValue(2)
+                else:
+                    self.worker.setValue(self.timeSave)
+               
+        if self.indexButtonSave >=2:
+            self.indexButtonSave =0
+             
+    def savingData(self):
+        """
+        - save data to excel file
+        """
+        if self.indexSaveData == 86400:  ### saving data to on file 24h if refreshing is 1s
+            self.refreshSaveData.stop()
+            sleep(1)
+            self.repeatSaveData += 1
+            self.saveDataThread.start(self.saveToCsv)
+            self.savingBar.setVisible(True)
+            self.backupSave.setVisible(True)
+            self.saveBarThread.start()
+            self.timeSave =self.indexSaveData * 0.001
+            if (self.timeSave) < 1:
+                self.worker.setValue(2)
+            else:
+                self.worker.setValue(self.timeSave)
+            sleep(5)
+            self.refreshSaveData.start()
+          
+        if self.indexSaveData > 86480:
+            self.saveBarThread.terminate()
+            self.indexSaveData = 0
+            self.excelFile(self.fileName)
+        allParameters = []
+        self.label_saveFile.setVisible(True)
+        if self.refreshSaving != self.excelRefresh.value():
+            self.refreshSaveData.setInterval(int(self.excelRefresh.value()*1000))
+    
+            self.refreshSaving = self.excelRefresh.value()
+
+        digitalPot = [self.readDigitalPot0,self.readDigitalPot1,self.readDigitalPot2,self.readDigitalPot3,self.readDigitalPot4,self.readDigitalPot5]
+        digitalOut = [bool(self.index_on_off),bool(self.index_out[0]),bool(self.index_out[1]),bool(self.index_out[2]),bool(self.index_out[3]),bool(self.index_out[4]),bool(self.index_out[5]),bool(self.index_out[6]),bool(self.index_out[7])]
+        
+        readPwm1= [self.read_pwm_all[0]['f'],self.read_pwm_all[0]['d']]
+        readPwm2= [self.read_pwm_all[1]['f'],self.read_pwm_all[1]['d']]
+        dacSet = [self.readDac0,self.readDac1,self.readDac2,self.readDac3,self.readDac4,self.readDac5,self.readDac6,self.readDac7]
+        allParameters.extend(digitalPot)
+        allParameters.extend(digitalOut)
+        allParameters.extend(self.read_adc_all)
+        allParameters.extend(readPwm1)
+        allParameters.extend(self.readPwm1)
+        allParameters.extend(readPwm2)
+        allParameters.extend(self.readPwm2)
+        allParameters.extend(self.read_input)
+        allParameters.extend(dacSet)
+        allParameters.extend(self.readPwmOld)
+        RowName = self.sheet.cell(row = self.indexSaveData+2, column = 1) 
+        RowName.value = self.time.toString('dd-MM-yyyy hh:mm:ss')
+        for index, name in enumerate(allParameters):
+            RowName = self.sheet.cell(row = self.indexSaveData+2, column = index+2)
+            RowName.value=name
+
+        self.indexSaveData += 1
+        
+    def excelFile(self,file_name):
+        """
+        - in first column create name for all parameters
+        - if Marks is selected get names from boxMark file and copy to first column row
+        """
+        try:
+            self.fileName = file_name
+            if self.index_refreshing >= 1:
+                if self.repeatSaveData == 0:
+                    self.indexButtonSave += 1
+                self.indexSaveData = 0
+                self.wb = openpyxl.Workbook()     
+                self.sheet = self.wb.active
+                freqOldBox = []
+                dutyOldBox = []
+                dacSet =[]
+                digitalInput = []
+                readAdc =[]
+                setVoltage = []
+                readPwm1 = []
+                readPwm2 = []
+                setPwm1 = []
+                setPwm2 = []
+                digitalOut = []
+                digitalPot =[]
+                sheetNames =[]
+                for index in range(6):
+                    try:
+                        if self.read_all_lines[5].replace('\n','').split(',')[index] == '':
+                            digitalPot.append(f'setPot{index}')
+                        else:
+                            digitalPot.append(self.read_all_lines[5].replace('\n','').split(',')[index])
+                    except IndexError:
+                        digitalPot.append(f'setPot{index}')
+                    except AttributeError:
+                        digitalPot.append(f'setPot{index}')
+                digitalOut.append(f'On/Off')
+                for index in range(8):
+                    try:
+                        if self.read_all_lines[3].replace('\n','').split(',')[index] == '':
+                            digitalOut.append(f'switch{index}')
+                        else:
+                            digitalOut.append(self.read_all_lines[3].replace('\n','').split(',')[index])
+                    except IndexError:
+                        digitalOut.append(f'switch{index}')
+                    except AttributeError:
+                        digitalOut.append(f'switch{index}')
+                    
+                for index in range(4):
+                    try:
+                        if self.read_all_lines[9].replace('\n','').split(',')[index] == '':
+                            readAdc.append(f'readADC{index}')
+                        else:
+                            readAdc.append(self.read_all_lines[9].replace('\n','').split(',')[index])
+                    except IndexError:
+                        readAdc.append(f'readADC{index}')
+                    except AttributeError: 
+                        readAdc.append(f'readADC{index}')
+                for index in range(4):
+                    try:
+                        if self.read_all_lines[11].replace('\n','').split(',')[index] == '':
+                            setVoltage.append(f'setVoltage{index}')
+                        else:
+                            setVoltage.append(self.read_all_lines[11].replace('\n','').split(',')[index])
+                    except IndexError:
+                        setVoltage.append(f'setVoltage{index}')
+                    except AttributeError:         
+                        setVoltage.append(f'setVoltage{index}')
+                readPwm1.append(f'readPwm1')
+                readPwm1.append(f'readDuty1')
+                setPwm1.append(f'setPwm1')
+                setPwm1.append(f'setDuty1')
+                readPwm2.append(f'readPwm2')
+                readPwm2.append(f'readDuty2')
+                setPwm2.append(f'setPwm2')
+                setPwm2.append(f'setDuty2')
+                for index in range(32):
+                    try:
+                        if self.read_all_lines[1].replace('\n','').split(',')[index] == '':
+                            digitalInput.append(f'IN{index}')
+                        else:
+                            digitalInput.append(self.read_all_lines[1].replace('\n','').split(',')[index])
+                    except IndexError:
+                        digitalInput.append(f'IN{index}')
+                    except AttributeError:         
+                        digitalInput.append(f'IN{index}')    
+                for index in range(8):
+                    try:
+                        if self.read_all_lines[7].replace('\n','').split(',')[index] == '':
+                            dacSet.append(f'setDac{index}')
+                        else:
+                            dacSet.append(self.read_all_lines[7].replace('\n','').split(',')[index])
+                    except IndexError:
+                        dacSet.append(f'setDac{index}')
+                    except AttributeError:         
+                        dacSet.append(f'setDac{index}') 
+                freqOldBox.append(f'setFreq(duty50%)')
+                dutyOldBox.append(f'setDuty(2kHz)')
+                sheetNames.extend(digitalPot)
+                sheetNames.extend(digitalOut)
+                sheetNames.extend(readAdc)
+                sheetNames.extend(readPwm1)
+                sheetNames.extend(setPwm1)
+                sheetNames.extend(readPwm2)
+                sheetNames.extend(setPwm2)
+                sheetNames.extend(digitalInput)
+                sheetNames.extend(dacSet)
+                sheetNames.extend(freqOldBox)
+                sheetNames.extend(dutyOldBox)
+                columnName = self.sheet.cell(row = 1, column = 1) 
+                columnName.value = 'date and time'
+                for index, name in enumerate(sheetNames):
+                    columnName = self.sheet.cell(row = 1, column = index+2) 
+                    columnName.value = name
+                if  self.indexButtonSave == 1:
+                    self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
+                    self.ExcelFile.setStyleSheet(ButtonStyleOn)
+                    self.startStopSaving.setEnabled(True)
+                    self.startStopSaving.setIcon(self.iconSaveData)
+                    self.refreshSaveData.start()
+                    sleep(2)
+                else:
+                    self.ExcelFile.setStyleSheet(ButtonStyleWhite)
+                    self.refreshSaveData.stop()
+                    self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
+                    self.startStopSaving.setIcon(self.iconSaveData)
+            else:
+                self.label_errorSaveFile.setVisible(True)
+                self.label_saveFile.setVisible(False)
+                self.label_errorSaveFile.setText(f"!!! CONNECT DIGITAL BOX !!!")
+            
+            if self.indexButtonSave >=2:
+                self.indexButtonSave =0
+        
+        except PermissionError:
+            self.label_errorSaveFile.setVisible(True)
+            self.label_saveFile.setVisible(False)
+            self.label_errorSaveFile.setText(f"!!! Excel file {self.fileName} is open. Close and try again !!!")
+        
     def closeEvent(self, event):
         """
         show the message when you close the application
@@ -271,6 +659,12 @@ class MainWindow(QMainWindow):
         close = close.exec()
         if close == QMessageBox.Yes:
             #close all screen if main app close
+            try:
+                if self.indexButtonSave == 1: #backup
+                    self.wb.save(f"{DATA_SAVE}/{self.fileName}_backup.csv")
+                    
+            except PermissionError:
+                self.wb.save(f"{DATA_SAVE}/{self.fileName}_backup.csv")
             event.accept()
             mainWindow.close()
             HusaModelWindow.close()
@@ -278,6 +672,7 @@ class MainWindow(QMainWindow):
             SetDacValue.close()
             PotTableSet.close()
             DacTableCreate.close()
+            
              
         else:
             event.ignore()
@@ -295,8 +690,8 @@ class MainWindow(QMainWindow):
         """
         Show data/time on widget
         """
-        time=QDateTime.currentDateTime()
-        timeDisplay=time.toString('hh:mm:ss yyyy-MM-dd dddd')
+        self.time=QDateTime.currentDateTime()
+        timeDisplay=self.time.toString('dd-MM-yyyy hh:mm:ss dddd')
         self.date_and_time.setText(timeDisplay)
     
     def timerDigitalBox(self):
@@ -307,7 +702,7 @@ class MainWindow(QMainWindow):
         if self.digitalPotIndex == 0:
             tbegin = time()
             try:
-                self.showTime()
+                self.time_show.start(self.showTime)
                 self.check_output()
                 self.set_voltage()
                 self.set_pwm1()
@@ -316,7 +711,7 @@ class MainWindow(QMainWindow):
                 self.input_state_indicate()
                 self.thread_check_input.start(self.check_all_input)
                 tend = time()
-                print('time main box',int((tend-tbegin)*1000),'interval:',MAIN_TIME_REFRESHING)
+                #print('time main box',int((tend-tbegin)*1000),'interval:',MAIN_TIME_REFRESHING)
                 # increase main time refreshing if function executing to long
                 if  (tend-tbegin)*1000 >= MAIN_TIME_REFRESHING:
                     self.digitalPotChange = 1
@@ -365,6 +760,7 @@ class MainWindow(QMainWindow):
             f.close()
         try:   
             self.read_pwm()
+            
         except Exception:
             with open('check_error.txt', 'w') as f:
                 f.write(f'{errorNumber}\n')
@@ -377,7 +773,6 @@ class MainWindow(QMainWindow):
             f.close()
         self.check_digital_pot()
         self.check_DAC_pot()
-        
         self.digitalPotIndex = 0
                 
     def boxMarks(self,BOXMARKS):
@@ -386,94 +781,115 @@ class MainWindow(QMainWindow):
         """
         try:
             BOX_MARKS = open(f"{BOX_MARKS_PATH}/{BOXMARKS}.txt", "r")
-            read_all_lines=BOX_MARKS.readlines()
-            for index in range(32):
-                eval(f'self.INPUT_{index}.setStyleSheet(ButtonStyleOff)')
-            for name in read_all_lines:
+            self.BoxMarks.setStyleSheet(ButtonStyleOn)
+            self.read_all_lines=BOX_MARKS.readlines()
+            for name in self.read_all_lines:
                 if name == f'INPUT{SPACE}':
                     try:
                         for index in range(DigitalInput):
                             input_text = eval(f'self.INPUT_{index}')
-                            input_text.setText(read_all_lines[1].replace('\n','').split(',')[index])
+                            if self.read_all_lines[1].replace('\n','').split(',')[index] == '':
+                                input_text.setText(f'IN{index}')
+                            else:
+                                input_text.setText(self.read_all_lines[1].replace('\n','').split(',')[index])
                     except IndexError:
-                        continue
+                        input_text.setText(f'IN{index}')
+                        
                 if name == f'OUTPUT{SPACE}':
                     try:
                         for index in range(8):
                             output_text = eval(f'self.OUT{index}')
-                            output_text.setText(read_all_lines[3].replace('\n','').split(',')[index])
+                            if self.read_all_lines[3].replace('\n','').split(',')[index] == '':
+                                output_text.setText(f'out{index}')
+                            else:
+                                output_text.setText(self.read_all_lines[3].replace('\n','').split(',')[index])
                     except IndexError:
-                        continue
+                        output_text.setText(f'out{index}')
                 if name == f'DIGITAL_POT{SPACE}':
                     try:
                         for index in range(6):
                             digital_pot_text = eval(f'self.labelDigitalPot{index}')
-                            digital_pot_text.setText(read_all_lines[5].replace('\n','').split(',')[index])
+                            if self.read_all_lines[5].replace('\n','').split(',')[index] == '':
+                                digital_pot_text.setText(f'digitalPot{index}')
+                            else:
+                                digital_pot_text.setText(self.read_all_lines[5].replace('\n','').split(',')[index])
                             digital_pot_text.setFont(QFont('Arial', 10))
                     except IndexError:
-                        continue
+                        digital_pot_text.setText(f'digitalPot{index}')
                     except AttributeError:
                         print('!!! POT not enough slider !!!')
                 
                 
                 if name == f'DAC_POT{SPACE}':
                     try:
-        
-                        for index in range(6):
+                        for index in range(8):
                             digital_pot_text = eval(f'SetDacValue.labelDac{index}')
-                            digital_pot_text.setText(read_all_lines[7].replace('\n','').split(',')[index])
+                            if self.read_all_lines[7].replace('\n','').split(',')[index] == '':
+                                digital_pot_text.setText(f'Table{index}')
+                            else:
+                                digital_pot_text.setText(self.read_all_lines[7].replace('\n','').split(',')[index])
                             digital_pot_text.setFont(QFont('Arial', 10))
                     except IndexError:
-                        continue
+                        digital_pot_text.setText(f'Table{index}')
                     except AttributeError:
                         print('!!! DAC not enough slider !!!')
                 
                 
                 if name == f'READ_ADC{SPACE}':
-                
-                    for index in range(4):
-                        digital_pot_text = eval(f'self.labelADC{index}')
-                        digital_pot_text.setText(read_all_lines[9].replace('\n','').split(',')[index])
-                        digital_pot_text.setFont(QFont('Arial', 10))
+                    try:
+                        for index in range(4):
+                            digital_pot_text = eval(f'self.labelADC{index}')
+                            if self.read_all_lines[9].replace('\n','').split(',')[index] == '':
+                                digital_pot_text.setText(f'ADC{index}')
+                            else:
+                                digital_pot_text.setText(self.read_all_lines[9].replace('\n','').split(',')[index])
+                            digital_pot_text.setFont(QFont('Arial', 10))
+                    except IndexError:
+                        digital_pot_text.setText(f'ADC{index}')
                 
                 
                 if name == f'SET_VOLTAGE{SPACE}':
-                
-                    for index in range(4):
-                        digital_pot_text = eval(f'self.labelSetVoltage{index}')
-                        digital_pot_text.setText(read_all_lines[11].replace('\n','').split(',')[index])
-                        digital_pot_text.setFont(QFont('Arial', 10))
+                    try:
+                        for index in range(4):
+                            digital_pot_text = eval(f'self.labelSetVoltage{index}')
+                            if self.read_all_lines[11].replace('\n','').split(',')[index] == '':
+                                digital_pot_text.setText(f'VOLTAGE{index}')
+                            else:    
+                                digital_pot_text.setText(self.read_all_lines[11].replace('\n','').split(',')[index])
+                            digital_pot_text.setFont(QFont('Arial', 10))
+                    except IndexError:
+                        digital_pot_text.setText(f'VOLTAGE{index}')
             
                 if name == f'READ_PWM1{SPACE}':
                     for index in range(2):
                         digital_pot_text = eval(f'self.labelPwm1_{index}')
-                        digital_pot_text.setText(read_all_lines[13].replace('\n','').split(',')[index])
+                        digital_pot_text.setText(self.read_all_lines[13].replace('\n','').split(',')[index])
                         digital_pot_text.setFont(QFont('Arial', 10))
                 
                 if name == f'READ_PWM2{SPACE}':
                     for index in range(2):
                         digital_pot_text = eval(f'self.labelPwm2_{index}')
-                        digital_pot_text.setText(read_all_lines[15].replace('\n','').split(',')[index])
+                        digital_pot_text.setText(self.read_all_lines[15].replace('\n','').split(',')[index])
                         digital_pot_text.setFont(QFont('Arial', 10)) 
             
                 if name == f'SET_PWM1{SPACE}':
                     for index in range(2):
                         digital_pot_text = eval(f'self.labelSetPwm1_{index}')
-                        digital_pot_text.setText(read_all_lines[17].replace('\n','').split(',')[index])
+                        digital_pot_text.setText(self.read_all_lines[17].replace('\n','').split(',')[index])
                         digital_pot_text.setFont(QFont('Arial', 10))  
                 
                 if name == f'SET_PWM2{SPACE}':
                     for index in range(2):
                         digital_pot_text = eval(f'self.labelSetPwm2_{index}')
-                        digital_pot_text.setText(read_all_lines[19].replace('\n','').split(',')[index])
+                        digital_pot_text.setText(self.read_all_lines[19].replace('\n','').split(',')[index])
                         digital_pot_text.setFont(QFont('Arial', 10))
                 if name == f'SET_FREQ{SPACE}':
                         digital_pot_text = eval(f'self.labelSetPwm3_0')
-                        digital_pot_text.setText(read_all_lines[21].replace('\n',''))
+                        digital_pot_text.setText(self.read_all_lines[21].replace('\n',''))
                         digital_pot_text.setFont(QFont('Arial', 10))
                 if name == f'SET_DUTY{SPACE}':
                         digital_pot_text = eval(f'self.labelSetPwm3_1')
-                        digital_pot_text.setText(read_all_lines[23].replace('\n',''))
+                        digital_pot_text.setText(self.read_all_lines[23].replace('\n',''))
                         digital_pot_text.setFont(QFont('Arial', 10))
         except IndexError:
             with open('check_error.txt', 'w') as f:
@@ -497,13 +913,22 @@ class MainWindow(QMainWindow):
         - check if version is correct
         - show warning message if version is not correct  
         """
+        self.backup_save()
         self.Connection = CONNECTBOX
+        self.startStopSaving.setEnabled(False)
+        self.resetExcelParameters()
+        self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
+        self.startStopSaving.setIcon(self.iconSaveData)
         try:
+            if self.index_refreshing >= 1:
+                sleep(2)
+                self.box.disconnect()
             if CONNECTBOX[0:3] =='COM':
                 self.box = SERIALCONNECT(CONNECTBOX[0:5].replace(' ',''))
                 VERSION = self.box.connect()
+                self.label_errorSaveFile.setVisible(False)
+                self.label_saveFile.setVisible(True)
                 if VERSION >= "3.10":
-                    print('version is corrected')
                     self.index_refreshing +=1
                     self.DIGITAL_BOX_MAIN.start()
                     self.BOX_VERSION.setVisible(False)
@@ -511,7 +936,6 @@ class MainWindow(QMainWindow):
                     self.warningMessageDac.setVisible(False)
                     self.BoxConnect.setStyleSheet(ButtonStyleOn)
                 else:
-                    print('version is < 3.10 upgrade version')
                     sleep(2)
                     self.box.disconnect()
                     self.index_refreshing = 0
@@ -521,10 +945,8 @@ class MainWindow(QMainWindow):
             else:
                 self.box = DAS(CONNECTBOX.replace('RPI - ',''))  #
                 self.box.connect()
-                print('dasConnect')
                 VERSION =  self.box.box_version[0].strip()
                 if VERSION >= "3.10":
-                    print('version is corrected')
                     self.index_refreshing +=1
                     self.DIGITAL_BOX_MAIN.start()
                     self.BOX_VERSION.setVisible(False)
@@ -532,12 +954,12 @@ class MainWindow(QMainWindow):
                     self.warningMessageDac.setVisible(False)
                     self.BoxConnect.setStyleSheet(ButtonStyleOn)
                 else:
-                    print('version is < 3.10 upgrade version')
                     sleep(2)
                     self.box.disconnect()
                     self.index_refreshing = 0
                     self.BOX_VERSION.setVisible(True)
                     self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= 3.10. Update box to the latest version if you want to use this application") 
+            
             self.ButtonHusaModel.setStyleSheet(ButtonStyleOff2)
             self.ButtonPyroSystem.setStyleSheet(ButtonStyleOff2)
             self.ButtonDacSet.setStyleSheet(ButtonStyleOff2)
@@ -551,8 +973,9 @@ class MainWindow(QMainWindow):
                 f.write(f'Das service is not connected to this ip {CONNECTBOX[6:]} \n')
                 f.write('Solution:\n')
                 f.write(f'-- Open supervisor {CONNECTBOX[6:]}:9001 (copy ip to this ip to browser) and check das service \n')
-                f.write(f'-- Reset das service.Das service must bi in running state \n')
+                f.write(f'-- Reset das service.Das service must be in running state \n')
                 f.write('-- Computer and RPI must be in the same domain \n')
+                f.write('-- RPI(das V3.10), digital box(third generation) and tester(V3.10) must be updated \n')
                 f.write(f'{errorNumber}\n')
                 f.write(traceback.format_exc())
                 f.write(f'{errorNumber}\n')
@@ -580,14 +1003,14 @@ class MainWindow(QMainWindow):
                     min,max = tableValueMaxMin(self,TablePot)
                     eval(f'self.digital_pot{index}.setMinimum(min-10)')
                     eval(f'self.digital_pot{index}.setMaximum(max+10)')
-                    eval(f'self.digital_pot{index}.setTickInterval(int((max +(abs(min)))/10))')
+                    eval(f'self.digital_pot{index}.setTickInterval(int((max +(abs(min)))/20))')
                     eval(f'self.PotMax{index}.setText(str(max+10))')
                     eval(f'self.PotMin{index}.setText(str(min-10))')
                     eval(f'self.PotMin{index}.setStyleSheet(PotSlicerLabelStyle)')
                     eval(f'self.PotMax{index}.setStyleSheet(PotSlicerLabelStyle)')
                     R,G,B = sliderColor(self,index,min,max)
                     eval(f'self.digital_pot{index}.valueChanged.connect(self.SetDigitalPot{index})')
-                    eval(f'self.labelDigitalPot{index}.setStyleSheet(ButtonStyleOn)')
+                    eval(f'self.labelDigitalPot{index}.setStyleSheet(InputStyleOn)')
                     eval(f'self.lcdNumber_digital_pot{index}.display(self.digital_pot{index}.value())')
                     eval(f'self.digital_pot{index}.setValue(min+20)')
                     eval(f'self.digital_pot{index}.setStyleSheet(f"background-color: rgb({R},{G},{B})")')
@@ -606,34 +1029,45 @@ class MainWindow(QMainWindow):
     def BoxRefreshing(self):
         """
         - refresh box connection,digital pot table and select marks
-        - 
         """
+        self.backup_save()
         self.BoxConnect.setStyleSheet(ButtonStyleWhite)   
         self.BoxMarks.setStyleSheet(ButtonStyleWhite)
         self.SelectPotTable.setStyleSheet(ButtonStyleWhite)
+        self.resetExcelParameters()
+        self.indexButtonSave = 0
+        self.repeatSaveData = 0
         if  self.index_refreshing == 0:
             self.BoxConnect.clear()
+            self.ExcelFile.clear()
             self.BoxMarks.clear()
             self.SelectPotTable.clear()
             self.BoxConnect.addItems(listConnection())
             self.BoxMarks.addItems(listBoxMarks())
             self.SelectPotTable.addItems(listDigitalPotTable())
+            self.ExcelFile.addItems(dataFile())
             self.AllTable = listDigitalPotTable()
-            self.BOX_VERSION.setText('')
+            self.BOX_VERSION.setVisible(False)
 
         else:
             sleep(2)
             self.index_refreshing +=1
+            self.refreshSaveData.stop()
+            self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
+            self.startStopSaving.setIcon(self.iconSaveData)
             self.DIGITAL_BOX_MAIN.stop()
             self.DIGITAL_BOX_MAIN.setInterval(1000)
             self.BoxConnect.clear()
             self.BoxMarks.clear()
+            self.ExcelFile.clear()
             self.SelectPotTable.clear()
             self.label_connect.setText('BOX CONNECT')
             self.label_marks.setText('SELECT MARKS')
-            print(listConnection())
             self.BoxConnect.addItems(listConnection())
             self.BoxMarks.addItems(listBoxMarks())
+            self.BoxMarks.setStyleSheet(ButtonStyleWhite)
+            self.ExcelFile.setStyleSheet(ButtonStyleWhite)
+            self.ExcelFile.addItems(dataFile())
             self.SelectPotTable.addItems(listDigitalPotTable())
             for index,TablePot in enumerate(listDigitalPotTable()):
                 eval(f'self.labelDigitalPot{index}.setStyleSheet(MainScreenStyle)')
@@ -650,7 +1084,7 @@ class MainWindow(QMainWindow):
             
             sleep(1)
             self.box.disconnect()
-            print('disconnected')
+            #print('disconnected')
     
         
         if self.index_refreshing >=2:
@@ -706,7 +1140,7 @@ class MainWindow(QMainWindow):
         - if box is connected then slider is activated
         - show value on the slider and ldc display
         """
-        if self.index_refreshing == 1:
+        if self.index_refreshing >= 1:
             min,max = tableValueMaxMin(self,'Table1.1')
             R,G,B = sliderColor(self,0,min,max)
             self.digital_pot0.setStyleSheet(f"background-color: rgb({R},{G},{B})")
@@ -718,7 +1152,7 @@ class MainWindow(QMainWindow):
         - if box is connected then slider is activated
         - show value on the slider and ldc display
         """
-        if self.index_refreshing == 1:
+        if self.index_refreshing >= 1:
             min,max = tableValueMaxMin(self,'Table1.2')
             R,G,B = sliderColor(self,1,min,max)
             self.digital_pot1.setStyleSheet(f"background-color: rgb({R},{G},{B})")
@@ -730,7 +1164,7 @@ class MainWindow(QMainWindow):
         - if box is connected then slider is activated
         - show value on the slider and ldc display
         """
-        if self.index_refreshing == 1:
+        if self.index_refreshing >= 1:
             min,max = tableValueMaxMin(self,'Table2.1')
             R,G,B = sliderColor(self,2,min,max)
             self.digital_pot2.setStyleSheet(f"background-color: rgb({R},{G},{B})")
@@ -742,7 +1176,7 @@ class MainWindow(QMainWindow):
         - if box is connected then slider is activated
         - show value on the slider and ldc display
         """
-        if self.index_refreshing == 1:
+        if self.index_refreshing >= 1:
             min,max = tableValueMaxMin(self,'Table2.2')
             R,G,B = sliderColor(self,3,min,max)
             self.digital_pot3.setStyleSheet(f"background-color: rgb({R},{G},{B})")
@@ -754,7 +1188,7 @@ class MainWindow(QMainWindow):
         - if box is connected then slider is activated
         - show value on the slider and ldc display
         """
-        if self.index_refreshing == 1:
+        if self.index_refreshing >= 1:
             min,max = tableValueMaxMin(self,'Table3.1')
             R,G,B = sliderColor(self,4,min,max)
             self.digital_pot4.setStyleSheet(f"background-color: rgb({R},{G},{B})")
@@ -766,7 +1200,7 @@ class MainWindow(QMainWindow):
         - if box is connected then slider is activated
         - show value on the slider and ldc display
         """
-        if self.index_refreshing == 1:
+        if self.index_refreshing >= 1:
             min,max = tableValueMaxMin(self,'Table3.2')
             R,G,B = sliderColor(self,5,min,max)
             self.digital_pot5.setStyleSheet(f"background-color: rgb({R},{G},{B})")
@@ -787,7 +1221,7 @@ class MainWindow(QMainWindow):
         """
         begin_parameter = [self.index_on_off,self.index_out[0],self.index_out[1],self.index_out[2],self.index_out[3],self.index_out[4],self.index_out[5],self.index_out[6],self.index_out[7]]
         if begin_parameter != change_parameters or self.connectParameters == 1:
-            print(begin_parameter,change_parameters)
+            #print(begin_parameter,change_parameters)
             if (self.index_on_off % 2) == 0:
                 self.box.main = 0
                 self.on_off.setIcon(self.iconOff)
@@ -867,54 +1301,55 @@ class MainWindow(QMainWindow):
         set digital pot value when value change
         """
         global beginPotValue
-        readDigitalPot0 = self.digital_pot0.value()
-        readDigitalPot1 = self.digital_pot1.value()
-        readDigitalPot2 = self.digital_pot2.value()
-        readDigitalPot3 = self.digital_pot3.value()
-        readDigitalPot4 = self.digital_pot4.value()
-        readDigitalPot5 = self.digital_pot5.value()
+        self.readDigitalPot0 = self.digital_pot0.value()
+        self.readDigitalPot1 = self.digital_pot1.value()
+        self.readDigitalPot2 = self.digital_pot2.value()
+        self.readDigitalPot3 = self.digital_pot3.value()
+        self.readDigitalPot4 = self.digital_pot4.value()
+        self.readDigitalPot5 = self.digital_pot5.value()
         ###############################digital potentiometer 1 ######################################################
-        if beginPotValue[0] != readDigitalPot0:
-            set_digital_pot(self,readDigitalPot0,tableIndex = 1,slider =1,chipSelect = 1)
-            beginPotValue[0] = readDigitalPot0
-        elif beginPotValue[1] != readDigitalPot1:
-            set_digital_pot(self,readDigitalPot1,tableIndex = 1,slider =2,chipSelect = 1)
-            beginPotValue[1] = readDigitalPot1
+        if beginPotValue[0] != self.readDigitalPot0:
+            set_digital_pot(self,self.readDigitalPot0,tableIndex = 1,slider =1,chipSelect = 1)
+            beginPotValue[0] = self.readDigitalPot0
+        elif beginPotValue[1] != self.readDigitalPot1:
+            set_digital_pot(self,self.readDigitalPot1,tableIndex = 1,slider =2,chipSelect = 1)
+            beginPotValue[1] = self.readDigitalPot1
         ###############################digital potentiometer 2 ######################################################
-        elif beginPotValue[2] != readDigitalPot2:
-            set_digital_pot(self,readDigitalPot2,tableIndex = 2,slider =1,chipSelect = 2)
-            beginPotValue[2] = readDigitalPot2
-        elif beginPotValue[3] != readDigitalPot3:
-            set_digital_pot(self,readDigitalPot3,tableIndex = 2,slider =2,chipSelect = 2)
-            beginPotValue[3] = readDigitalPot3
+        elif beginPotValue[2] != self.readDigitalPot2:
+            set_digital_pot(self,self.readDigitalPot2,tableIndex = 2,slider =1,chipSelect = 2)
+            beginPotValue[2] = self.readDigitalPot2
+        elif beginPotValue[3] != self.readDigitalPot3:
+            set_digital_pot(self,self.readDigitalPot3,tableIndex = 2,slider =2,chipSelect = 2)
+            beginPotValue[3] = self.readDigitalPot3
          ###############################digital potentiometer 3 ######################################################
-        elif beginPotValue[4] != readDigitalPot4:
-            set_digital_pot(self,readDigitalPot4,tableIndex = 3,slider =1,chipSelect = 3)
-            beginPotValue[4] = readDigitalPot4
+        elif beginPotValue[4] != self.readDigitalPot4:
+            set_digital_pot(self,self.readDigitalPot4,tableIndex = 3,slider =1,chipSelect = 3)
+            beginPotValue[4] = self.readDigitalPot4
         
-        elif beginPotValue[5] != readDigitalPot5:
-            set_digital_pot(self,readDigitalPot5,tableIndex = 3,slider =2,chipSelect = 3)
-            beginPotValue[5] = readDigitalPot5
+        elif beginPotValue[5] != self.readDigitalPot5:
+            set_digital_pot(self,self.readDigitalPot5,tableIndex = 3,slider =2,chipSelect = 3)
+            beginPotValue[5] = self.readDigitalPot5
             
     def read_adc(self):
         """
         read adc value and show on display
         """
-        read_adc_all = self.box.read_adc
-        self.readADC0.display(read_adc_all[0])
-        self.readADC1.display(read_adc_all[1])
-        self.readADC2.display(read_adc_all[2])
-        self.readADC3.display(read_adc_all[3])
+        self.read_adc_all = self.box.read_adc
+        self.readADC0.display(self.read_adc_all[0])
+        self.readADC1.display(self.read_adc_all[1])
+        self.readADC2.display(self.read_adc_all[2])
+        self.readADC3.display(self.read_adc_all[3])
     
     def read_pwm(self):
         """
         read pwm1 and pwm2 and show on the display
         """
-        read_pwm_all = self.box.read_pwm
-        self.ReadPwm1.display(read_pwm_all[0]['f'])
-        self.ReadDuty1.display(read_pwm_all[0]['d'])
-        self.ReadPwm2.display(read_pwm_all[1]['f'])
-        self.ReadDuty2.display(read_pwm_all[1]['d'])
+        self.read_pwm_all = self.box.read_pwm[:]
+        self.ReadPwm1.display(self.read_pwm_all[0]['f'])
+        self.ReadDuty1.display(self.read_pwm_all[0]['d'])
+        self.ReadPwm2.display(self.read_pwm_all[1]['f'])
+        self.ReadDuty2.display(self.read_pwm_all[1]['d'])
+       
     
     def set_voltage(self):
         """
@@ -954,57 +1389,54 @@ class MainWindow(QMainWindow):
         """
         set PWM1 when value change
         """
-        readPwm1 =[self.SetFrequency1.value(),self.SetDuty1.value()]
+        self.readPwm1 =[self.SetFrequency1.value(),self.SetDuty1.value()]
         self.SetPwmBar1.setValue(self.SetFrequency1.value())
-        print('pwm value:',self.SetFrequency1.value())
-        readPwm1 =[self.SetFrequency1.value(),self.SetDuty1.value()]
-        if setPwm1[0] != readPwm1[0]:
-            self.box.set_pwm1 = (readPwm1[0],readPwm1[1])
-            setPwm1[0] = readPwm1[0]
-        if setPwm1[1] != readPwm1[1]:
-            self.box.set_pwm1 = (readPwm1[0],readPwm1[1])
-            setPwm1[1] = readPwm1[1]
+        if setPwm1[0] != self.readPwm1[0]:
+            self.box.set_pwm1 = (self.readPwm1[0],self.readPwm1[1])
+            setPwm1[0] = self.readPwm1[0]
+        if setPwm1[1] != self.readPwm1[1]:
+            self.box.set_pwm1 = (self.readPwm1[0],self.readPwm1[1])
+            setPwm1[1] = self.readPwm1[1]
             
     def set_pwm2(self):
         """
         set PWM2 when value change
         """
-        readPwm2 =[self.SetFrequency2.value(),self.SetDuty2.value()]
+        self.readPwm2 =[self.SetFrequency2.value(),self.SetDuty2.value()]
         self.SetPwmBar2.setValue(self.SetFrequency2.value())
-        if setPwm2[0] != readPwm2[0]:
-            self.box.set_pwm2 = (readPwm2[0],readPwm2[1])
-            setPwm2[0] = readPwm2[0]
-            #print('dif0')
-        if setPwm2[1] != readPwm2[1]:
-            self.box.set_pwm2 = (readPwm2[0],readPwm2[1])
-            setPwm2[1] = readPwm2[1]
+        if setPwm2[0] != self.readPwm2[0]:
+            self.box.set_pwm2 = (self.readPwm2[0],self.readPwm2[1])
+            setPwm2[0] = self.readPwm2[0]
+        if setPwm2[1] != self.readPwm2[1]:
+            self.box.set_pwm2 = (self.readPwm2[0],self.readPwm2[1])
+            setPwm2[1] = self.readPwm2[1]
      
     def set_frequency_and_duty_old(self):
         """
         set frequency and duty value when value change
         """
-        readPwmOld =[self.SetFrequencyOld.value(),self.SetDutyOld.value()]
+        self.readPwmOld =[self.SetFrequencyOld.value(),self.SetDutyOld.value()]
        
-        if setPwmOld[0] != readPwmOld[0]:
-            self.box.frequency_out = readPwmOld[0]
-            setPwmOld[0] = readPwmOld[0]
+        if setPwmOld[0] != self.readPwmOld[0]:
+            self.box.frequency_out = self.readPwmOld[0]
+            setPwmOld[0] = self.readPwmOld[0]
         
-        if setPwmOld[1] != readPwmOld[1]:
-            self.box.duty_cycle_out = readPwmOld[1]
-            setPwmOld[1] = readPwmOld[1]
+        if setPwmOld[1] != self.readPwmOld[1]:
+            self.box.duty_cycle_out = self.readPwmOld[1]
+            setPwmOld[1] = self.readPwmOld[1]
                    
     def input_state_indicate(self):
         """
         color digital input state
         """
-        begin_input = self.check_input()
+        self.read_input = self.check_input()
         for index in range(DigitalInput):
-            if begin_input[index]== True:
-                eval(f'self.INPUT_{index}.setStyleSheet(ButtonStyleOn)')
+            if self.read_input[index]== True:
+                eval(f'self.INPUT_{index}.setStyleSheet(InputStyleOn)')
                 change_input[index] = True
 
-            elif begin_input[index]== False:
-                eval(f'self.INPUT_{index}.setStyleSheet(ButtonStyleOff)')
+            elif self.read_input[index]== False:
+                eval(f'self.INPUT_{index}.setStyleSheet(InputStyleOff)')
                 change_input[index] = False       
 ########################## OPEN SCREEN ###########################################################
     def buttonHusaModel(self):
@@ -1012,7 +1444,7 @@ class MainWindow(QMainWindow):
         - show screen husa if box is connected
         - if box is not connected show massage error
         """
-        if self.index_refreshing == 1:
+        if self.index_refreshing >= 1:
             if (self.index_extras[0] % 2) == 0:
                 self.ButtonHusaModel.setStyleSheet(ButtonStyleOn2)
                 HusaModelWindow.show()
@@ -1039,7 +1471,7 @@ class MainWindow(QMainWindow):
         - show screen pyro system if box is connected
         - if box is not connected show massage error
         """
-        if self.index_refreshing == 1:
+        if self.index_refreshing >= 1:
             if (self.index_extras[1] % 2) == 0:
                 self.ButtonPyroSystem.setStyleSheet(ButtonStyleOn2)
                 PyroSetSystem.show()
@@ -1134,7 +1566,7 @@ class MainWindow(QMainWindow):
         - show error message if box is not connected
         - stop the timer
         """
-        if self.index_refreshing == 1:
+        if self.index_refreshing >= 1:
             if (self.index_extras[3] % 2) == 0:
                 self.ButtonSetPot.setStyleSheet(ButtonStyleOn2)
                 PotTableSet.show()
@@ -1171,7 +1603,7 @@ class MainWindow(QMainWindow):
         - stop box timer(DIGITAL BOX MAIN) and start readSetPotDac timer
         - show error message if box is not connected
         """
-        if self.index_refreshing == 1:
+        if self.index_refreshing >= 1:
             if (self.index_extras[4] % 2) == 0:
                 self.ButtonSetDac.setStyleSheet(ButtonStyleOn2)
                 DacTableCreate.show()
@@ -1209,46 +1641,44 @@ class MainWindow(QMainWindow):
         - if value change send dac value
         """
         global beginDacValue
-        readDac0 = SetDacValue.dac_pot0.value()
-        readDac1 = SetDacValue.dac_pot1.value()
-        readDac2 = SetDacValue.dac_pot2.value()
-        readDac3 = SetDacValue.dac_pot3.value()
-        readDac4 = SetDacValue.dac_pot4.value()
-        readDac5 = SetDacValue.dac_pot5.value()
-        readDac6 = SetDacValue.dac_pot6.value()
-        readDac7 = SetDacValue.dac_pot7.value()
+        self.readDac0 = SetDacValue.dac_pot0.value()
+        self.readDac1 = SetDacValue.dac_pot1.value()
+        self.readDac2 = SetDacValue.dac_pot2.value()
+        self.readDac3 = SetDacValue.dac_pot3.value()
+        self.readDac4 = SetDacValue.dac_pot4.value()
+        self.readDac5 = SetDacValue.dac_pot5.value()
+        self.readDac6 = SetDacValue.dac_pot6.value()
+        self.readDac7 = SetDacValue.dac_pot7.value()
         ############################### DAC VALUE 1 ######################################################
-        if beginDacValue[0] != readDac0:
-            set_DAC(self,readDac0,tableIndex = 0,slider =1)
-            beginDacValue[0] = readDac0
+        if beginDacValue[0] != self.readDac0:
+            set_DAC(self,self.readDac0,tableIndex = 0,slider =1)
+            beginDacValue[0] = self.readDac0
         ############################### DAC VALUE 2 ######################################################
-        elif beginDacValue[1] != readDac1:
-            set_DAC(self,readDac1,tableIndex = 1,slider =2)
-            beginDacValue[1] = readDac1
+        elif beginDacValue[1] != self.readDac1:
+            set_DAC(self,self.readDac1,tableIndex = 1,slider =2)
+            beginDacValue[1] = self.readDac1
         ############################### DAC VALUE 3 ######################################################
-        elif beginDacValue[2] != readDac2:
-            set_DAC(self,readDac2,tableIndex = 2,slider =3)
-            beginDacValue[2] = readDac2
+        elif beginDacValue[2] != self.readDac2:
+            set_DAC(self,self.readDac2,tableIndex = 2,slider =3)
+            beginDacValue[2] = self.readDac2
         ############################### DAC VALUE 4 ######################################################
-        elif beginDacValue[3] != readDac3:
-            set_DAC(self,readDac3,tableIndex = 3,slider =4)
-            beginDacValue[3] = readDac3
+        elif beginDacValue[3] != self.readDac3:
+            set_DAC(self,self.readDac3,tableIndex = 3,slider =4)
+            beginDacValue[3] = self.readDac3
          ############################### DAC VALUE 5 ######################################################
-        elif beginDacValue[4] != readDac4:
-            set_DAC(self,readDac4,tableIndex = 4,slider =5)
-            beginDacValue[4] = readDac4
+        elif beginDacValue[4] != self.readDac4:
+            set_DAC(self,self.readDac4,tableIndex = 4,slider =5)
+            beginDacValue[4] = self.readDac4
         ############################### DAC VALUE 6 ######################################################
-        elif beginDacValue[5] != readDac5:
-            set_DAC(self,readDac5,tableIndex = 5,slider =6)
-            beginDacValue[5] = readDac5
-        elif beginDacValue[6] != readDac6:
-            set_DAC(self,readDac6,tableIndex = 6,slider =7)
-            beginDacValue[6] = readDac6
-
-        elif beginDacValue[7] != readDac7:
-            #sleep(0.5)
-            set_DAC(self,readDac7,tableIndex = 7,slider =8)
-            beginDacValue[7] = readDac7    
+        elif beginDacValue[5] != self.readDac5:
+            set_DAC(self,self.readDac5,tableIndex = 5,slider =6)
+            beginDacValue[5] = self.readDac5
+        elif beginDacValue[6] != self.readDac6:
+            set_DAC(self,self.readDac6,tableIndex = 6,slider =7)
+            beginDacValue[6] = self.readDac6
+        elif beginDacValue[7] != self.readDac7:
+            set_DAC(self,self.readDac7,tableIndex = 7,slider =8)
+            beginDacValue[7] = self.readDac7    
 
     def createPotTable(self):
         """
@@ -1773,7 +2203,7 @@ class CreatePotTable(QMainWindow):
         - save value to selected txt file
         """
         self.f = open(f'{BOX_DIGITAL_POT_PATH}\\{self.SelectTable}.txt', 'a')
-        print('save value',self.save_index,self.SelectTable,self.Pot_box_value.value(),self.Pot_value.value())
+        #print('save value',self.save_index,self.SelectTable,self.Pot_box_value.value(),self.Pot_value.value())
         self.f.writelines(f'{self.Pot_box_value.value()} {self.Pot_value.value()}\n')
         self.save_index += 1
         self.f.close()
@@ -1847,7 +2277,7 @@ class CreateDacTable(QMainWindow):
         - save value to selected txt file
         """
         self.f = open(f'{BOX_DIGITAL_DAC_PATH}\\{self.SelectTable}.txt', 'a')
-        print('save value',self.save_index,self.SelectTable,self.Dac_box_value.value(),self.Dac_value.value())
+        #print('save value',self.save_index,self.SelectTable,self.Dac_box_value.value(),self.Dac_value.value())
         self.f.writelines(f'{self.Dac_box_value.value()} {self.Dac_value.value()}\n')
         self.save_index += 1
         self.f.close()
@@ -1862,7 +2292,7 @@ class CreateDacTable(QMainWindow):
 if __name__ == "__main__":
     
     app = QApplication(sys.argv)
-    ### CREATE AN OBJECT NAMED ###
+    ### CREATE AN OBJECT NAMES ###
     mainWindow = MainWindow()
     HusaModelWindow = HusaSetModule()
     PyroSetSystem = Bio21PyroSetSystem()
