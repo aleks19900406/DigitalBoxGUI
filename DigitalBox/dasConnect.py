@@ -420,15 +420,3 @@ class SERIALCONNECT():
         for index in range(4):
             self._read_adc[index] = float(self.ser.readline().decode().strip())
         return self._read_adc
-
-
-
-
-box = SERIALCONNECT('COM19')
-box.connect()
-
-for a  in range(10):
-    box.main = 1
-    sleep(1)
-    box.main = 0
-    sleep(1)
