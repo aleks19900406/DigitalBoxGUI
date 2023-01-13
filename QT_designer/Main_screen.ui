@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1581</width>
-    <height>984</height>
+    <width>1523</width>
+    <height>1009</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>980</x>
-      <y>310</y>
+      <y>350</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -52,9 +52,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>210</y>
+      <y>120</y>
       <width>41</width>
-      <height>391</height>
+      <height>511</height>
      </rect>
     </property>
     <property name="tabletTracking">
@@ -88,10 +88,10 @@ p, li { white-space: pre-wrap; }
      <number>1</number>
     </property>
     <property name="value">
-     <number>30</number>
+     <number>0</number>
     </property>
     <property name="sliderPosition">
-     <number>30</number>
+     <number>0</number>
     </property>
     <property name="orientation">
      <enum>Qt::Vertical</enum>
@@ -107,20 +107,20 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>230</x>
-      <y>670</y>
+      <y>700</y>
       <width>70</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>digital_pot2.1</string>
+     <string>Table2.1</string>
     </property>
    </widget>
    <widget class="QPushButton" name="INPUT_21">
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>840</y>
+      <y>880</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -132,7 +132,7 @@ p, li { white-space: pre-wrap; }
    <widget class="QComboBox" name="BoxMarks">
     <property name="geometry">
      <rect>
-      <x>1150</x>
+      <x>1080</x>
       <y>120</y>
       <width>201</width>
       <height>31</height>
@@ -151,7 +151,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>890</y>
+      <y>930</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -163,7 +163,7 @@ p, li { white-space: pre-wrap; }
    <widget class="QComboBox" name="SelectPotTable">
     <property name="geometry">
      <rect>
-      <x>1150</x>
+      <x>1080</x>
       <y>80</y>
       <width>201</width>
       <height>31</height>
@@ -182,7 +182,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>980</x>
-      <y>220</y>
+      <y>260</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -210,7 +210,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1370</x>
-      <y>360</y>
+      <y>400</y>
       <width>121</width>
       <height>31</height>
      </rect>
@@ -232,9 +232,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1020</x>
-      <y>520</y>
+      <y>580</y>
       <width>101</width>
-      <height>41</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -252,15 +252,15 @@ p, li { white-space: pre-wrap; }
    <widget class="QLabel" name="date_and_time">
     <property name="geometry">
      <rect>
-      <x>1150</x>
+      <x>1200</x>
       <y>10</y>
-      <width>321</width>
+      <width>301</width>
       <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>14</pointsize>
       <weight>50</weight>
       <italic>false</italic>
       <bold>false</bold>
@@ -280,7 +280,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1310</x>
-      <y>170</y>
+      <y>210</y>
       <width>20</width>
       <height>551</height>
      </rect>
@@ -293,7 +293,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1140</x>
-      <y>640</y>
+      <y>680</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -317,20 +317,20 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>670</x>
-      <y>760</y>
+      <y>800</y>
       <width>61</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>out0</string>
+     <string>switch0</string>
     </property>
    </widget>
    <widget class="Line" name="line">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>700</y>
+      <y>740</y>
       <width>1521</width>
       <height>31</height>
      </rect>
@@ -343,7 +343,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>680</x>
-      <y>350</y>
+      <y>390</y>
       <width>121</width>
       <height>41</height>
      </rect>
@@ -364,7 +364,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>840</y>
+      <y>880</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -377,7 +377,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1040</x>
-      <y>720</y>
+      <y>760</y>
       <width>20</width>
       <height>211</height>
      </rect>
@@ -390,7 +390,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1370</x>
-      <y>610</y>
+      <y>650</y>
       <width>111</width>
       <height>51</height>
      </rect>
@@ -417,7 +417,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>520</x>
-      <y>890</y>
+      <y>930</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -430,9 +430,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>210</y>
+      <y>120</y>
       <width>41</width>
-      <height>391</height>
+      <height>511</height>
      </rect>
     </property>
     <property name="tabletTracking">
@@ -457,10 +457,10 @@ p, li { white-space: pre-wrap; }
      <number>1</number>
     </property>
     <property name="value">
-     <number>30</number>
+     <number>0</number>
     </property>
     <property name="sliderPosition">
-     <number>30</number>
+     <number>0</number>
     </property>
     <property name="tracking">
      <bool>true</bool>
@@ -484,10 +484,10 @@ p, li { white-space: pre-wrap; }
    <widget class="QLabel" name="warningMessagePot">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>110</y>
+      <x>130</x>
+      <y>40</y>
       <width>331</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -498,20 +498,20 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>670</y>
+      <y>700</y>
       <width>70</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>digital_pot2.2</string>
+     <string>Table2.2</string>
     </property>
    </widget>
    <widget class="QPushButton" name="INPUT_16">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>840</y>
+      <y>880</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -530,7 +530,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>630</x>
-      <y>360</y>
+      <y>400</y>
       <width>691</width>
       <height>21</height>
      </rect>
@@ -543,7 +543,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>890</y>
+      <y>930</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -556,7 +556,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>740</y>
+      <y>780</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -575,7 +575,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1380</x>
-      <y>540</y>
+      <y>580</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -594,7 +594,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>620</y>
+      <y>650</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -618,9 +618,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>620</x>
-      <y>170</y>
+      <y>80</y>
       <width>20</width>
-      <height>771</height>
+      <height>901</height>
      </rect>
     </property>
     <property name="orientation">
@@ -631,20 +631,20 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>530</x>
-      <y>670</y>
+      <y>700</y>
       <width>70</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>digital_pot3.2</string>
+     <string>Table3.2</string>
     </property>
    </widget>
    <widget class="QPushButton" name="INPUT_12">
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>790</y>
+      <y>830</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -663,7 +663,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>310</y>
+      <y>350</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -690,7 +690,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>920</x>
-      <y>180</y>
+      <y>220</y>
       <width>20</width>
       <height>181</height>
      </rect>
@@ -703,7 +703,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>790</y>
+      <y>830</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -715,7 +715,7 @@ p, li { white-space: pre-wrap; }
    <widget class="QComboBox" name="BoxConnect">
     <property name="geometry">
      <rect>
-      <x>1150</x>
+      <x>1080</x>
       <y>40</y>
       <width>201</width>
       <height>31</height>
@@ -737,7 +737,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>980</x>
-      <y>270</y>
+      <y>310</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -751,27 +751,27 @@ p, li { white-space: pre-wrap; }
      </font>
     </property>
     <property name="text">
-     <string>ADC2</string>
+     <string>VOLTAGE2</string>
     </property>
    </widget>
    <widget class="QPushButton" name="OUT2">
     <property name="geometry">
      <rect>
       <x>830</x>
-      <y>760</y>
+      <y>800</y>
       <width>61</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>out2</string>
+     <string>switch2</string>
     </property>
    </widget>
    <widget class="QLabel" name="PotMin5">
     <property name="geometry">
      <rect>
       <x>520</x>
-      <y>600</y>
+      <y>630</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -784,7 +784,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>520</x>
-      <y>840</y>
+      <y>880</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -797,7 +797,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>600</y>
+      <y>630</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -810,33 +810,33 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>750</x>
-      <y>760</y>
+      <y>800</y>
       <width>61</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>out1</string>
+     <string>switch1</string>
     </property>
    </widget>
    <widget class="QPushButton" name="OUT3">
     <property name="geometry">
      <rect>
       <x>910</x>
-      <y>760</y>
+      <y>800</y>
       <width>61</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>out3</string>
+     <string>switch3</string>
     </property>
    </widget>
    <widget class="QLabel" name="warningMessageDac">
     <property name="geometry">
      <rect>
       <x>1290</x>
-      <y>670</y>
+      <y>710</y>
       <width>231</width>
       <height>31</height>
      </rect>
@@ -849,7 +849,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>790</y>
+      <y>830</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -862,7 +862,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1370</x>
-      <y>440</y>
+      <y>480</y>
       <width>121</width>
       <height>31</height>
      </rect>
@@ -884,20 +884,20 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>670</y>
+      <y>700</y>
       <width>70</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>digital_pot3.1</string>
+     <string>Table3.1</string>
     </property>
    </widget>
    <widget class="QPushButton" name="INPUT_1">
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>740</y>
+      <y>780</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -909,8 +909,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>1350</x>
-      <y>900</y>
+      <x>1340</x>
+      <y>930</y>
       <width>171</width>
       <height>31</height>
      </rect>
@@ -935,20 +935,20 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>830</x>
-      <y>860</y>
+      <y>900</y>
       <width>61</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>out6</string>
+     <string>switch5</string>
     </property>
    </widget>
    <widget class="QPushButton" name="INPUT_24">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>890</y>
+      <y>930</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -967,7 +967,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>190</y>
+      <y>100</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -980,7 +980,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>150</y>
+      <y>60</y>
       <width>111</width>
       <height>41</height>
      </rect>
@@ -1010,20 +1010,20 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>910</x>
-      <y>860</y>
+      <y>900</y>
       <width>61</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>out7</string>
+     <string>switch6</string>
     </property>
    </widget>
    <widget class="QLCDNumber" name="lcdNumber_digital_pot4">
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>620</y>
+      <y>650</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -1050,7 +1050,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>530</x>
-      <y>620</y>
+      <y>650</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -1074,9 +1074,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>540</x>
-      <y>210</y>
+      <y>120</y>
       <width>41</width>
-      <height>391</height>
+      <height>511</height>
      </rect>
     </property>
     <property name="tabletTracking">
@@ -1101,10 +1101,10 @@ p, li { white-space: pre-wrap; }
      <number>1</number>
     </property>
     <property name="value">
-     <number>30</number>
+     <number>0</number>
     </property>
     <property name="sliderPosition">
-     <number>30</number>
+     <number>0</number>
     </property>
     <property name="tracking">
      <bool>true</bool>
@@ -1123,7 +1123,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>660</x>
-      <y>270</y>
+      <y>310</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -1144,7 +1144,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>600</y>
+      <y>630</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -1156,7 +1156,7 @@ p, li { white-space: pre-wrap; }
    <widget class="QLabel" name="label_connect">
     <property name="geometry">
      <rect>
-      <x>1010</x>
+      <x>950</x>
       <y>30</y>
       <width>111</width>
       <height>51</height>
@@ -1164,7 +1164,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="font">
      <font>
-      <pointsize>7</pointsize>
+      <pointsize>8</pointsize>
       <weight>50</weight>
       <italic>false</italic>
       <bold>false</bold>
@@ -1187,7 +1187,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>840</y>
+      <y>880</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1200,7 +1200,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>640</x>
-      <y>640</y>
+      <y>680</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -1221,7 +1221,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>840</y>
+      <y>880</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1234,7 +1234,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>600</y>
+      <y>630</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -1247,7 +1247,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>230</x>
-      <y>620</y>
+      <y>650</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -1271,7 +1271,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>190</y>
+      <y>100</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -1292,20 +1292,20 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>670</y>
+      <y>700</y>
       <width>70</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>digital_pot1.2</string>
+     <string>Table1.2</string>
     </property>
    </widget>
    <widget class="QPushButton" name="INPUT_30">
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>890</y>
+      <y>930</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1318,7 +1318,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1200</x>
-      <y>310</y>
+      <y>350</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -1345,7 +1345,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>620</y>
+      <y>650</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -1368,9 +1368,9 @@ p, li { white-space: pre-wrap; }
    <widget class="Line" name="line_6">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>160</y>
-      <width>1521</width>
+      <x>630</x>
+      <y>200</y>
+      <width>901</width>
       <height>21</height>
      </rect>
     </property>
@@ -1382,7 +1382,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>890</y>
+      <y>930</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1401,7 +1401,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>190</y>
+      <y>100</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -1414,7 +1414,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>740</y>
+      <y>780</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1427,7 +1427,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>670</y>
+      <y>710</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -1454,7 +1454,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>230</y>
+      <y>270</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -1485,7 +1485,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>840</x>
-      <y>390</y>
+      <y>440</y>
       <width>471</width>
       <height>21</height>
      </rect>
@@ -1513,7 +1513,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>660</x>
-      <y>200</y>
+      <y>240</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -1534,7 +1534,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>460</y>
+      <y>500</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -1561,7 +1561,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>890</y>
+      <y>930</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1574,7 +1574,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>190</y>
+      <y>100</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -1587,7 +1587,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>190</y>
+      <y>100</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -1600,7 +1600,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1080</x>
-      <y>750</y>
+      <y>790</y>
       <width>121</width>
       <height>51</height>
      </rect>
@@ -1619,7 +1619,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>790</y>
+      <y>830</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1632,20 +1632,20 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>670</y>
+      <y>700</y>
       <width>71</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>digital_pot1.1</string>
+     <string>Table1.1</string>
     </property>
    </widget>
    <widget class="QSpinBox" name="SetFrequencyOld">
     <property name="geometry">
      <rect>
       <x>1380</x>
-      <y>400</y>
+      <y>440</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -1673,20 +1673,20 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>670</x>
-      <y>860</y>
+      <y>900</y>
       <width>61</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>out4</string>
+     <string>switch4</string>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="SetVoltage1">
     <property name="geometry">
      <rect>
       <x>1200</x>
-      <y>220</y>
+      <y>260</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -1714,7 +1714,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1210</x>
-      <y>750</y>
+      <y>790</y>
       <width>121</width>
       <height>51</height>
      </rect>
@@ -1739,9 +1739,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1010</x>
-      <y>350</y>
+      <y>400</y>
       <width>111</width>
-      <height>41</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -1760,7 +1760,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>740</x>
-      <y>150</y>
+      <y>190</y>
       <width>111</width>
       <height>41</height>
      </rect>
@@ -1781,7 +1781,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>660</x>
-      <y>230</y>
+      <y>270</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -1811,9 +1811,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>420</y>
+      <y>470</y>
       <width>111</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -1832,7 +1832,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>600</y>
+      <y>630</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -1845,9 +1845,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>210</y>
+      <y>120</y>
       <width>41</width>
-      <height>391</height>
+      <height>511</height>
      </rect>
     </property>
     <property name="tabletTracking">
@@ -1872,10 +1872,10 @@ p, li { white-space: pre-wrap; }
      <number>1</number>
     </property>
     <property name="value">
-     <number>30</number>
+     <number>0</number>
     </property>
     <property name="sliderPosition">
-     <number>30</number>
+     <number>0</number>
     </property>
     <property name="orientation">
      <enum>Qt::Vertical</enum>
@@ -1891,7 +1891,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>790</y>
+      <y>830</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1904,7 +1904,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1060</x>
-      <y>150</y>
+      <y>190</y>
       <width>131</width>
       <height>41</height>
      </rect>
@@ -1925,7 +1925,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>740</y>
+      <y>780</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1952,8 +1952,8 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1150</x>
-      <y>700</y>
-      <width>221</width>
+      <y>740</y>
+      <width>231</width>
       <height>31</height>
      </rect>
     </property>
@@ -1973,9 +1973,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>600</y>
+      <y>650</y>
       <width>111</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -1994,7 +1994,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>700</y>
+      <y>740</y>
       <width>161</width>
       <height>31</height>
      </rect>
@@ -2015,7 +2015,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>740</y>
+      <y>780</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2028,7 +2028,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1390</x>
-      <y>60</y>
+      <y>40</y>
       <width>70</width>
       <height>70</height>
      </rect>
@@ -2047,7 +2047,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1380</x>
-      <y>480</y>
+      <y>520</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -2072,7 +2072,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>450</y>
+      <y>500</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -2093,7 +2093,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>890</y>
+      <y>930</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2106,7 +2106,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>800</x>
-      <y>370</y>
+      <y>410</y>
       <width>20</width>
       <height>341</height>
      </rect>
@@ -2119,9 +2119,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1130</x>
-      <y>420</y>
+      <y>470</y>
       <width>121</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -2140,7 +2140,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>270</y>
+      <y>310</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -2160,31 +2160,31 @@ p, li { white-space: pre-wrap; }
    <widget class="QLabel" name="label_digital_pot">
     <property name="geometry">
      <rect>
-      <x>1010</x>
-      <y>70</y>
-      <width>121</width>
-      <height>51</height>
+      <x>890</x>
+      <y>80</y>
+      <width>181</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>7</pointsize>
+      <pointsize>8</pointsize>
       <weight>50</weight>
       <italic>false</italic>
       <bold>false</bold>
      </font>
     </property>
     <property name="text">
-     <string>DIGITAL POT TABLE:</string>
+     <string>ACTIVATE DIGITAL POT TABLE:</string>
     </property>
    </widget>
    <widget class="QSlider" name="digital_pot1">
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>210</y>
+      <y>120</y>
       <width>41</width>
-      <height>391</height>
+      <height>511</height>
      </rect>
     </property>
     <property name="tabletTracking">
@@ -2209,10 +2209,10 @@ p, li { white-space: pre-wrap; }
      <number>1</number>
     </property>
     <property name="value">
-     <number>30</number>
+     <number>0</number>
     </property>
     <property name="sliderPosition">
-     <number>30</number>
+     <number>0</number>
     </property>
     <property name="orientation">
      <enum>Qt::Vertical</enum>
@@ -2228,7 +2228,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>790</y>
+      <y>830</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2241,7 +2241,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>840</y>
+      <y>880</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2254,9 +2254,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>350</x>
-      <y>210</y>
+      <y>120</y>
       <width>41</width>
-      <height>391</height>
+      <height>511</height>
      </rect>
     </property>
     <property name="tabletTracking">
@@ -2281,10 +2281,10 @@ p, li { white-space: pre-wrap; }
      <number>1</number>
     </property>
     <property name="value">
-     <number>30</number>
+     <number>0</number>
     </property>
     <property name="sliderPosition">
-     <number>30</number>
+     <number>0</number>
     </property>
     <property name="orientation">
      <enum>Qt::Vertical</enum>
@@ -2300,7 +2300,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>380</y>
+      <y>430</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -2321,7 +2321,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1390</x>
-      <y>210</y>
+      <y>250</y>
       <width>70</width>
       <height>70</height>
      </rect>
@@ -2347,7 +2347,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>840</x>
-      <y>570</y>
+      <y>610</y>
       <width>471</width>
       <height>21</height>
      </rect>
@@ -2369,7 +2369,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>640</y>
+      <y>680</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -2396,7 +2396,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>200</y>
+      <y>240</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -2417,7 +2417,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>660</x>
-      <y>310</y>
+      <y>350</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -2447,7 +2447,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>790</y>
+      <y>830</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2466,7 +2466,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>410</y>
+      <y>460</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -2493,7 +2493,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>1200</x>
-      <y>180</y>
+      <y>220</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -2507,14 +2507,14 @@ selection-color: rgb(255, 170, 0);</string>
      </font>
     </property>
     <property name="text">
-     <string>ADC1</string>
+     <string>VOLTAGE1</string>
     </property>
    </widget>
    <widget class="Line" name="line_10">
     <property name="geometry">
      <rect>
       <x>630</x>
-      <y>530</y>
+      <y>580</y>
       <width>691</width>
       <height>21</height>
      </rect>
@@ -2527,7 +2527,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>200</x>
-      <y>150</y>
+      <y>60</y>
       <width>241</width>
       <height>41</height>
      </rect>
@@ -2548,7 +2548,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>520</x>
-      <y>740</y>
+      <y>780</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2561,7 +2561,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>740</y>
+      <y>780</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2574,9 +2574,9 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>1140</x>
-      <y>600</y>
+      <y>650</y>
       <width>111</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -2595,7 +2595,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>740</y>
+      <y>780</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2613,7 +2613,7 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QLabel" name="label_marks">
     <property name="geometry">
      <rect>
-      <x>1010</x>
+      <x>970</x>
       <y>110</y>
       <width>101</width>
       <height>51</height>
@@ -2621,7 +2621,7 @@ selection-color: rgb(255, 170, 0);</string>
     </property>
     <property name="font">
      <font>
-      <pointsize>7</pointsize>
+      <pointsize>8</pointsize>
       <weight>50</weight>
       <italic>false</italic>
       <bold>false</bold>
@@ -2635,7 +2635,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>520</x>
-      <y>190</y>
+      <y>100</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -2651,7 +2651,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>680</x>
-      <y>520</y>
+      <y>570</y>
       <width>121</width>
       <height>41</height>
      </rect>
@@ -2672,7 +2672,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>600</y>
+      <y>630</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -2685,7 +2685,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>620</y>
+      <y>650</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -2709,7 +2709,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>520</x>
-      <y>790</y>
+      <y>830</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2721,7 +2721,7 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QLabel" name="BOX_VERSION">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>10</y>
       <width>1121</width>
       <height>31</height>
@@ -2749,7 +2749,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>770</x>
-      <y>700</y>
+      <y>740</y>
       <width>161</width>
       <height>31</height>
      </rect>
@@ -2770,7 +2770,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>1200</x>
-      <y>270</y>
+      <y>310</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -2784,14 +2784,14 @@ selection-color: rgb(255, 170, 0);</string>
      </font>
     </property>
     <property name="text">
-     <string>ADC3</string>
+     <string>VOLTAGE3</string>
     </property>
    </widget>
    <widget class="QLCDNumber" name="ReadDuty1">
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>480</y>
+      <y>530</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -2818,7 +2818,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>980</x>
-      <y>180</y>
+      <y>220</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -2832,14 +2832,14 @@ selection-color: rgb(255, 170, 0);</string>
      </font>
     </property>
     <property name="text">
-     <string>ADC0</string>
+     <string>VOLTAGE0</string>
     </property>
    </widget>
    <widget class="QLabel" name="labelPwm2_0">
     <property name="geometry">
      <rect>
       <x>640</x>
-      <y>560</y>
+      <y>610</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -2860,7 +2860,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>840</y>
+      <y>880</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2879,7 +2879,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>1130</x>
-      <y>460</y>
+      <y>500</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -2903,20 +2903,20 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>750</x>
-      <y>860</y>
+      <y>900</y>
       <width>61</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>out5</string>
+     <string>switch4</string>
     </property>
    </widget>
    <widget class="QLCDNumber" name="ReadPwm2">
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>590</y>
+      <y>640</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -2943,7 +2943,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>1380</x>
-      <y>310</y>
+      <y>350</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -2964,7 +2964,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>1320</x>
-      <y>320</y>
+      <y>360</y>
       <width>211</width>
       <height>16</height>
      </rect>
@@ -2977,7 +2977,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>1390</x>
-      <y>150</y>
+      <y>190</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -2994,6 +2994,247 @@ selection-color: rgb(255, 170, 0);</string>
      <string>ON/OFF</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="ExcelFile">
+    <property name="geometry">
+     <rect>
+      <x>1080</x>
+      <y>160</y>
+      <width>201</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="frame">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_saveFile">
+    <property name="geometry">
+     <rect>
+      <x>970</x>
+      <y>150</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>SAVE DATA:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_errorSaveFile">
+    <property name="geometry">
+     <rect>
+      <x>730</x>
+      <y>150</y>
+      <width>451</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>error file open</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line_9">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>70</y>
+      <width>621</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="startStopSaving">
+    <property name="geometry">
+     <rect>
+      <x>1390</x>
+      <y>120</y>
+      <width>70</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-right-color: rgb(85, 255, 127);
+selection-color: rgb(255, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>68</width>
+      <height>68</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="excelRefresh">
+    <property name="geometry">
+     <rect>
+      <x>1290</x>
+      <y>160</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+      <strikeout>false</strikeout>
+     </font>
+    </property>
+    <property name="buttonSymbols">
+     <enum>QAbstractSpinBox::PlusMinus</enum>
+    </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+    </property>
+    <property name="decimals">
+     <number>1</number>
+    </property>
+    <property name="minimum">
+     <double>1.000000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>3600.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>0.000000000000000</double>
+    </property>
+    <property name="stepType">
+     <enum>QAbstractSpinBox::DefaultStepType</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_connect_2">
+    <property name="geometry">
+     <rect>
+      <x>1360</x>
+      <y>160</y>
+      <width>41</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Plain</enum>
+    </property>
+    <property name="text">
+     <string>s</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_connect_3">
+    <property name="geometry">
+     <rect>
+      <x>1280</x>
+      <y>130</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Plain</enum>
+    </property>
+    <property name="text">
+     <string>Save interval</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="savingBar">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>160</y>
+      <width>271</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+    <property name="textDirection">
+     <enum>QProgressBar::TopToBottom</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="backupSave">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>120</y>
+      <width>261</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Saving data please wait</string>
+    </property>
+   </widget>
+   <zorder>label_digital_pot</zorder>
+   <zorder>labelPwm1_0</zorder>
+   <zorder>label_connect_2</zorder>
+   <zorder>label_connect_3</zorder>
+   <zorder>line_9</zorder>
    <zorder>digital_pot4</zorder>
    <zorder>labelDigitalPot2</zorder>
    <zorder>INPUT_21</zorder>
@@ -3007,7 +3248,6 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>SetDuty2</zorder>
    <zorder>OUT0</zorder>
    <zorder>line</zorder>
-   <zorder>label_marks_5</zorder>
    <zorder>INPUT_18</zorder>
    <zorder>line_3</zorder>
    <zorder>ButtonSetDac</zorder>
@@ -3073,7 +3313,6 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>PotMax2</zorder>
    <zorder>ButtonHusaModel</zorder>
    <zorder>INPUT_11</zorder>
-   <zorder>labelDigitalPot0</zorder>
    <zorder>SetFrequencyOld</zorder>
    <zorder>OUT4</zorder>
    <zorder>SetVoltage1</zorder>
@@ -3097,12 +3336,10 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>line_7</zorder>
    <zorder>labelSetPwm1_1</zorder>
    <zorder>labelADC3</zorder>
-   <zorder>label_digital_pot</zorder>
    <zorder>digital_pot1</zorder>
    <zorder>INPUT_10</zorder>
    <zorder>INPUT_17</zorder>
    <zorder>digital_pot3</zorder>
-   <zorder>labelPwm1_0</zorder>
    <zorder>on_off</zorder>
    <zorder>SetPwmBar2</zorder>
    <zorder>SetFrequency2</zorder>
@@ -3142,13 +3379,22 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>label_marks_11</zorder>
    <zorder>digital_pot0</zorder>
    <zorder>label</zorder>
+   <zorder>ExcelFile</zorder>
+   <zorder>label_saveFile</zorder>
+   <zorder>label_errorSaveFile</zorder>
+   <zorder>label_marks_5</zorder>
+   <zorder>excelRefresh</zorder>
+   <zorder>startStopSaving</zorder>
+   <zorder>labelDigitalPot0</zorder>
+   <zorder>savingBar</zorder>
+   <zorder>backupSave</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1581</width>
+     <width>1523</width>
      <height>21</height>
     </rect>
    </property>

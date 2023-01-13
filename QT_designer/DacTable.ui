@@ -56,6 +56,9 @@
      <strikeout>false</strikeout>
     </font>
    </property>
+   <property name="smallDecimalPoint">
+    <bool>false</bool>
+   </property>
    <property name="digitCount">
     <number>3</number>
    </property>
@@ -191,10 +194,10 @@
     <number>1</number>
    </property>
    <property name="value">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="sliderPosition">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="tracking">
     <bool>true</bool>
@@ -332,10 +335,10 @@
     <number>1</number>
    </property>
    <property name="value">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="sliderPosition">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
@@ -378,10 +381,10 @@
     <number>1</number>
    </property>
    <property name="value">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="sliderPosition">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
@@ -437,10 +440,10 @@
     <number>1</number>
    </property>
    <property name="value">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="sliderPosition">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
@@ -530,10 +533,10 @@
     <number>1</number>
    </property>
    <property name="value">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="sliderPosition">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
@@ -576,10 +579,10 @@
     <number>1</number>
    </property>
    <property name="value">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="sliderPosition">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
@@ -734,10 +737,10 @@
     <number>1</number>
    </property>
    <property name="value">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="sliderPosition">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
@@ -801,10 +804,10 @@
     <number>1</number>
    </property>
    <property name="value">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="sliderPosition">
-    <number>30</number>
+    <number>0</number>
    </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
