@@ -53,6 +53,16 @@ def convert_digital_in(read_digital_in):
     return all_digital_in
 
 class SERIALCONNECT():
+    """
+    Connect to digital box:
+    example:
+    box = SERIALCONNECT('COM19')
+    box.connect()
+    box.main = 1
+    box.disconnect()
+    """
+    
+    
     def __init__(self,comport):
         ############################# BEGIN PARAMETERS ##################################
         self.comport = comport
@@ -72,6 +82,7 @@ class SERIALCONNECT():
         self._frequency_out = 0
         self._set_voltage = 0
         self._read_adc = [0,0,0,0]
+    
     def connect(self):
         """
         - set baudrate serial communication
@@ -113,7 +124,7 @@ class SERIALCONNECT():
     def main(self,value):
         """
         - set main value
-        -  self.box.main = 0 / 1
+        - self.box.main = 0 / 1
         """
         self.ser.write(f'{MAIN},{value}'.encode())
         self._main = value
@@ -410,3 +421,14 @@ class SERIALCONNECT():
             self._read_adc[index] = float(self.ser.readline().decode().strip())
         return self._read_adc
 
+
+
+
+box = SERIALCONNECT('COM19')
+box.connect()
+
+for a  in range(10):
+    box.main = 1
+    sleep(1)
+    box.main = 0
+    sleep(1)
