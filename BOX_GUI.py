@@ -510,7 +510,7 @@ class MainWindow(QMainWindow):
             RowName.value=name
 
         self.indexSaveData += 1
-        print(self.indexSaveData)
+        #print(self.indexSaveData)
         
     def excelFile(self,file_name):
         """
@@ -1352,8 +1352,7 @@ class MainWindow(QMainWindow):
         self.ReadDuty1.display(self.read_pwm_all[0]['d'])
         self.ReadPwm2.display(self.read_pwm_all[1]['f'])
         self.ReadDuty2.display(self.read_pwm_all[1]['d'])
-       
-    
+        
     def set_voltage(self):
         """
         set voltage when value change
