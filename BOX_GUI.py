@@ -483,8 +483,8 @@ class MainWindow(QMainWindow):
         allParameters = []
         self.label_saveFile.setVisible(True)
         if self.refreshSaving != self.excelRefresh.value():
-            self.refreshSaveData.setInterval(int(self.excelRefresh.value()*10))
-    
+            self.refreshSaveData.setInterval(int(self.excelRefresh.value()*1000))
+            #self.refreshSaveData.setInterval(int(self.excelRefresh.value()*1)) # Test
             self.refreshSaving = self.excelRefresh.value()
 
         digitalPot = [self.readDigitalPot0,self.readDigitalPot1,self.readDigitalPot2,self.readDigitalPot3,self.readDigitalPot4,self.readDigitalPot5]
