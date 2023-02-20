@@ -3130,7 +3130,7 @@ selection-color: rgb(255, 170, 0);</string>
      <double>3600.000000000000000</double>
     </property>
     <property name="singleStep">
-     <double>0.000000000000000</double>
+     <double>1.000000000000000</double>
     </property>
     <property name="stepType">
      <enum>QAbstractSpinBox::DefaultStepType</enum>
