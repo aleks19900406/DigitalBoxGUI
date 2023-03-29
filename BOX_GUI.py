@@ -10,7 +10,7 @@ from cv2 import repeat
 from os.path import abspath, basename, dirname, join, realpath
 from time import sleep,time
 from package.tester._clients.das import DAS  # Import DAS class
-from DigitalBox.dasConnect import SERIALCONNECT
+from DigitalBox.dasConnect import SERIALCONNECT,WifiEsp32Connect
 from DigitalBox.lib import*
 import serial.tools.list_ports
 import traceback
@@ -25,6 +25,8 @@ IMAGES_PATH = os.path.join("data","images","system")
 IMAGE_PATH_OTHER =os.path.join("data","images","other")
 DATA_SAVE = os.path.join("data","saveData")
 ###################### BEGIN PARAMETERS #################################
+VERZIJA_ESP = "3.17"
+VERZIJA_RPI = "3.10"
 MAIN_TIME_REFRESHING = 1000
 SPACE = '\n'
 DigitalInput = 32
@@ -44,10 +46,10 @@ errorNumber ='#'*100
 ######################### BUTTON SET STYLE ##############################
 ButtonStyleOnOff = ("background-color:white ;""font: 10px;" )
 ButtonStyleOff2  = ("background-color: rgb(210,210,210);""font: 10px;" )
-ButtonStyleOn2  = ("background-color: lightgreen;""font: 10px;")
+ButtonStyleOn2  = ("background-color: rgb(159,255,159);""font: 10px;")
 ButtonStyleOff  = ("background-color: rgb(210,210,210);"
                                 "border-radius: 5px;""font: 10px;")
-ButtonStyleOn  = ("background-color: lightgreen;"
+ButtonStyleOn  = ("background-color:  rgb(159,255,159);"
                                 "border-radius: 5px;"
                                 "font: 12px;")                                 
 ButtonStyleWhite = ("background-color: white;"
@@ -61,12 +63,13 @@ PotSlicerLabelStyle = ("background-color: white;"
                                 "border-color: fusion;"
                                 "font: 12px;")
 
-InputStyleOn  = ("background-color: lightgreen;"
+InputStyleOn  = ("background-color:  rgb(159,255,159);"
                                 "border-radius: 5px;"
                                 "font: 10px;")                                 
 InputStyleOff =  ("background-color: rgb(210,210,210);"
                                 "border-radius: 5px;""font: 10px;")
 ##########################################################################
+
 class Worker(QObject):
     finished = pyqtSignal()
     stepIncreased = pyqtSignal(int)
@@ -222,6 +225,8 @@ def listConnection():
         elif'CP210x' in str(USB_PORT) :
             LIST_CONNECT.append(f'{str(USB_PORT)[0:5]} - NodeMCU ESP32')
     #LIST_CONNECT.append("")
+    for ip_address in range(15,100,10):
+        LIST_CONNECT.append(f'ESP32 - 192.168.1.{ip_address}')
     for ip_address in range(10,100,10):
         LIST_CONNECT.append(f'RPI - 192.168.1.{ip_address}')
     
@@ -292,6 +297,10 @@ class MainWindow(QMainWindow):
         self.SelectPotTable.activated[str].connect(self.digitalPotTable)
         self.SelectPotTable.setEditable(True)
         self.SelectPotTable.setStyleSheet(ButtonStyleWhite)
+        self.BoxConnect.addItems(listConnection())
+        self.BoxMarks.addItems(listBoxMarks())
+        self.SelectPotTable.addItems(listDigitalPotTable())
+        self.ExcelFile.addItems(dataFile())
         ##################### SAVE DATA ##########################################
         self.ExcelFile.activated[str].connect(self.excelFile)
         self.ExcelFile.setEditable(True)
@@ -321,12 +330,21 @@ class MainWindow(QMainWindow):
         ###########################################################################
         self.date_and_time.setText("")
         self.savingBar.setVisible(False)
-        ############################## BUTTON STYLE ###############################
+        ############################## BUTTON ICON ###############################
         self.on_off.setStyleSheet(ButtonStyleOff2)
+      
+        self.iconSwitchOff = QtGui.QIcon()
+        self.iconSwitchOff.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/switchOff.png')))
+    
+        self.iconSwitchOn = QtGui.QIcon()
+        self.iconSwitchOn.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/switchOn.png')))
+        
         self.iconOff = QtGui.QIcon()
         self.iconOff.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/offButton.png')))
+        
         self.iconOn = QtGui.QIcon()
         self.iconOn.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/OnButton.png')))
+        
         self.on_off.setIcon(self.iconOff)
         self.iconRefresh = QtGui.QIcon()
         self.iconRefresh.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/ButtonRefresh.png')))
@@ -410,6 +428,7 @@ class MainWindow(QMainWindow):
             self.savingBar.setVisible(False)
             self.backupSave.setVisible(False)
             self.label_errorSaveFile.setText(f"!!! Excel file {self.fileName} is open. Close and try again !!!")
+        
         except AttributeError:
             self.indexButtonSave = 0
             self.startStopSaving.setEnabled(True)
@@ -715,6 +734,7 @@ class MainWindow(QMainWindow):
                 self.thread_check_input.start(self.check_all_input)
                 tend = time()
                 #print('time main box',int((tend-tbegin)*1000),'interval:',MAIN_TIME_REFRESHING)
+                
                 # increase main time refreshing if function executing to long
                 if  (tend-tbegin)*1000 >= MAIN_TIME_REFRESHING:
                     self.digitalPotChange = 1
@@ -726,13 +746,14 @@ class MainWindow(QMainWindow):
                         self.DIGITAL_BOX_MAIN.setInterval(MAIN_TIME_REFRESHING)
                         MAIN_TIME_REFRESHING -= 100
                         self.digitalPotChange = 0
+                
             # save value error to check_error.txt file
             except ValueError:
                 with open('check_error.txt', 'w') as f:
                     f.write(f'{errorNumber}\n')
                     f.write('!!! Can not set any parameters(set_voltage,set_pwm1,2...)!!!\n')
                     f.write('Solution:\n')
-                    f.write('-- Check digital box version(>= V3.10) and\n')
+                    f.write(f'-- Check digital box version(RPI - {VERZIJA_RPI} ESP - {VERZIJA_ESP}) and\n')
                     f.write(f'{errorNumber}\n')
                     f.write(traceback.format_exc())
                     f.write(f'{errorNumber}\n')
@@ -756,11 +777,12 @@ class MainWindow(QMainWindow):
                 f.write(f'{errorNumber}\n')
                 f.write('!!!Dont get anything from ADC read !!!\n')
                 f.write('Solution:\n')
-                f.write('-- Check digital box version or hardware problems with ADC read\n')
+                f.write(f'-- Check digital box version(RPI - {VERZIJA_RPI} ESP - {VERZIJA_ESP}) or hardware problems with ADC read\n')
                 f.write(f'{errorNumber}\n')
                 f.write(traceback.format_exc())
                 f.write(f'{errorNumber}\n')
             f.close()
+        
         try:   
             self.read_pwm()
             
@@ -769,13 +791,15 @@ class MainWindow(QMainWindow):
                 f.write(f'{errorNumber}\n')
                 f.write('!!!Dont get anything from PWM read !!!\n')
                 f.write('Solution:\n')
-                f.write('-- Check digital box version or hardware problems with ADC read\n')
+                f.write(f'-- Check digital box version(RPI - {VERZIJA_RPI} ESP - {VERZIJA_ESP}) or hardware problems with ADC read\n')
                 f.write(f'{errorNumber}\n')
                 f.write(traceback.format_exc())
                 f.write(f'{errorNumber}\n')
             f.close()
+        
         self.check_digital_pot()
         self.check_DAC_pot()
+        
         self.digitalPotIndex = 0
                 
     def boxMarks(self,BOXMARKS):
@@ -926,12 +950,13 @@ class MainWindow(QMainWindow):
             if self.index_refreshing >= 1:
                 sleep(2)
                 self.box.disconnect()
+            
             if CONNECTBOX[0:3] =='COM':
                 self.box = SERIALCONNECT(CONNECTBOX[0:5].replace(' ',''))
                 VERSION = self.box.connect()
                 self.label_errorSaveFile.setVisible(False)
                 self.label_saveFile.setVisible(True)
-                if VERSION >= "3.10":
+                if VERSION >= VERZIJA_RPI:
                     self.index_refreshing +=1
                     self.DIGITAL_BOX_MAIN.start()
                     self.BOX_VERSION.setVisible(False)
@@ -944,12 +969,34 @@ class MainWindow(QMainWindow):
                     self.index_refreshing = 0
                     self.BoxConnect.setStyleSheet(ButtonStyleWhite)
                     self.BOX_VERSION.setVisible(True)
-                    self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= 3.10. Update box to the latest version if you want to use this application") 
-            else:
+                    self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= {VERZIJA_RPI}. Update box to the latest version if you want to use this application") 
+            
+            elif CONNECTBOX[0:3] =='ESP':
+                self.box = WifiEsp32Connect(CONNECTBOX.replace('ESP32 - ',''))
+                VERSION = self.box.connect()
+                self.label_errorSaveFile.setVisible(False)
+                self.label_saveFile.setVisible(True)
+                if VERSION >= VERZIJA_ESP:
+                    self.index_refreshing +=1
+                    self.DIGITAL_BOX_MAIN.start()
+                    self.BOX_VERSION.setVisible(False)
+                    self.warningMessagePot.setVisible(False)
+                    self.warningMessageDac.setVisible(False)
+                    self.BoxConnect.setStyleSheet(ButtonStyleOn)
+                else:
+                    sleep(2)
+                    self.box.disconnect()
+                    self.index_refreshing = 0
+                    self.BoxConnect.setStyleSheet(ButtonStyleWhite)
+                    self.BOX_VERSION.setVisible(True)
+                    self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= {VERZIJA_ESP}. Update box to the latest version if you want to use this application") 
+            
+            elif CONNECTBOX[0:3] =='RPI':
+                #print('connect to rpi')
                 self.box = DAS(CONNECTBOX.replace('RPI - ',''))  #
                 self.box.connect()
                 VERSION =  self.box.box_version[0].strip()
-                if VERSION >= "3.10":
+                if VERSION >= VERZIJA_RPI:
                     self.index_refreshing +=1
                     self.DIGITAL_BOX_MAIN.start()
                     self.BOX_VERSION.setVisible(False)
@@ -961,7 +1008,7 @@ class MainWindow(QMainWindow):
                     self.box.disconnect()
                     self.index_refreshing = 0
                     self.BOX_VERSION.setVisible(True)
-                    self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= 3.10. Update box to the latest version if you want to use this application") 
+                    self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= {VERZIJA_RPI}. Update box to the latest version if you want to use this application") 
             
             self.ButtonHusaModel.setStyleSheet(ButtonStyleOff2)
             self.ButtonPyroSystem.setStyleSheet(ButtonStyleOff2)
@@ -978,7 +1025,7 @@ class MainWindow(QMainWindow):
                 f.write(f'-- Open supervisor {CONNECTBOX[6:]}:9001 (copy ip to this ip to browser) and check das service \n')
                 f.write(f'-- Reset das service.Das service must be in running state \n')
                 f.write('-- Computer and RPI must be in the same domain \n')
-                f.write('-- RPI(das V3.10), digital box(third generation) and tester(V3.10) must be updated \n')
+                f.write(f'-- RPI(das {VERZIJA_RPI}), digital box(third generation) and tester({VERZIJA_RPI}) must be updated \n')
                 f.write(f'{errorNumber}\n')
                 f.write(traceback.format_exc())
                 f.write(f'{errorNumber}\n')
@@ -1051,7 +1098,6 @@ class MainWindow(QMainWindow):
             self.ExcelFile.addItems(dataFile())
             self.AllTable = listDigitalPotTable()
             self.BOX_VERSION.setVisible(False)
-
         else:
             sleep(2)
             self.index_refreshing +=1
@@ -1079,6 +1125,8 @@ class MainWindow(QMainWindow):
             self.on_off.setIcon(self.iconOff)
             for index in range(8):
                 eval(f'self.OUT{index}.setStyleSheet(ButtonStyleOff2)')
+                eval(f'self.OUT{index}.setIcon(self.iconSwitchOff)')
+                
             for index in range(6):
                 eval(f'self.digital_pot{index}.setStyleSheet(ButtonStyleWhite)')
                 eval(f'self.digital_pot{index}.value()')
@@ -1089,54 +1137,96 @@ class MainWindow(QMainWindow):
             self.box.disconnect()
             #print('disconnected')
     
-        
         if self.index_refreshing >=2:
             self.index_refreshing =0
  ################################## ON/OFF AND OUTPUT BUTTONS #################################      
     def button_OnOff(self):
         self.index_on_off +=1
         if self.index_on_off >=2:
-            self.index_on_off =0
+            self.index_on_off = 0
+            self.on_off.setIcon(self.iconOff)
+        else:
+             self.on_off.setIcon(self.iconOn)
     
     def output0(self):
         self.index_out[0] +=1
-        if self.index_out[0] >=2:
-            self.index_out[0] =0 
+        if self.index_out[0] >= 2:
+            self.index_out[0] = 0
+            self.OUT0.setStyleSheet(ButtonStyleOff2) 
+            self.OUT0.setIcon(self.iconSwitchOff)
+        else:
+            self.OUT0.setStyleSheet(ButtonStyleOn2)
+            self.OUT0.setIcon(self.iconSwitchOn)
     
     def output1(self):
         self.index_out[1] +=1
         if self.index_out[1] >=2:
             self.index_out[1] =0 
-         
+            self.OUT1.setStyleSheet(ButtonStyleOff2) 
+            self.OUT1.setIcon(self.iconSwitchOff)
+        else:
+            self.OUT1.setStyleSheet(ButtonStyleOn2)
+            self.OUT1.setIcon(self.iconSwitchOn)
+    
     def output2(self):
         self.index_out[2] +=1
         if self.index_out[2] >=2:
             self.index_out[2] =0  
+            self.OUT2.setStyleSheet(ButtonStyleOff2)
+            self.OUT2.setIcon(self.iconSwitchOff) 
+        else:
+            self.OUT2.setStyleSheet(ButtonStyleOn2)
+            self.OUT2.setIcon(self.iconSwitchOn)
     
     def output3(self):
         self.index_out[3] +=1
         if self.index_out[3] >=2:
             self.index_out[3] =0  
+            self.OUT3.setStyleSheet(ButtonStyleOff2)
+            self.OUT3.setIcon(self.iconSwitchOff) 
+        else:
+            self.OUT3.setStyleSheet(ButtonStyleOn2)
+            self.OUT3.setIcon(self.iconSwitchOn)
     
     def output4(self):
         self.index_out[4] +=1
         if self.index_out[4] >=2:
-            self.index_out[4] =0  
+            self.index_out[4] =0
+            self.OUT4.setStyleSheet(ButtonStyleOff2)
+            self.OUT4.setIcon(self.iconSwitchOff)
+        else:
+            self.OUT4.setStyleSheet(ButtonStyleOn2)
+            self.OUT4.setIcon(self.iconSwitchOn)   
     
     def output5(self):
         self.index_out[5] +=1
         if self.index_out[5] >=2:
             self.index_out[5] =0  
+            self.OUT5.setStyleSheet(ButtonStyleOff2)
+            self.OUT5.setIcon(self.iconSwitchOff)
+        else:
+            self.OUT5.setStyleSheet(ButtonStyleOn2)
+            self.OUT5.setIcon(self.iconSwitchOn)
     
     def output6(self):
         self.index_out[6] +=1
         if self.index_out[6] >=2:
-            self.index_out[6] =0  
+            self.index_out[6] =0
+            self.OUT6.setStyleSheet(ButtonStyleOff2)
+            self.OUT6.setIcon(self.iconSwitchOff)
+        else:
+            self.OUT6.setStyleSheet(ButtonStyleOn2)
+            self.OUT6.setIcon(self.iconSwitchOn) 
     
     def output7(self):
         self.index_out[7] +=1
         if self.index_out[7] >=2:
             self.index_out[7] =0
+            self.OUT7.setStyleSheet(ButtonStyleOff2)
+            self.OUT7.setIcon(self.iconSwitchOff)
+        else:
+            self.OUT7.setStyleSheet(ButtonStyleOn2)
+            self.OUT7.setIcon(self.iconSwitchOn)
  ##################################### SLIDERS #################################################   
     def SetDigitalPot0(self):
         """
@@ -1226,12 +1316,12 @@ class MainWindow(QMainWindow):
         if begin_parameter != change_parameters or self.connectParameters == 1:
             #print(begin_parameter,change_parameters)
             if (self.index_on_off % 2) == 0:
+                #self.on_off.setIcon(self.iconOff)
                 self.box.main = 0
-                self.on_off.setIcon(self.iconOff)
                 change_parameters[0]= 0
-            elif (self.index_on_off % 2) == 1:
+            else:
+                #self.on_off.setIcon(self.iconOn)
                 self.box.main = 1
-                self.on_off.setIcon(self.iconOn)
                 change_parameters[0]= 1
             
             parameter_true = tuple([i for i, val in enumerate(begin_parameter[1:]) if  val])
@@ -1243,60 +1333,76 @@ class MainWindow(QMainWindow):
                 activate_output(self,parameter_false,False) 
    
             if (self.index_out[0] % 2) == 0:
-                change_parameters[1]= 0 
-                self.OUT0.setStyleSheet(ButtonStyleOff2) 
+                change_parameters[1]= 0
+                self.OUT0.setStyleSheet(ButtonStyleOff2)
+                self.OUT0.setIcon(self.iconSwitchOff) 
             else:
                 change_parameters[1]= 1
-                self.OUT0.setStyleSheet(ButtonStyleOn2) 
+                self.OUT0.setStyleSheet(ButtonStyleOn2)
+                self.OUT0.setIcon(self.iconSwitchOn) 
                 
             if (self.index_out[1] % 2) == 0:
                 change_parameters[2]= 0
-                self.OUT1.setStyleSheet(ButtonStyleOff2) 
+                self.OUT1.setStyleSheet(ButtonStyleOff2)
+                self.OUT1.setIcon(self.iconSwitchOff)
             else:
                 change_parameters[2]= 1
-                self.OUT1.setStyleSheet(ButtonStyleOn2) 
+                self.OUT1.setStyleSheet(ButtonStyleOn2)
+                self.OUT1.setIcon(self.iconSwitchOn) 
                 
             if (self.index_out[2] % 2) == 0:
                 change_parameters[3]= 0    
-                self.OUT2.setStyleSheet(ButtonStyleOff2) 
+                self.OUT2.setStyleSheet(ButtonStyleOff2)
+                self.OUT2.setIcon(self.iconSwitchOff)
             else:
                 change_parameters[3]= 1
-                self.OUT2.setStyleSheet(ButtonStyleOn2) 
+                self.OUT2.setStyleSheet(ButtonStyleOn2)
+                self.OUT2.setIcon(self.iconSwitchOn) 
                 
             if (self.index_out[3] % 2) == 0:
                 change_parameters[4]= 0
-                self.OUT3.setStyleSheet(ButtonStyleOff2) 
+                self.OUT3.setStyleSheet(ButtonStyleOff2)
+                self.OUT3.setIcon(self.iconSwitchOff)
             else:
                 change_parameters[4]= 1
-                self.OUT3.setStyleSheet(ButtonStyleOn2) 
+                self.OUT3.setStyleSheet(ButtonStyleOn2)
+                self.OUT3.setIcon(self.iconSwitchOn)
                 
             if (self.index_out[4] % 2) == 0:
                 change_parameters[5]= 0 
-                self.OUT4.setStyleSheet(ButtonStyleOff2) 
+                self.OUT4.setStyleSheet(ButtonStyleOff2)
+                self.OUT4.setIcon(self.iconSwitchOff)
             else:
                 change_parameters[5]= 1
-                self.OUT4.setStyleSheet(ButtonStyleOn2) 
+                self.OUT4.setStyleSheet(ButtonStyleOn2)
+                self.OUT4.setIcon(self.iconSwitchOn)
                 
             if (self.index_out[5] % 2) == 0:
                 change_parameters[6]= 0
-                self.OUT5.setStyleSheet(ButtonStyleOff2) 
+                self.OUT5.setStyleSheet(ButtonStyleOff2)
+                self.OUT5.setIcon(self.iconSwitchOff)
             else:
                 change_parameters[6]= 1
                 self.OUT5.setStyleSheet(ButtonStyleOn2) 
+                self.OUT5.setIcon(self.iconSwitchOn)
                   
             if (self.index_out[6] % 2) == 0:
                 change_parameters[7]= 0
-                self.OUT6.setStyleSheet(ButtonStyleOff2) 
+                self.OUT6.setStyleSheet(ButtonStyleOff2)
+                self.OUT6.setIcon(self.iconSwitchOff)
             else: 
                 change_parameters[7]= 1
-                self.OUT6.setStyleSheet(ButtonStyleOn2) 
+                self.OUT6.setStyleSheet(ButtonStyleOn2)
+                self.OUT6.setIcon(self.iconSwitchOn)
             
             if (self.index_out[7] % 2) == 0:
                 change_parameters[8]= 0
-                self.OUT7.setStyleSheet(ButtonStyleOff2)  
+                self.OUT7.setStyleSheet(ButtonStyleOff2)
+                self.OUT7.setIcon(self.iconSwitchOff) 
             else:
                 change_parameters[8]= 1
-                self.OUT7.setStyleSheet(ButtonStyleOn2) 
+                self.OUT7.setStyleSheet(ButtonStyleOn2)
+                self.OUT7.setIcon(self.iconSwitchOn) 
             self.connectParameters = 0
    
     def check_digital_pot(self):
@@ -1338,10 +1444,11 @@ class MainWindow(QMainWindow):
         read adc value and show on display
         """
         self.read_adc_all = self.box.read_adc
-        self.readADC0.display(self.read_adc_all[0])
-        self.readADC1.display(self.read_adc_all[1])
-        self.readADC2.display(self.read_adc_all[2])
-        self.readADC3.display(self.read_adc_all[3])
+        #print(self.read_adc_all)
+        self.readADC0.display(float(self.read_adc_all[0]))
+        self.readADC1.display(float(self.read_adc_all[1]))
+        self.readADC2.display(float(self.read_adc_all[2]))
+        self.readADC3.display(float(self.read_adc_all[3]))
     
     def read_pwm(self):
         """
