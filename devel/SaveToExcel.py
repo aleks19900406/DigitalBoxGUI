@@ -35,7 +35,7 @@ for rowMove in range(1,500):
             wb.save(f"excelFile/sample{indexFile}.xlsx")
             print('new file',indexFile)
     #print('rowMove',rowMove)
-wb.save(f"excelFile/sample.xlsx")
+
     
 # Anytime you modify the Workbook object 
 # or its sheets and cells, the spreadsheet 
