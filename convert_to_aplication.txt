@@ -15,3 +15,9 @@ C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project
 -settings:
 path to save exe file:
 C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Aplication
+
+!!! copy file from GUI project to GUI application !!!
+- data
+- QT_designer
+
+
