@@ -515,6 +515,7 @@ class MainWindow(QMainWindow):
         allParameters.extend(digitalPot)
         allParameters.extend(digitalOut)
         allParameters.extend(self.read_adc_all)
+        allParameters.extend(self.readVoltage)
         allParameters.extend(readPwm1)
         allParameters.extend(self.readPwm1)
         allParameters.extend(readPwm2)
@@ -595,6 +596,7 @@ class MainWindow(QMainWindow):
                             setVoltage.append(f'setVoltage{index}')
                         else:
                             setVoltage.append(self.read_all_lines[11].replace('\n','').split(',')[index])
+                            
                     except IndexError:
                         setVoltage.append(f'setVoltage{index}')
                     except AttributeError:         
@@ -632,6 +634,7 @@ class MainWindow(QMainWindow):
                 sheetNames.extend(digitalPot)
                 sheetNames.extend(digitalOut)
                 sheetNames.extend(readAdc)
+                sheetNames.extend(setVoltage)
                 sheetNames.extend(readPwm1)
                 sheetNames.extend(setPwm1)
                 sheetNames.extend(readPwm2)
@@ -773,6 +776,8 @@ class MainWindow(QMainWindow):
         try:
             self.read_adc()
         except Exception:
+            self.read_adc_all = [0,0,0,0]
+            #print(self.read_adc_all)
             with open('check_error.txt', 'w') as f:
                 f.write(f'{errorNumber}\n')
                 f.write('!!!Dont get anything from ADC read !!!\n')
@@ -1464,19 +1469,19 @@ class MainWindow(QMainWindow):
         """
         set voltage when value change
         """
-        readVoltage =[self.SetVoltage0.value(),self.SetVoltage1.value(),self.SetVoltage2.value(),self.SetVoltage3.value()]
-        if beginSetVoltage[0] != readVoltage[0]:
-            self.box.set_voltage = (0,readVoltage[0])
-            beginSetVoltage[0] = readVoltage[0]
-        if beginSetVoltage[1] != readVoltage[1]:
-            self.box.set_voltage = (1,readVoltage[1])
-            beginSetVoltage[1] = readVoltage[1]
-        if beginSetVoltage[2] != readVoltage[2]:
-            self.box.set_voltage = (2,readVoltage[2])
-            beginSetVoltage[2] = readVoltage[2]
-        if beginSetVoltage[3] != readVoltage[3]:
-            self.box.set_voltage = (3,readVoltage[3])
-            beginSetVoltage[3] = readVoltage[3]
+        self.readVoltage =[self.SetVoltage0.value(),self.SetVoltage1.value(),self.SetVoltage2.value(),self.SetVoltage3.value()]
+        if beginSetVoltage[0] != self.readVoltage[0]:
+            self.box.set_voltage = (0,self.readVoltage[0])
+            beginSetVoltage[0] = self.readVoltage[0]
+        if beginSetVoltage[1] != self.readVoltage[1]:
+            self.box.set_voltage = (1,self.readVoltage[1])
+            beginSetVoltage[1] = self.readVoltage[1]
+        if beginSetVoltage[2] != self.readVoltage[2]:
+            self.box.set_voltage = (2,self.readVoltage[2])
+            beginSetVoltage[2] = self.readVoltage[2]
+        if beginSetVoltage[3] != self.readVoltage[3]:
+            self.box.set_voltage = (3,self.readVoltage[3])
+            beginSetVoltage[3] = self.readVoltage[3]
     
     def SetFrequencyBar1(self):
         """
