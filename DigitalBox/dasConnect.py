@@ -461,7 +461,6 @@ class WifiEsp32Connect():
     def connect(self):
         try:
             self.ser = socket.socket() 
-            #print(self.comport)
             self.ser.connect((self.comport, PORT))
             sleep(3)
             self.ser.send(f'{CHECK_VERSION}#'.encode())
@@ -785,7 +784,7 @@ class WifiEsp32Connect():
         return self._read_adc
    
 """
-box = WifiEsp32Connect("192.168.1.116")
+box = WifiEsp32Connect("192.168.1.35")
 
 #box = SERIALCONNECT("COM33")
 box.connect()
@@ -793,16 +792,16 @@ sleep(3)
 for _ in range(10):
     #box.set_digital_pot([1,0,1],45)
     #sleep(0.2)
-    #print(box.digital_in[:])
+    print(box.digital_in[:])
     #box.main = 0
-    #sleep(0.2)
-    box.main = 1
-    for a in range(3):
-        box.set_voltage = (a,3)
-        sleep(0.2)
+    sleep(2)
+    #box.main = 1
+    #for a in range(3):
+     #   box.set_voltage = (a,3)
+      #  sleep(0.2)
     #print(box.digital_in[:])
-    print('adc read', box.read_adc)
-    print('pwm read', box.read_pwm)
+    #print('adc read', box.read_adc)
+    #print('pwm read', box.read_pwm)
     #try:
      #   print('pwm read', box.read_adc)
     #except:
