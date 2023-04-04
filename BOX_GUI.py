@@ -239,7 +239,7 @@ class MainWindow(QMainWindow):
         self.refreshSaving = 1000
         self.index_on_off = 0
         self.index_out = [0,0,0,0,0,0,0,0]
-        self.index_extras = [0,0,0,0,0]
+        self.index_extras = [0,0,0,0,0,0]
         self.connectParameters = 0
         self.box_is_connected = 0
         self.index_refreshing = 0
@@ -300,6 +300,7 @@ class MainWindow(QMainWindow):
         self.BoxConnect.addItems(listConnection())
         self.BoxMarks.addItems(listBoxMarks())
         self.SelectPotTable.addItems(listDigitalPotTable())
+        self.AllTable = listDigitalPotTable()
         self.ExcelFile.addItems(dataFile())
         ##################### SAVE DATA ##########################################
         self.ExcelFile.activated[str].connect(self.excelFile)
@@ -307,6 +308,7 @@ class MainWindow(QMainWindow):
         self.ExcelFile.setStyleSheet(ButtonStyleWhite)
         self.startStopSaving.clicked.connect(self.startStopSave)
         self.startStopSaving.setEnabled(False)
+        self.startStopSaving.setStyleSheet(ButtonStyleOff2)
         self.backupSave.setVisible(False)
         self.backupSave.setStyleSheet("color: red")
         ################### TIMER ################################################
@@ -324,8 +326,11 @@ class MainWindow(QMainWindow):
         self.refreshSaveData = QTimer()
         self.refreshSaveData.timeout.connect(self.savingData)  # 
         self.refreshSaveData.setInterval(MAIN_TIME_REFRESHING)
+        self.dateTimeTimer = QTimer()
+        self.dateTimeTimer.timeout.connect(self.showTime)  # 
+        self.dateTimeTimer.setInterval(MAIN_TIME_REFRESHING)
         self.thread_check_input = QThreadPool()
-        self.time_show = QThreadPool()
+        #self.time_show = QThreadPool()
         self.saveDataThread = QThreadPool()
         ###########################################################################
         self.date_and_time.setText("")
@@ -350,7 +355,7 @@ class MainWindow(QMainWindow):
         self.iconRefresh.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/ButtonRefresh.png')))
         self.RefreshingConnection.setIcon(self.iconRefresh)
         self.iconSaveData = QtGui.QIcon()
-        self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
+        self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
         self.startStopSaving.setIcon(self.iconSaveData)
     
     def resetExcelParameters(self):
@@ -362,8 +367,6 @@ class MainWindow(QMainWindow):
         self.refreshSaveData.stop()
         self.ExcelFile.setStyleSheet(ButtonStyleWhite)
         self.refreshSaveData.stop()
-        self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
-        self.startStopSaving.setIcon(self.iconSaveData)
      
     def backup_save(self):
         """
@@ -443,17 +446,15 @@ class MainWindow(QMainWindow):
         """
         - start or stop saving parameters to excel
         """
+        print("file name",self.fileName)
         if self.index_refreshing >= 1:
             self.label_errorSaveFile.setVisible(False)
             self.indexButtonSave +=1
             if  self.indexButtonSave == 1:
-                self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
-                self.startStopSaving.setIcon(self.iconSaveData)
                 self.savingBar.setVisible(False)
                 self.ExcelFile.setStyleSheet(ButtonStyleOn)
                 self.refreshSaveData.start()
                 self.saveBarThread.terminate()
-        
             else:
                 self.repeatSaveData = 0
                 self.ExcelFile.setStyleSheet(ButtonStyleWhite)
@@ -479,7 +480,7 @@ class MainWindow(QMainWindow):
         """
         - save data to excel file
         """
-        if self.indexSaveData == 86400:  ### saving data to on file 24h if refreshing is 1s
+        if self.indexSaveData == 86400:  ### saving data to file 24h if refreshing is 1s
             self.refreshSaveData.stop()
             sleep(1)
             self.repeatSaveData += 1
@@ -649,7 +650,6 @@ class MainWindow(QMainWindow):
                     columnName = self.sheet.cell(row = 1, column = index+2) 
                     columnName.value = name
                 if  self.indexButtonSave == 1:
-                    self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
                     self.ExcelFile.setStyleSheet(ButtonStyleOn)
                     self.startStopSaving.setEnabled(True)
                     self.startStopSaving.setIcon(self.iconSaveData)
@@ -718,6 +718,18 @@ class MainWindow(QMainWindow):
         self.time=QDateTime.currentDateTime()
         timeDisplay=self.time.toString('dd-MM-yyyy hh:mm:ss dddd')
         self.date_and_time.setText(timeDisplay)
+        if  self.indexButtonSave == 1:
+            if(self.index_extras[5] % 2) == 0:
+                self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
+                self.startStopSaving.setIcon(self.iconSaveData)
+                #self.startStopSaving.setStyleSheet(ButtonStyleOn2)
+            else:
+                self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn1.png')))
+                self.startStopSaving.setIcon(self.iconSaveData)
+                #self.startStopSaving.setStyleSheet(ButtonStyleOff2)
+        self.index_extras[5] += 1
+        if self.index_extras[5] >=2:
+            self.index_extras[5] =0
     
     def timerDigitalBox(self):
         """
@@ -727,7 +739,7 @@ class MainWindow(QMainWindow):
         if self.digitalPotIndex == 0:
             tbegin = time()
             try:
-                self.time_show.start(self.showTime)
+                #self.time_show.start(self.showTime)
                 self.check_output()
                 self.set_voltage()
                 self.set_pwm1()
@@ -736,7 +748,7 @@ class MainWindow(QMainWindow):
                 self.input_state_indicate()
                 self.thread_check_input.start(self.check_all_input)
                 tend = time()
-                #print('time main box',int((tend-tbegin)*1000),'interval:',MAIN_TIME_REFRESHING)
+                #print('time main box',int((tend-tbegin)*1000),'ms','interval:',MAIN_TIME_REFRESHING)
                 
                 # increase main time refreshing if function executing to long
                 if  (tend-tbegin)*1000 >= MAIN_TIME_REFRESHING:
@@ -949,8 +961,8 @@ class MainWindow(QMainWindow):
         self.Connection = CONNECTBOX
         self.startStopSaving.setEnabled(False)
         self.resetExcelParameters()
-        self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
-        self.startStopSaving.setIcon(self.iconSaveData)
+        #self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
+        #self.startStopSaving.setIcon(self.iconSaveData)
         try:
             if self.index_refreshing >= 1:
                 sleep(2)
@@ -964,6 +976,7 @@ class MainWindow(QMainWindow):
                 if VERSION >= VERZIJA_RPI:
                     self.index_refreshing +=1
                     self.DIGITAL_BOX_MAIN.start()
+                    self.dateTimeTimer.start()
                     self.BOX_VERSION.setVisible(False)
                     self.warningMessagePot.setVisible(False)
                     self.warningMessageDac.setVisible(False)
@@ -979,11 +992,13 @@ class MainWindow(QMainWindow):
             elif CONNECTBOX[0:3] =='ESP':
                 self.box = WifiEsp32Connect(CONNECTBOX.replace('ESP32 - ',''))
                 VERSION = self.box.connect()
+                print(VERSION)
                 self.label_errorSaveFile.setVisible(False)
                 self.label_saveFile.setVisible(True)
                 if VERSION >= VERZIJA_ESP:
                     self.index_refreshing +=1
                     self.DIGITAL_BOX_MAIN.start()
+                    self.dateTimeTimer.start()
                     self.BOX_VERSION.setVisible(False)
                     self.warningMessagePot.setVisible(False)
                     self.warningMessageDac.setVisible(False)
@@ -1004,6 +1019,7 @@ class MainWindow(QMainWindow):
                 if VERSION >= VERZIJA_RPI:
                     self.index_refreshing +=1
                     self.DIGITAL_BOX_MAIN.start()
+                    self.dateTimeTimer.start()
                     self.BOX_VERSION.setVisible(False)
                     self.warningMessagePot.setVisible(False)
                     self.warningMessageDac.setVisible(False)
@@ -1046,6 +1062,7 @@ class MainWindow(QMainWindow):
         - activate selected digital pot slider
         - set min,max and interval for selected slider
         """
+        #print(self.AllTable)
         for index,allPotTable in enumerate(self.AllTable):
             if allPotTable == potTable:
                 self.AllTable.pop(index)
@@ -1101,15 +1118,16 @@ class MainWindow(QMainWindow):
             self.BoxMarks.addItems(listBoxMarks())
             self.SelectPotTable.addItems(listDigitalPotTable())
             self.ExcelFile.addItems(dataFile())
-            self.AllTable = listDigitalPotTable()
             self.BOX_VERSION.setVisible(False)
         else:
             sleep(2)
             self.index_refreshing +=1
             self.refreshSaveData.stop()
-            self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
-            self.startStopSaving.setIcon(self.iconSaveData)
+            #self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
+            #self.startStopSaving.setIcon(self.iconSaveData)
+            self.startStopSaving.setEnabled(False)
             self.DIGITAL_BOX_MAIN.stop()
+            self.dateTimeTimer.stop()
             self.DIGITAL_BOX_MAIN.setInterval(1000)
             self.BoxConnect.clear()
             self.BoxMarks.clear()
@@ -1448,7 +1466,7 @@ class MainWindow(QMainWindow):
         """
         read adc value and show on display
         """
-        self.read_adc_all = self.box.read_adc
+        self.read_adc_all = self.box.read_adc[0:4]
         #print(self.read_adc_all)
         self.readADC0.display(float(self.read_adc_all[0]))
         self.readADC1.display(float(self.read_adc_all[1]))
