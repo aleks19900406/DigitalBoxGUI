@@ -446,7 +446,7 @@ class MainWindow(QMainWindow):
         """
         - start or stop saving parameters to excel
         """
-        print("file name",self.fileName)
+        #print("file name",self.fileName)
         if self.index_refreshing >= 1:
             self.label_errorSaveFile.setVisible(False)
             self.indexButtonSave +=1
@@ -992,7 +992,6 @@ class MainWindow(QMainWindow):
             elif CONNECTBOX[0:3] =='ESP':
                 self.box = WifiEsp32Connect(CONNECTBOX.replace('ESP32 - ',''))
                 VERSION = self.box.connect()
-                print(VERSION)
                 self.label_errorSaveFile.setVisible(False)
                 self.label_saveFile.setVisible(True)
                 if VERSION >= VERZIJA_ESP:
