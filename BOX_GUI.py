@@ -1505,9 +1505,9 @@ class MainWindow(QMainWindow):
         - set frequency with slider
         - color the slider when value change
         """
+       
         self.SetFrequency1.setValue(self.SetPwmBar1.value())
         self.SetPwmBar1.setStyleSheet(f"background-color: rgb({250-int((self.SetPwmBar1.value()/100))},{250-int((self.SetPwmBar1.value()/100))},255)")
-       
     def SetFrequencyBar2(self):
         """
         - set frequency with slider
@@ -1515,11 +1515,14 @@ class MainWindow(QMainWindow):
         """
         self.SetFrequency2.setValue(self.SetPwmBar2.value())
         self.SetPwmBar2.setStyleSheet(f"background-color: rgb({250-int((self.SetPwmBar2.value()/100))},{250-int((self.SetPwmBar2.value()/100))},255)")
-      
     def set_pwm1(self):
         """
         set PWM1 when value change
         """
+        self.BeginValuePwm1=self.setPwmBegin1.value()
+        self.EndValuePwm1=self.setPwmEnd1.value()
+        self.SetPwmBar1.setMinimum(self.BeginValuePwm1)
+        self.SetPwmBar1.setMaximum(self.EndValuePwm1)
         self.readPwm1 =[self.SetFrequency1.value(),self.SetDuty1.value()]
         self.SetPwmBar1.setValue(self.SetFrequency1.value())
         if setPwm1[0] != self.readPwm1[0]:
@@ -1533,6 +1536,10 @@ class MainWindow(QMainWindow):
         """
         set PWM2 when value change
         """
+        self.BeginValuePwm2=self.setPwmBegin2.value()
+        self.EndValuePwm2=self.setPwmEnd2.value()
+        self.SetPwmBar2.setMinimum(self.BeginValuePwm2)
+        self.SetPwmBar2.setMaximum(self.EndValuePwm2)
         self.readPwm2 =[self.SetFrequency2.value(),self.SetDuty2.value()]
         self.SetPwmBar2.setValue(self.SetFrequency2.value())
         if setPwm2[0] != self.readPwm2[0]:
