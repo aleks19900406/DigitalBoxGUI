@@ -6,8 +6,6 @@ from PyQt5 import QtWidgets,QtGui
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QMessageBox,QMainWindow,QApplication
 from PyQt5.QtCore import *
-from cv2 import repeat
-from os.path import abspath, basename, dirname, join, realpath
 from time import sleep,time
 from package.tester._clients.das import DAS  # Import DAS class
 from DigitalBox.dasConnect import SERIALCONNECT,WifiEsp32Connect
