@@ -1523,9 +1523,9 @@ p, li { white-space: pre-wrap; }
    <widget class="QScrollBar" name="SetPwmBar1">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>440</y>
-      <width>471</width>
+      <x>810</x>
+      <y>430</y>
+      <width>501</width>
       <height>21</height>
      </rect>
     </property>
@@ -1536,7 +1536,7 @@ p, li { white-space: pre-wrap; }
      <number>10000</number>
     </property>
     <property name="singleStep">
-     <number>200</number>
+     <number>10</number>
     </property>
     <property name="sliderPosition">
      <number>13</number>
@@ -1596,7 +1596,7 @@ p, li { white-space: pre-wrap; }
      <number>10000</number>
     </property>
     <property name="singleStep">
-     <number>50</number>
+     <number>1</number>
     </property>
    </widget>
    <widget class="QPushButton" name="INPUT_27">
@@ -2394,9 +2394,9 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QScrollBar" name="SetPwmBar2">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>610</y>
-      <width>471</width>
+      <x>810</x>
+      <y>620</y>
+      <width>511</width>
       <height>21</height>
      </rect>
     </property>
@@ -2407,7 +2407,7 @@ selection-color: rgb(255, 170, 0);</string>
      <number>10000</number>
     </property>
     <property name="singleStep">
-     <number>200</number>
+     <number>10</number>
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
@@ -2437,7 +2437,7 @@ selection-color: rgb(255, 170, 0);</string>
      <number>10000</number>
     </property>
     <property name="singleStep">
-     <number>50</number>
+     <number>1</number>
     </property>
    </widget>
    <widget class="QLabel" name="labelADC1">
@@ -3155,7 +3155,7 @@ selection-color: rgb(255, 170, 0);</string>
      <rect>
       <x>1290</x>
       <y>160</y>
-      <width>81</width>
+      <width>71</width>
       <height>31</height>
      </rect>
     </property>
@@ -3196,7 +3196,7 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QLabel" name="label_connect_2">
     <property name="geometry">
      <rect>
-      <x>1360</x>
+      <x>1350</x>
       <y>160</y>
       <width>41</width>
       <height>31</height>
@@ -3287,6 +3287,154 @@ selection-color: rgb(255, 170, 0);</string>
      <string>Saving data please wait</string>
     </property>
    </widget>
+   <widget class="QSpinBox" name="setPwmBegin2">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>660</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="maximum">
+     <number>10000</number>
+    </property>
+    <property name="singleStep">
+     <number>10</number>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="setPwmEnd2">
+    <property name="geometry">
+     <rect>
+      <x>1260</x>
+      <y>660</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="maximum">
+     <number>10000</number>
+    </property>
+    <property name="singleStep">
+     <number>10</number>
+    </property>
+    <property name="stepType">
+     <enum>QAbstractSpinBox::DefaultStepType</enum>
+    </property>
+    <property name="value">
+     <number>10000</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMin4_3">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>640</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>BEGIN:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMax4_4">
+    <property name="geometry">
+     <rect>
+      <x>1260</x>
+      <y>640</y>
+      <width>31</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>END:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMax4_5">
+    <property name="geometry">
+     <rect>
+      <x>1260</x>
+      <y>450</y>
+      <width>31</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>END:</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="setPwmBegin1">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>470</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="maximum">
+     <number>10000</number>
+    </property>
+    <property name="singleStep">
+     <number>10</number>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="setPwmEnd1">
+    <property name="geometry">
+     <rect>
+      <x>1260</x>
+      <y>470</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="maximum">
+     <number>10000</number>
+    </property>
+    <property name="singleStep">
+     <number>10</number>
+    </property>
+    <property name="stepType">
+     <enum>QAbstractSpinBox::DefaultStepType</enum>
+    </property>
+    <property name="value">
+     <number>10000</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="PotMin4_4">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>450</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>BEGIN:</string>
+    </property>
+   </widget>
    <zorder>label_digital_pot</zorder>
    <zorder>labelPwm1_0</zorder>
    <zorder>label_connect_2</zorder>
@@ -3362,7 +3510,6 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>INPUT_3</zorder>
    <zorder>ReadDuty2</zorder>
    <zorder>readADC1</zorder>
-   <zorder>SetPwmBar1</zorder>
    <zorder>labelADC0</zorder>
    <zorder>SetFrequency1</zorder>
    <zorder>INPUT_27</zorder>
@@ -3398,7 +3545,6 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>INPUT_17</zorder>
    <zorder>digital_pot3</zorder>
    <zorder>on_off</zorder>
-   <zorder>SetPwmBar2</zorder>
    <zorder>SetFrequency2</zorder>
    <zorder>labelADC1</zorder>
    <zorder>readADC2</zorder>
@@ -3445,6 +3591,16 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>label_marks_7</zorder>
    <zorder>labelSetVoltage0</zorder>
    <zorder>labelSetVoltage1</zorder>
+   <zorder>setPwmBegin2</zorder>
+   <zorder>setPwmEnd2</zorder>
+   <zorder>PotMin4_3</zorder>
+   <zorder>PotMax4_4</zorder>
+   <zorder>PotMax4_5</zorder>
+   <zorder>setPwmBegin1</zorder>
+   <zorder>setPwmEnd1</zorder>
+   <zorder>PotMin4_4</zorder>
+   <zorder>SetPwmBar1</zorder>
+   <zorder>SetPwmBar2</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
