@@ -3441,6 +3441,27 @@ selection-color: rgb(255, 170, 0);</string>
      <string>BEGIN:</string>
     </property>
    </widget>
+   <widget class="QLabel" name="labelTableOpenError">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>330</y>
+      <width>1161</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ERROR</string>
+    </property>
+   </widget>
    <zorder>label_digital_pot</zorder>
    <zorder>labelPwm1_0</zorder>
    <zorder>label_connect_2</zorder>
@@ -3607,6 +3628,7 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>PotMin4_4</zorder>
    <zorder>SetPwmBar1</zorder>
    <zorder>SetPwmBar2</zorder>
+   <zorder>labelTableOpenError</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
