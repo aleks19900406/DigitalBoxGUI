@@ -99,13 +99,14 @@ def listDigitalDacTable():
     """
     Convert all DacTable file name to list except readMe.txt
     """
-    DigitalPotList =[]
-    DigitalPotList.clear()
+    DigitalDacList =[]
+    DigitalDacList.clear()
     for file_name in os.listdir(BOX_DIGITAL_DAC_PATH):
         if file_name == "readMe.txt":
             continue
-        DigitalPotList.append(file_name.replace('.txt',''))
-    return DigitalPotList
+        if file_name.endswith('.txt'):
+            DigitalDacList.append(file_name.replace('.txt',''))
+    return DigitalDacList
 
 def dataFile():
     """
@@ -129,7 +130,8 @@ def listBoxMarks():
         #print(file_name)
         if file_name == "readMe.txt":
             continue
-        boxMarkList.append(file_name.replace('.txt',''))
+        if file_name.endswith('.txt'):
+            boxMarkList.append(file_name.replace('.txt',''))
     return boxMarkList
 
 def listDigitalPotTable():
@@ -141,7 +143,8 @@ def listDigitalPotTable():
     for file_name in os.listdir(BOX_DIGITAL_POT_PATH):
         if file_name == "readMe.txt":
             continue
-        DigitalPotList.append(file_name.replace('.txt',''))
+        if file_name.endswith('.txt'):
+            DigitalPotList.append(file_name.replace('.txt',''))
     return DigitalPotList
 
 def deliteListDigitalPotTable():
@@ -151,7 +154,8 @@ def deliteListDigitalPotTable():
     DigitalPotList =[]
     DigitalPotList.clear()
     for file_name in os.listdir(BOX_DIGITAL_POT_PATH):
-        DigitalPotList.append(file_name.replace('.txt',''))
+        if file_name.endswith('.txt'):
+            DigitalPotList.append(file_name.replace('.txt',''))
     return DigitalPotList
 
 def sliderColor(self,sliderIndex,minValue,maxValue):
@@ -270,6 +274,9 @@ class MainWindow(QMainWindow):
         self.label_errorSaveFile.setVisible(False)
         self.label_errorSaveFile.setFont(QFont('Arial', 12))
         self.label_errorSaveFile.setStyleSheet("color: red")
+        self.labelTableOpenError.setVisible(False)
+        self.labelTableOpenError.setFont(QFont('Arial', 20))
+        self.labelTableOpenError.setStyleSheet("color: red")
         ################## DIGITAL OUTPUT #########################################
         self.OUT0.clicked.connect(self.output0)
         self.OUT1.clicked.connect(self.output1)
@@ -355,6 +362,7 @@ class MainWindow(QMainWindow):
         self.iconSaveData = QtGui.QIcon()
         self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
         self.startStopSaving.setIcon(self.iconSaveData)
+    
     
     def resetExcelParameters(self):
         """
@@ -1635,9 +1643,10 @@ class MainWindow(QMainWindow):
         show dac set screen
         """
         if (self.index_extras[2] % 2) == 0:
+            
             self.ButtonDacSet.setStyleSheet(ButtonStyleOn2)
             SetDacValue.show()
-        else: 
+        else:
             self.ButtonDacSet.setStyleSheet(ButtonStyleOff2)
             SetDacValue.close()
             
@@ -1702,8 +1711,11 @@ class MainWindow(QMainWindow):
         - show error message if box is not connected
         - stop the timer
         """
+        
         if self.index_refreshing >= 1:
             if (self.index_extras[3] % 2) == 0:
+                self.labelTableOpenError.setText(f"!!! CREATE POT TABLE IS OPEN. GUI STOPPED!!!")
+                self.labelTableOpenError.setVisible(True)
                 self.ButtonSetPot.setStyleSheet(ButtonStyleOn2)
                 PotTableSet.show()
                 self.DIGITAL_BOX_MAIN.stop()
@@ -1711,6 +1723,7 @@ class MainWindow(QMainWindow):
                 self.ReadSetPotDac.start()
                 
             else: 
+                self.labelTableOpenError.setVisible(False)
                 self.ButtonSetPot.setStyleSheet(ButtonStyleOff2)
                 PotTableSet.close()
                 self.ReadSetPotDac.stop()
@@ -1732,6 +1745,7 @@ class MainWindow(QMainWindow):
         self.ButtonSetPot.setStyleSheet(ButtonStyleOff2)
         self.ReadSetPotDac.stop()
         self.DIGITAL_BOX_MAIN.start()
+        self.labelTableOpenError.setVisible(False)
     
     def buttonSetDac(self):
         """
@@ -1741,13 +1755,16 @@ class MainWindow(QMainWindow):
         """
         if self.index_refreshing >= 1:
             if (self.index_extras[4] % 2) == 0:
+                self.labelTableOpenError.setText(f"!!! CREATE DAC TABLE IS OPEN. GUI STOPPED!!!")
+                self.labelTableOpenError.setVisible(True)
                 self.ButtonSetDac.setStyleSheet(ButtonStyleOn2)
                 DacTableCreate.show()
                 self.DIGITAL_BOX_MAIN.stop()
                 self.DIGITAL_BOX_MAIN.setInterval(1000)
                 self.ReadSetPotDac.start()
                 
-            else: 
+            else:
+                self.labelTableOpenError.setVisible(False)
                 self.ButtonSetDac.setStyleSheet(ButtonStyleOff2)
                 DacTableCreate.close()
                 self.ReadSetPotDac.stop()
@@ -1771,6 +1788,7 @@ class MainWindow(QMainWindow):
         self.ButtonSetDac.setStyleSheet(ButtonStyleOff2)
         self.ReadSetPotDac.stop()
         self.DIGITAL_BOX_MAIN.start()
+        self.labelTableOpenError.setVisible(False)
       
     def check_DAC_pot(self):
         """
@@ -1823,23 +1841,70 @@ class MainWindow(QMainWindow):
         """
         global beginSetPot
         self.DIGITAL_BOX_MAIN.stop()
-        readPot = PotTableSet.Pot_value.value()
-        if beginSetPot != readPot:
-            if readPot <= 255:
-                self.box.set_digital_pot([PotTableSet.tableSelection(),0],readPot)
-                self.box.set_digital_pot([PotTableSet.tableSelection(),1,2,3],0)
-            elif readPot > 255 and readPot <= 255*2:
-                self.box.set_digital_pot([PotTableSet.tableSelection(),0],255)
-                self.box.set_digital_pot([PotTableSet.tableSelection(),1],readPot)
-                self.box.set_digital_pot([PotTableSet.tableSelection(),2,3],0)
-            elif readPot > 255*2 and readPot <= 255*3:
-                self.box.set_digital_pot([PotTableSet.tableSelection(),0,1],255)
-                self.box.set_digital_pot([PotTableSet.tableSelection(),2],readPot)
-                self.box.set_digital_pot([PotTableSet.tableSelection(),3],0)
-            elif readPot > 255*3:
-                self.box.set_digital_pot([PotTableSet.tableSelection(),0,1,2],255)
-                self.box.set_digital_pot([PotTableSet.tableSelection(),3],readPot)
-            beginSetPot = readPot
+        try:
+            readPot = PotTableSet.Pot_value.value()
+            TableFirstMin,TableFirstMax = tablePotMaxMin(self,f"{PotTableSet.tableSelection()[0:5]}{PotTableSet.tableSelection()[5]}.1")
+            #print('table-->',f"{PotTableSet.tableSelection()[0:5]}{PotTableSet.tableSelection()[5]}.1")
+            #print('max=',TableFirstMax)
+            if beginSetPot != readPot:
+                if PotTableSet.tableSelection()[7] == '1':
+                    PotTableSet.closeLableError()
+                    if readPot <= 255:
+                        self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),0],readPot)
+                        self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),1,2,3],0)
+                    elif readPot > 255 and readPot <= 255*2:
+                        self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),0],255)
+                        self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),1],readPot-255)
+                        self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),2,3],0)
+                    elif readPot > 255*2 and readPot <= 255*3:
+                        self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),0,1],255)
+                        self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),2],readPot-255*2)
+                        self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),3],0)
+                    elif readPot > 255*3:
+                        self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),0,1,2],255)
+                        self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),3],readPot-255*3)
+                    beginSetPot = readPot
+                if PotTableSet.tableSelection()[7] == '2':
+                    self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),4,5],0)
+                    if TableFirstMax <= 255:
+                        PotTableSet.closeLableError()
+                        if readPot <= 255:
+                            self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),1],readPot)
+                            self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),2,3],0)
+                        elif readPot > 255 and readPot <= 255*2:
+                            self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),1],255)
+                            self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),2],readPot-255)
+                            self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),3],0)
+                        elif readPot > 255*2 and readPot <= 255*3:
+                            self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),0,1,2],255)
+                            self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),3],readPot-255*2)
+                    elif TableFirstMax > 255 and TableFirstMax <= 255*2:
+                        PotTableSet.closeLableError()
+                        if readPot <= 255:
+                            self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),2],readPot)
+                            self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),3],0)
+                        elif readPot > 255 and readPot <= 255*2:
+                            self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),2],255)
+                            self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),3],readPot)
+                    elif TableFirstMax > 255*2 and TableFirstMax <= 255*3:
+                        PotTableSet.closeLableError()
+                        if readPot <= 255:
+                            self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),3],readPot)
+                           
+                    elif TableFirstMax > 255*3:
+                        PotTableSet.showLableError(PotTableSet.tableSelection()[5])
+                    beginSetPot = readPot
+                #print(self.box.digital_pot[:])
+        except ValueError:
+            with open('check_error.txt', 'w') as f:
+                f.write(f'{errorNumber}\n')
+                f.write(f'!!! {PotTableSet.tableSelection()[0:5]}{PotTableSet.tableSelection()[5]}.1 is empty or not created properly  !!!\n')
+                f.write('Solution:\n')
+                f.write(f' Check {PotTableSet.tableSelection()[0:5]}{PotTableSet.tableSelection()[5]}.1 and try again \n')
+                f.write(f'{errorNumber}\n')
+                f.write(traceback.format_exc())
+                f.write(f'{errorNumber}\n')
+                f.close()
     
     def createDacTable(self):
         """
@@ -2293,11 +2358,21 @@ class CreatePotTable(QMainWindow):
         self.SelectPotTable.addItems(listDigitalPotTable())
         self.SelectPotTable.setStyleSheet(ButtonStyleWhite)
         self.save_value.setStyleSheet(ButtonStyleOff2)
+        self.lableErrorPot.setVisible(False)
+        self.lableErrorPot.setFont(QFont('Arial', 11))
+        self.lableErrorPot.setStyleSheet("color: red")
+        self.lableErrorPot.setText(f"Pot value in Table x.1 is > 765. Table x.2 can not be set")
         ############################## BUTTON STYLE ##################################
         self.iconSaveOn = QtGui.QIcon()
         self.iconSaveOn.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
         self.save_value.setIcon(self.iconSaveOn)
         
+    def showLableError(self,number):
+        self.lableErrorPot.setVisible(True)
+        self.lableErrorPot.setText(f"Pot value in Table {number}.1 is > 765. Table {number}.2 can not be set")
+    def closeLableError(self):
+        self.lableErrorPot.setVisible(False)
+     
     def ChangeValuePot(self):
         """
         - return pot value
@@ -2320,7 +2395,7 @@ class CreatePotTable(QMainWindow):
         """
         - return table number
         """
-        return self.SelectTable[5]
+        return self.SelectTable
     
     def digitalPotTable(self,potTable):
         """
@@ -2331,13 +2406,15 @@ class CreatePotTable(QMainWindow):
         if self.save_index >= 1:
             self.f.close()
         self.save_index = 0
-        self.f = open(f'{BOX_DIGITAL_POT_PATH}\\{self.SelectTable}.txt', 'w')
+        #self.f = open(f'{BOX_DIGITAL_POT_PATH}\\{self.SelectTable}.txt', 'w')
         self.SelectPotTable.setStyleSheet(ButtonStyleOn)
     
     def savePotValue(self):
         """
         - save value to selected txt file
         """
+        if self.save_index == 0:
+            self.f = open(f'{BOX_DIGITAL_POT_PATH}\\{self.SelectTable}.txt', 'w')
         self.f = open(f'{BOX_DIGITAL_POT_PATH}\\{self.SelectTable}.txt', 'a')
         #print('save value',self.save_index,self.SelectTable,self.Pot_box_value.value(),self.Pot_value.value())
         self.f.writelines(f'{self.Pot_box_value.value()} {self.Pot_value.value()}\n')
@@ -2426,17 +2503,16 @@ class CreateDacTable(QMainWindow):
         mainWindow.closeDacTable()    
  
 if __name__ == "__main__":
-    
     app = QApplication(sys.argv)
     ### CREATE AN OBJECT NAMES ###
     mainWindow = MainWindow()
+    mainWindow.show()
     HusaModelWindow = HusaSetModule()
     PyroSetSystem = Bio21PyroSetSystem()
     SetDacValue = SetDacPot()
     PotTableSet = CreatePotTable()
     DacTableCreate = CreateDacTable()
     ##############################
-    mainWindow.show()
     sys.exit(app.exec_())
 
 
