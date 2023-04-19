@@ -63,7 +63,20 @@ def tableValueMaxMin(self,TablePot):
             dict_temp[float(key)] = value
     
     return [int(min(dict_temp.items(), key=operator.itemgetter(0))[0]),int(max(dict_temp.items(), key=operator.itemgetter(0))[0])]
-   
+
+def tablePotMaxMin(self,TablePot):
+    """
+    Get min and max from digitalPotTable
+    """
+    OPEN_TABLE = open(f'{POT_TABLE}\\{TablePot}.txt')
+    dict_temp = {}
+    for line in OPEN_TABLE:
+        if len(line)> 1:
+            key,value = line.split()
+            dict_temp[float(key)] = value
+    
+    return [int(min(dict_temp.items(), key=operator.itemgetter(0))[1]),int(max(dict_temp.items(), key=operator.itemgetter(0))[1])]
+  
 def set_digital_pot(self,temp: int,tableIndex = 1,slider =1,chipSelect = 1):
     """
     Get value from lookup table and send to pot value.
@@ -74,9 +87,9 @@ def set_digital_pot(self,temp: int,tableIndex = 1,slider =1,chipSelect = 1):
         if len(line)> 1:
             key,value  = line.split()
             dict_table[float(key)] = value
-       
+    
     tableMaxMin = [int(min(dict_table.items(), key=operator.itemgetter(0))[1]),int(max(dict_table.items(), key=operator.itemgetter(0))[1])]
-
+   
     if tableMaxMin[0] > tableMaxMin[1]:
         tableMaxSlider = tableMaxMin[0]
     else:
