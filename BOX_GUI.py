@@ -277,6 +277,7 @@ class MainWindow(QMainWindow):
         self.labelTableOpenError.setVisible(False)
         self.labelTableOpenError.setFont(QFont('Arial', 20))
         self.labelTableOpenError.setStyleSheet("color: red")
+        self.connectBar.setVisible(False)
         ################## DIGITAL OUTPUT #########################################
         self.OUT0.clicked.connect(self.output0)
         self.OUT1.clicked.connect(self.output1)
@@ -337,6 +338,7 @@ class MainWindow(QMainWindow):
         self.thread_check_input = QThreadPool()
         #self.time_show = QThreadPool()
         self.saveDataThread = QThreadPool()
+        self.connectAnimation = QThreadPool()
         ###########################################################################
         self.date_and_time.setText("")
         self.savingBar.setVisible(False)
@@ -956,7 +958,14 @@ class MainWindow(QMainWindow):
                 with open('check_error.txt', 'w') as f:
                     f.write(traceback.format_exc())
                 f.close()
-           
+    
+    def animationConnect(self):
+        self.connectBar.setVisible(True)
+        for value in range(0,110,10):
+            self.connectBar.setValue(value)
+            sleep(0.2)
+        self.connectBar.setVisible(False)
+        self.connectBar.setValue(0)
     def connectBox(self,CONNECTBOX):
         """
         - connect digital box with RPI or direct with digital box(serial connection)
@@ -967,9 +976,9 @@ class MainWindow(QMainWindow):
         self.Connection = CONNECTBOX
         self.startStopSaving.setEnabled(False)
         self.resetExcelParameters()
-        #self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
-        #self.startStopSaving.setIcon(self.iconSaveData)
+        self.connectAnimation.start(self.animationConnect)
         try:
+            print('connect')
             if self.index_refreshing >= 1:
                 sleep(2)
                 self.box.disconnect()
@@ -982,7 +991,6 @@ class MainWindow(QMainWindow):
                 if VERSION >= VERZIJA_RPI:
                     self.index_refreshing +=1
                     self.DIGITAL_BOX_MAIN.start()
-                    self.dateTimeTimer.start()
                     self.BOX_VERSION.setVisible(False)
                     self.warningMessagePot.setVisible(False)
                     self.warningMessageDac.setVisible(False)
@@ -1020,6 +1028,7 @@ class MainWindow(QMainWindow):
                 #print('connect to rpi')
                 self.box = DAS(CONNECTBOX.replace('RPI - ',''))  #
                 self.box.connect()
+                sleep(2)
                 VERSION =  self.box.box_version[0].strip()
                 if VERSION >= VERZIJA_RPI:
                     self.index_refreshing +=1
@@ -1042,7 +1051,7 @@ class MainWindow(QMainWindow):
             self.ButtonSetPot.setStyleSheet(ButtonStyleOff2)
             self.ButtonSetDac.setStyleSheet(ButtonStyleOff2)
             self.warningMessageAddFunction.setStyleSheet("color: black")
-            self.warningMessageAddFunction.setText(f"ADDITIONAL FUNCTIONS")          
+            self.warningMessageAddFunction.setText(f"ADDITIONAL FUNCTIONS")     
         except:
             with open('check_error.txt', 'w') as f:
                 f.write(f'{errorNumber}\n')
