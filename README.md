@@ -1,6 +1,6 @@
 1. downoload the project
 
-3. create codna environment
+3. create environment
 
 > `conda create -n myenv python=3.8.15`
 
