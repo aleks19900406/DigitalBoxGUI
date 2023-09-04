@@ -3,6 +3,7 @@ from time import sleep, time
 import serial
 import traceback
 import socket
+import datetime
 SEND_TIME = 0.1
 PORT = 9001             #ESP32 Server Port   
 ########################## COMMAND FOR BOX WITH ESP 32 ###########################
@@ -23,7 +24,7 @@ SET_DUTY = "SET_DC_PWM2kHz"
 SET_FREQUENCY = "SET_SIG_f"
 ##################################################################################
 CHECK_VERSION = 'VERZIJa'
-errorNumber ='#'*100
+errorNumber ='#'*50
 analogOutDict = {
         0: "13,A",
         1: "12,D",
@@ -41,7 +42,6 @@ def Convert(string):
     return list1
 
 def convert_digital_in(read_digital_in):
-
     all_digital_in =[]
     if read_digital_in.split(' ')[3] == "":
         read_digital_in=read_digital_in + '0'
@@ -110,10 +110,12 @@ class SERIALCONNECT():
             VERSION = self.ser.readline().decode().strip()
         except:
             print('Device disconnected')
-            with open('check_error.txt', 'w') as f:
-                f.write(f'{errorNumber}\n')
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
                 f.write(traceback.format_exc())
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
             f.close()
             self.ser.close()
         return VERSION
@@ -469,10 +471,12 @@ class WifiEsp32Connect():
             VERSION = self.ser.recv(1024).decode().strip()
         except:
             print('Device disconnected')
-            with open('check_error.txt', 'w') as f:
-                f.write(f'{errorNumber}\n')
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
                 f.write(traceback.format_exc())
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
             f.close()
             self.ser.close()
         return VERSION
@@ -516,7 +520,7 @@ class WifiEsp32Connect():
         - return type bool
         """
         self.ser.send(f'{DIGITAL_IN}#'.encode())
-        sleep(SEND_TIME*2)
+        sleep(SEND_TIME*4)
         return convert_digital_in(self.ser.recv(1024).decode())
     ########################## digital_out #########################
     @property
@@ -645,10 +649,10 @@ class WifiEsp32Connect():
         read_pwm[1]['d'] get duty form pwm 2
         """
         self.ser.send(f'{READ_PWM_WIFI},1#'.encode())
-        sleep(SEND_TIME*2)
+        sleep(SEND_TIME*4)
         read_pwm_duty1 = self.ser.recv(1024).decode().replace("\r","").split(' ')
         self.ser.send(f'{READ_PWM_WIFI},2#'.encode())
-        sleep(SEND_TIME*2)
+        sleep(SEND_TIME*4)
         read_pwm_duty2 = self.ser.recv(1024).decode().replace("\r","").split(' ')
         readPwm1 = {"d":read_pwm_duty1[1],"f":read_pwm_duty1[0],}
         readPwm2 = {"d":read_pwm_duty2[1],"f":read_pwm_duty2[0],}
