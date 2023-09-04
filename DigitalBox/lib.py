@@ -34,7 +34,7 @@ def dacValueMaxMin(self,TablePot):
             key,value = line.split()
             #print(value,key)
             dict_temp[float(key)] = value
-    
+
     return [int(min(dict_temp.items(), key=operator.itemgetter(0))[0]),int(max(dict_temp.items(), key=operator.itemgetter(0))[0])]
 
 def set_DAC(self,temp: int,tableIndex,slider = 1):
@@ -81,96 +81,99 @@ def set_digital_pot(self,temp: int,tableIndex = 1,slider =1,chipSelect = 1):
     """
     Get value from lookup table and send to pot value.
     """
-    OPEN_TABLE = open(f'{LOOKUP_TABLE}{tableIndex}.{slider}.txt')
-    dict_table = {}
-    for line in OPEN_TABLE:
-        if len(line)> 1:
-            key,value  = line.split()
-            dict_table[float(key)] = value
-    
-    tableMaxMin = [int(min(dict_table.items(), key=operator.itemgetter(0))[1]),int(max(dict_table.items(), key=operator.itemgetter(0))[1])]
-   
-    if tableMaxMin[0] > tableMaxMin[1]:
-        tableMaxSlider = tableMaxMin[0]
-    else:
-        tableMaxSlider =tableMaxMin[1]
-    res = int((dict_table.get(temp)or dict_table[min(dict_table.keys(), key=lambda key: abs(key - temp))]))
-    
-    if slider==1:
-        if tableMaxSlider <= 255:
-            if res <= 255:
-                self.box.set_digital_pot([chipSelect,0],res)
-         ############################################################   
-        elif (tableMaxSlider > 255 and tableMaxSlider <= 255*2):
-            if res <= 255:
-                self.box.set_digital_pot([chipSelect,0],res)
-                self.box.set_digital_pot([chipSelect,1],0)
-            elif res > 255 and res <= 255*2:
-                self.box.set_digital_pot([chipSelect,0],255)
-                self.box.set_digital_pot([chipSelect,1],res-255)
-        #################################################################
-        elif (tableMaxSlider > 255*2 and tableMaxSlider <= 255*3):
-            if res <= 255:
-                self.box.set_digital_pot([chipSelect,0],res)
-                self.box.set_digital_pot([chipSelect,1,2],0)
-            elif res > 255 and res <= 255*2:
-                self.box.set_digital_pot([chipSelect,0],255)
-                self.box.set_digital_pot([chipSelect,1],res-255)
-                self.box.set_digital_pot([chipSelect,2],0)
-            elif res > 255*2 and res <= 255*3:
-                self.box.set_digital_pot([chipSelect,0,1],255)
-                self.box.set_digital_pot([chipSelect,2],res-255*2)
+    try:
+        OPEN_TABLE = open(f'{LOOKUP_TABLE}{tableIndex}.{slider}.txt')
+        dict_table = {}
+        for line in OPEN_TABLE:
+            if len(line)> 1:
+                key,value  = line.split()
+                dict_table[float(key)] = value
         
-        elif tableMaxSlider > 255*3:
-            if res <= 255:
-                self.box.set_digital_pot([chipSelect,0],res)
-                self.box.set_digital_pot([chipSelect,1,2,3],0)
-            elif res > 255 and res <= 255*2:
-                self.box.set_digital_pot([chipSelect,0],255)
-                self.box.set_digital_pot([chipSelect,1],res-255)
-                self.box.set_digital_pot([chipSelect,2],0)
-            elif res > 255*2 and res <= 255*3:
-                self.box.set_digital_pot([chipSelect,0,1],255)
-                self.box.set_digital_pot([chipSelect,2],res-255*2)
-                self.box.set_digital_pot([chipSelect,3],0)
-            elif res > 255*3:
-                self.box.set_digital_pot([chipSelect,0,1,2],255)
-                self.box.set_digital_pot([chipSelect,3],res-255*3)
+        tableMaxMin = [int(min(dict_table.items(), key=operator.itemgetter(0))[1]),int(max(dict_table.items(), key=operator.itemgetter(0))[1])]
     
-    elif slider == 2:
-        ######################################################
-        if res <= 255 and tableMaxSlider <= 255:
-            self.box.set_digital_pot([chipSelect,1],res)
-            self.box.set_digital_pot([chipSelect,2,3],0)
-        elif res > 255 and res <= 255*2 and tableMaxSlider <= 255:
-            self.box.set_digital_pot([chipSelect,1],255)
-            self.box.set_digital_pot([chipSelect,2],res -255)
-            self.box.set_digital_pot([chipSelect,3],0)
-        elif res > 255*2 and res <= 255*3 and tableMaxSlider <= 255:
-            self.box.set_digital_pot([chipSelect,1,2],255)
-            self.box.set_digital_pot([chipSelect,3],res -255*2)  
-        elif res > 255*3 and tableMaxSlider <= 255:
-            self.box.set_digital_pot([chipSelect,1,2,3],255)
-            print(f'Table {tableIndex}.2 is to big > 765 table max slider  {tableIndex}.1 is {tableMaxSlider}')
-        #######################################################
-        if res <= 255 and (tableMaxSlider > 255 and tableMaxSlider <= 255*2):
-            self.box.set_digital_pot([chipSelect,2],res)
-            self.box.set_digital_pot([chipSelect,3],0)
-        elif (res > 255 and res <= 255*2) and (tableMaxSlider > 255 and tableMaxSlider <= 255*2):
-            self.box.set_digital_pot([chipSelect,2],255)
-            self.box.set_digital_pot([chipSelect,3],res -255)
-        elif res > 255*2 and (tableMaxSlider > 255 and tableMaxSlider <= 255*2):
-            self.box.set_digital_pot([chipSelect,2,3],255)
-            print(f'Table {tableIndex}.2 is to big > 510 table max slider  {tableIndex}.1 is {tableMaxSlider}')
-        #######################################################
-        if res <= 255 and (tableMaxSlider > 255*2 and tableMaxSlider <= 255*3):
-            self.box.set_digital_pot([chipSelect,3],res)
-        elif res > 255 and (tableMaxSlider > 255*2 and tableMaxSlider <= 255*3):
-            self.box.set_digital_pot([chipSelect,3],255)
-            print(f'Table {tableIndex}.2 is to big > 510 table max slider  {tableIndex}.1 is {tableMaxSlider}')
-        ####################################################### 
-        if  tableMaxSlider > 255*3:
-            print(f'Table {tableIndex}.2 can not be used because table {tableIndex}.1 is to big !!!')
+        if tableMaxMin[0] > tableMaxMin[1]:
+            tableMaxSlider = tableMaxMin[0]
+        else:
+            tableMaxSlider =tableMaxMin[1]
+        res = int((dict_table.get(temp)or dict_table[min(dict_table.keys(), key=lambda key: abs(key - temp))]))
+        
+        if slider==1:
+            if tableMaxSlider <= 255:
+                if res <= 255:
+                    self.box.set_digital_pot([chipSelect,0],res)
+            ############################################################   
+            elif (tableMaxSlider > 255 and tableMaxSlider <= 255*2):
+                if res <= 255:
+                    self.box.set_digital_pot([chipSelect,0],res)
+                    self.box.set_digital_pot([chipSelect,1],0)
+                elif res > 255 and res <= 255*2:
+                    self.box.set_digital_pot([chipSelect,0],255)
+                    self.box.set_digital_pot([chipSelect,1],res-255)
+            #################################################################
+            elif (tableMaxSlider > 255*2 and tableMaxSlider <= 255*3):
+                if res <= 255:
+                    self.box.set_digital_pot([chipSelect,0],res)
+                    self.box.set_digital_pot([chipSelect,1,2],0)
+                elif res > 255 and res <= 255*2:
+                    self.box.set_digital_pot([chipSelect,0],255)
+                    self.box.set_digital_pot([chipSelect,1],res-255)
+                    self.box.set_digital_pot([chipSelect,2],0)
+                elif res > 255*2 and res <= 255*3:
+                    self.box.set_digital_pot([chipSelect,0,1],255)
+                    self.box.set_digital_pot([chipSelect,2],res-255*2)
+            
+            elif tableMaxSlider > 255*3:
+                if res <= 255:
+                    self.box.set_digital_pot([chipSelect,0],res)
+                    self.box.set_digital_pot([chipSelect,1,2,3],0)
+                elif res > 255 and res <= 255*2:
+                    self.box.set_digital_pot([chipSelect,0],255)
+                    self.box.set_digital_pot([chipSelect,1],res-255)
+                    self.box.set_digital_pot([chipSelect,2],0)
+                elif res > 255*2 and res <= 255*3:
+                    self.box.set_digital_pot([chipSelect,0,1],255)
+                    self.box.set_digital_pot([chipSelect,2],res-255*2)
+                    self.box.set_digital_pot([chipSelect,3],0)
+                elif res > 255*3:
+                    self.box.set_digital_pot([chipSelect,0,1,2],255)
+                    self.box.set_digital_pot([chipSelect,3],res-255*3)
+        
+        elif slider == 2:
+            ######################################################
+            if res <= 255 and tableMaxSlider <= 255:
+                self.box.set_digital_pot([chipSelect,1],res)
+                self.box.set_digital_pot([chipSelect,2,3],0)
+            elif res > 255 and res <= 255*2 and tableMaxSlider <= 255:
+                self.box.set_digital_pot([chipSelect,1],255)
+                self.box.set_digital_pot([chipSelect,2],res -255)
+                self.box.set_digital_pot([chipSelect,3],0)
+            elif res > 255*2 and res <= 255*3 and tableMaxSlider <= 255:
+                self.box.set_digital_pot([chipSelect,1,2],255)
+                self.box.set_digital_pot([chipSelect,3],res -255*2)  
+            elif res > 255*3 and tableMaxSlider <= 255:
+                self.box.set_digital_pot([chipSelect,1,2,3],255)
+                print(f'Table {tableIndex}.2 is to big > 765 table max slider  {tableIndex}.1 is {tableMaxSlider}')
+            #######################################################
+            if res <= 255 and (tableMaxSlider > 255 and tableMaxSlider <= 255*2):
+                self.box.set_digital_pot([chipSelect,2],res)
+                self.box.set_digital_pot([chipSelect,3],0)
+            elif (res > 255 and res <= 255*2) and (tableMaxSlider > 255 and tableMaxSlider <= 255*2):
+                self.box.set_digital_pot([chipSelect,2],255)
+                self.box.set_digital_pot([chipSelect,3],res -255)
+            elif res > 255*2 and (tableMaxSlider > 255 and tableMaxSlider <= 255*2):
+                self.box.set_digital_pot([chipSelect,2,3],255)
+                print(f'Table {tableIndex}.2 is to big > 510 table max slider  {tableIndex}.1 is {tableMaxSlider}')
+            #######################################################
+            if res <= 255 and (tableMaxSlider > 255*2 and tableMaxSlider <= 255*3):
+                self.box.set_digital_pot([chipSelect,3],res)
+            elif res > 255 and (tableMaxSlider > 255*2 and tableMaxSlider <= 255*3):
+                self.box.set_digital_pot([chipSelect,3],255)
+                print(f'Table {tableIndex}.2 is to big > 510 table max slider  {tableIndex}.1 is {tableMaxSlider}')
+            ####################################################### 
+            if  tableMaxSlider > 255*3:
+                print(f'Table {tableIndex}.2 can not be used because table {tableIndex}.1 is to big !!!')
+    except ValueError:
+            print('Value not set correctly')
 #### select PB_model and auto select LB model ######
 def select_model(self,model_name= 'M1'):
     """_summary_
