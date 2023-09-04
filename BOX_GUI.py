@@ -4,7 +4,7 @@ import os
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets,QtGui
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QMessageBox,QMainWindow,QApplication
+from PyQt5.QtWidgets import QMessageBox,QMainWindow,QApplication,QTreeWidgetItemIterator,QTreeWidgetItem,QTreeWidget,QPushButton,QPlainTextEdit
 from PyQt5.QtCore import *
 from time import sleep,time
 from package.tester._clients.das import DAS  # Import DAS class
@@ -13,7 +13,9 @@ from DigitalBox.lib import*
 import serial.tools.list_ports
 import traceback
 import openpyxl
-from threading import Thread
+import subprocess
+import datetime
+
 ################## PATH TO DATA FILE ####################################
 QT_DESIGNER_PATH = os.path.join("QT_designer")
 BOX_MARKS_PATH = os.path.join("data","boxMarks")
@@ -22,6 +24,8 @@ BOX_DIGITAL_DAC_PATH = os.path.join("data","dacTable")
 IMAGES_PATH = os.path.join("data","images","system")
 IMAGE_PATH_OTHER =os.path.join("data","images","other")
 DATA_SAVE = os.path.join("data","saveData")
+AUTO_TEST_PATH = os.path.join("data","autoTest")
+print(os.path.basename(AUTO_TEST_PATH))
 ###################### BEGIN PARAMETERS #################################
 VERZIJA_ESP = "3.17"
 VERZIJA_RPI = "3.10"
@@ -40,7 +44,7 @@ beginDacPot = 0
 setPwm1 = [0,0]
 setPwm2 = [0,0]
 setPwmOld =[0,0]
-errorNumber ='#'*100
+errorNumber ='#'*50
 ######################### BUTTON SET STYLE ##############################
 ButtonStyleOnOff = ("background-color:white ;""font: 10px;" )
 ButtonStyleOff2  = ("background-color: rgb(210,210,210);""font: 10px;" )
@@ -238,10 +242,13 @@ class MainWindow(QMainWindow):
         super().__init__()
         Window1 = os.path.abspath(f"{QT_DESIGNER_PATH}/Main_screen.ui")
         loadUi(str(Window1),self)
+        f = open("check_error.txt", "w")
+        f.write("")
+        f.close()
         self.refreshSaving = 1000
         self.index_on_off = 0
         self.index_out = [0,0,0,0,0,0,0,0]
-        self.index_extras = [0,0,0,0,0,0]
+        self.index_extras = [0,0,0,0,0,0,0,0]
         self.connectParameters = 0
         self.box_is_connected = 0
         self.index_refreshing = 0
@@ -293,6 +300,12 @@ class MainWindow(QMainWindow):
         self.ButtonDacSet.clicked.connect(self.buttonDacSet)
         self.ButtonSetPot.clicked.connect(self.buttonSetPot)
         self.ButtonSetDac.clicked.connect(self.buttonSetDac)
+        self.ButtonAutomation.clicked.connect(self.buttonAutomation)
+        #self.ButtonCreateAutoTest.clicked.connect(self.buttonCreateAutoTest)
+        self.ButtonCreateAutoTest.setVisible(False)
+        self.barOpenAutoTest.setVisible(False)
+        self.SetEnvirement.setVisible(False)
+        self.setEnvironmentText.setVisible(False)
         ########################### BOX CONNECTED #################################
         self.BoxConnect.activated[str].connect(self.connectBox)
         self.BoxConnect.setEditable(True)
@@ -698,6 +711,11 @@ class MainWindow(QMainWindow):
                     
             except PermissionError:
                 self.wb.save(f"{DATA_SAVE}/{self.fileName}_backup.csv")
+            
+            with open("check_error.txt") as f:
+                with open("ALL_ERROR.txt", "a") as f1:
+                    for line in f:
+                        f1.write(line)
             event.accept()
             mainWindow.close()
             HusaModelWindow.close()
@@ -705,6 +723,7 @@ class MainWindow(QMainWindow):
             SetDacValue.close()
             PotTableSet.close()
             DacTableCreate.close()
+            RunAutoTest.close()
             
              
         else:
@@ -724,8 +743,8 @@ class MainWindow(QMainWindow):
         Show data/time on widget
         """
         self.time=QDateTime.currentDateTime()
-        timeDisplay=self.time.toString('dd-MM-yyyy hh:mm:ss dddd')
-        self.date_and_time.setText(timeDisplay)
+        self.timeDisplay=self.time.toString('dd-MM-yyyy hh:mm:ss dddd')
+        self.date_and_time.setText(self.timeDisplay)
         if  self.indexButtonSave == 1:
             if(self.index_extras[5] % 2) == 0:
                 self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
@@ -756,7 +775,7 @@ class MainWindow(QMainWindow):
                 self.input_state_indicate()
                 self.thread_check_input.start(self.check_all_input)
                 tend = time()
-                #print('time main box',int((tend-tbegin)*1000),'ms','interval:',MAIN_TIME_REFRESHING)
+                print('time main box',int((tend-tbegin)*1000),'ms','interval:',MAIN_TIME_REFRESHING)
                 
                 # increase main time refreshing if function executing to long
                 if  (tend-tbegin)*1000 >= MAIN_TIME_REFRESHING:
@@ -772,17 +791,19 @@ class MainWindow(QMainWindow):
                 
             # save value error to check_error.txt file
             except ValueError:
-                with open('check_error.txt', 'w') as f:
-                    f.write(f'{errorNumber}\n')
+                x = datetime.datetime.now()
+                dateAndTime = x.strftime("%c")
+                with open('check_error.txt', 'a') as f:
+                    f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
                     f.write('!!! Can not set any parameters(set_voltage,set_pwm1,2...)!!!\n')
                     f.write('Solution:\n')
                     f.write(f'-- Check digital box version(RPI - {VERZIJA_RPI} ESP - {VERZIJA_ESP}) and\n')
-                    f.write(f'{errorNumber}\n')
+                    f.write(f'{errorNumber*2}\n')
                     f.write(traceback.format_exc())
-                    f.write(f'{errorNumber}\n')
-                f.close()
+                    f.write(f'{errorNumber*2}\n')
+                    f.close()
             except:
-                with open('check_error.txt', 'w') as f:
+                with open('check_error.txt', 'a') as f:
                     f.write(traceback.format_exc())
                 f.close()
         
@@ -797,29 +818,32 @@ class MainWindow(QMainWindow):
             self.read_adc()
         except Exception:
             self.read_adc_all = [0,0,0,0]
-            #print(self.read_adc_all)
-            with open('check_error.txt', 'w') as f:
-                f.write(f'{errorNumber}\n')
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
                 f.write('!!!Dont get anything from ADC read !!!\n')
                 f.write('Solution:\n')
                 f.write(f'-- Check digital box version(RPI - {VERZIJA_RPI} ESP - {VERZIJA_ESP}) or hardware problems with ADC read\n')
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
                 f.write(traceback.format_exc())
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
             f.close()
         
         try:   
             self.read_pwm()
             
         except Exception:
-            with open('check_error.txt', 'w') as f:
-                f.write(f'{errorNumber}\n')
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
                 f.write('!!!Dont get anything from PWM read !!!\n')
                 f.write('Solution:\n')
                 f.write(f'-- Check digital box version(RPI - {VERZIJA_RPI} ESP - {VERZIJA_ESP}) or hardware problems with ADC read\n')
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
                 f.write(traceback.format_exc())
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
             f.close()
         
         self.check_digital_pot()
@@ -944,18 +968,21 @@ class MainWindow(QMainWindow):
                         digital_pot_text.setText(self.read_all_lines[23].replace('\n',''))
                         digital_pot_text.setFont(QFont('Arial', 10))
         except IndexError:
-            with open('check_error.txt', 'w') as f:
-                f.write(f'{errorNumber}\n')
+            
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
                 f.write('!!!Some name(INPUT,OUTPUT,DIGITAL_POT,...) do not have arguments!!!\n')
                 f.write('Solution:\n')
                 f.write(f'-- Check data/{BOXMARKS}.txt file and do as instructed(check readMe.txt file) \n')
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
                 f.write(traceback.format_exc())
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
             f.close()
         
         except:
-                with open('check_error.txt', 'w') as f:
+                with open('check_error.txt', 'a') as f:
                     f.write(traceback.format_exc())
                 f.close()
     
@@ -1050,20 +1077,23 @@ class MainWindow(QMainWindow):
             self.ButtonDacSet.setStyleSheet(ButtonStyleOff2)
             self.ButtonSetPot.setStyleSheet(ButtonStyleOff2)
             self.ButtonSetDac.setStyleSheet(ButtonStyleOff2)
+            self.ButtonAutomation.setStyleSheet(ButtonStyleOff2)
             self.warningMessageAddFunction.setStyleSheet("color: black")
             self.warningMessageAddFunction.setText(f"ADDITIONAL FUNCTIONS")     
         except:
-            with open('check_error.txt', 'w') as f:
-                f.write(f'{errorNumber}\n')
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
                 f.write(f'Das service is not connected to this ip {CONNECTBOX[6:]} \n')
                 f.write('Solution:\n')
                 f.write(f'-- Open supervisor {CONNECTBOX[6:]}:9001 (copy ip to this ip to browser) and check das service \n')
                 f.write(f'-- Reset das service.Das service must be in running state \n')
                 f.write('-- Computer and RPI must be in the same domain \n')
                 f.write(f'-- RPI(das {VERZIJA_RPI}), digital box(third generation) and tester({VERZIJA_RPI}) must be updated \n')
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
                 f.write(traceback.format_exc())
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
             f.close()
 
         self.connectParameters = 1
@@ -1101,15 +1131,17 @@ class MainWindow(QMainWindow):
                     eval(f'self.digital_pot{index}.setValue(min+20)')
                     eval(f'self.digital_pot{index}.setStyleSheet(f"background-color: rgb({R},{G},{B})")')
             except Exception:
-                with open('check_error.txt', 'w') as f:
-                    f.write(f'{errorNumber}\n')
+                x = datetime.datetime.now()
+                dateAndTime = x.strftime("%c")
+                with open('check_error.txt', 'a') as f:
+                    f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
                     f.write('!!!Table{x.x}.txt change or in table missing pot value or temperature value !!!\n')
                     f.write('Solution:\n')
                     f.write('-- Dont change name!!! Name must be Table1.1,Table1.2--->Table3.1,Table3.2\n')
                     f.write('-- Table must have temperature and pot value\n')
-                    f.write(f'{errorNumber}\n')
+                    f.write(f'{errorNumber*2}\n')
                     f.write(traceback.format_exc())
-                    f.write(f'{errorNumber}\n')
+                    f.write(f'{errorNumber*2}\n')
                 f.close()  
                   
     def BoxRefreshing(self):
@@ -1470,8 +1502,7 @@ class MainWindow(QMainWindow):
          ###############################digital potentiometer 3 ######################################################
         elif beginPotValue[4] != self.readDigitalPot4:
             set_digital_pot(self,self.readDigitalPot4,tableIndex = 3,slider =1,chipSelect = 3)
-            beginPotValue[4] = self.readDigitalPot4
-        
+            beginPotValue[4] = self.readDigitalPot4      
         elif beginPotValue[5] != self.readDigitalPot5:
             set_digital_pot(self,self.readDigitalPot5,tableIndex = 3,slider =2,chipSelect = 3)
             beginPotValue[5] = self.readDigitalPot5
@@ -1798,7 +1829,47 @@ class MainWindow(QMainWindow):
         self.ReadSetPotDac.stop()
         self.DIGITAL_BOX_MAIN.start()
         self.labelTableOpenError.setVisible(False)
-      
+    
+    def buttonAutomation(self):
+   
+        if self.index_extras[6]  == 0:
+            self.SetEnvirement.setVisible(True)
+            self.setEnvironmentText.setVisible(True)
+        elif self.index_extras[6]  == 1:
+            self.SetEnvirement.setVisible(False)
+            self.setEnvironmentText.setVisible(False)
+            subprocess.Popen(f"conda activate {self.SetEnvirement.text()} && python -m tester.executables.test", shell=True)
+            self.barOpenAutoTest.setVisible(True)
+            for number in range(0,100,5):
+                self.barOpenAutoTest.setValue(number)
+                sleep(0.2)
+            self.barOpenAutoTest.setVisible(False)
+            self.ButtonAutomation.setStyleSheet(ButtonStyleOn2)
+        else:
+            self.ButtonAutomation.setStyleSheet(ButtonStyleOff2)
+            #self.pQ.kill()
+        self.index_extras[6] +=1
+        if self.index_extras[6] >=3:
+            self.index_extras[6] =0 
+    
+    def buttonCreateAutoTest(self):
+        if self.index_extras[7]  == 0:
+            self.ButtonCreateAutoTest.setStyleSheet(ButtonStyleOn2)
+            RunAutoTest.show()
+        else:
+            self.ButtonCreateAutoTest.setStyleSheet(ButtonStyleOff2)
+            RunAutoTest.close()
+        self.index_extras[7] +=1
+        if self.index_extras[7] >=2:
+            self.index_extras[7] =0   
+    
+    def closeRunAutoTest(self):
+        """
+        - close screen closeRunAutoTest
+        """
+        self.index_extras[6] +=1
+        self.ButtonCreateAutoTest.setStyleSheet(ButtonStyleOff2)
+    
     def check_DAC_pot(self):
         """
         - if value change send dac value
@@ -1905,15 +1976,17 @@ class MainWindow(QMainWindow):
                     beginSetPot = readPot
                 #print(self.box.digital_pot[:])
         except ValueError:
-            with open('check_error.txt', 'w') as f:
-                f.write(f'{errorNumber}\n')
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
                 f.write(f'!!! {PotTableSet.tableSelection()[0:5]}{PotTableSet.tableSelection()[5]}.1 is empty or not created properly  !!!\n')
                 f.write('Solution:\n')
                 f.write(f' Check {PotTableSet.tableSelection()[0:5]}{PotTableSet.tableSelection()[5]}.1 and try again \n')
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
                 f.write(traceback.format_exc())
-                f.write(f'{errorNumber}\n')
-                f.close()
+                f.write(f'{errorNumber*2}\n')
+            f.close()
     
     def createDacTable(self):
         """
@@ -1924,7 +1997,8 @@ class MainWindow(QMainWindow):
         self.DIGITAL_BOX_MAIN.stop()
         if beginDacPot != readDac:
             self.box.set_analog_out(int(DacTableCreate.tableSelection())-1,readDac)
-            beginDacPot = readDac         
+            beginDacPot = readDac               
+
 class SetDacPot(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -1949,15 +2023,17 @@ class SetDacPot(QMainWindow):
                 eval(f'self.dac_pot{index}.valueChanged.connect(self.SetDacPot{index})')
                 eval(f'self.labelDac{index}.setStyleSheet(ButtonStyleOn)')
         except Exception:
-            with open('check_error.txt', 'w') as f:
-                f.write(f'{errorNumber}\n')
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
                 f.write('!!!Table{x}.txt change or in table missing DAC value or temperature value !!!\n')
                 f.write('Solution:\n')
                 f.write('-- Dont change name!!! Name must be Table1-->Table8\n')
                 f.write('-- Table must have temperature and DAC value\n')
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
                 f.write(traceback.format_exc())
-                f.write(f'{errorNumber}\n')
+                f.write(f'{errorNumber*2}\n')
             f.close()  
         #######################################################################
     def closeEvent(self, event):
@@ -2510,17 +2586,365 @@ class CreateDacTable(QMainWindow):
         - close dac table
         """
         mainWindow.closeDacTable()    
- 
+
+class CreateAutoTest(QMainWindow):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.Dict = {}
+        self.DictRunTest ={}
+        # to store files in a list
+        self.listDirectory = []
+        self.dir_list = os.listdir(AUTO_TEST_PATH)
+        self.dir_list.insert(0,'')
+        print('dirList',self.dir_list)
+        self.fileType = ".py"
+        self.index = 0
+        self.pQ = None
+        self.setWindowTitle('AUTO TEST')
+        self.setGeometry(100, 100, 900, 900)
+        self.setStyleSheet(MainScreenStyle)
+        # tree
+        self.tree = QTreeWidget(self)
+        self.tree.setGeometry(10, 50, 300, 300)
+        self.tree.setStyleSheet(MainScreenStyle)
+        self.tree.setHidden(False)
+        self.tree.setHeaderLabels(['click refresh to expand test'])
+        
+        self.refreshButton = QPushButton('refresh', self)
+        self.refreshButton.move(0,10)
+        self.refreshButton.setStyleSheet(ButtonStyleOff)
+           # connect button to function on_click
+        self.refreshButton.clicked.connect(self.test_refresh)
+        
+        self.runButton = QPushButton('run tests', self)
+        self.runButton.move(110,10)
+        self.runButton.setStyleSheet(ButtonStyleOff)
+           # connect button to function on_click
+        self.runButton.clicked.connect(self.runTest)
+        
+        self.Button = QPushButton('test', self)
+        self.Button.move(250,10)
+        self.Button.setStyleSheet(ButtonStyleOff)
+           # connect button to function on_click
+        self.Button.clicked.connect(self.testButton)
+        
+        self.text = QPlainTextEdit(self)
+        self.text.move(10,350)
+        self.text.resize(300,100)
+        #self.text.setReadOnly(True)
+        
+        self.thread_run_test = QThreadPool()
+     
+        #self.progress = QProgressBar(self)
+        #self.progress.move(10,450)
+        #self.progress.setRange(0, 100)
+    def closeEvent(self, event):
+        """
+        - close dac table
+        """
+        mainWindow.closeRunAutoTest()    
+    def testButton(self):
+        # Kill all child processes
+        for child in self.all_processes:
+            child.kill()
+            #self.pQ.kill()
+        print('end proccess')
+    
+    def test_refresh(self):
+        self.Dict.clear()
+        self.DictRunTest.clear()
+        self.listDirectory.clear()
+        #self.testButton()
+        self.tree.clear()
+        self.tree.setHidden(False)
+        self.tree.setHeaderLabels(["automation test"])
+        for index,(root, dirs, file) in enumerate(os.walk(AUTO_TEST_PATH)):
+            testFile= file.copy()
+            testFile.sort(reverse=True)
+            for f in file:
+                if self.fileType in f:
+                    if index == 0:
+                        continue
+                    if (self.dir_list[index].find(".") == -1):
+                        self.Dict[self.dir_list[index]] = file
+                        self.DictRunTest[self.dir_list[index]] = testFile
+                    
+        for department in self.dir_list[1:]:
+            self.parent = QTreeWidgetItem(self.tree)
+            if (department.find(".") == -1):
+                self.parent.setExpanded(False)
+                self.parent.setText(0,department)
+                self.parent.setFlags(self.parent.flags() | Qt.ItemIsTristate | Qt.ItemIsUserCheckable)
+                self.listDirectory.append(department)
+                self.listDirectory.sort()
+                try:
+                    for self.index_child ,employee in enumerate(self.Dict[department]):
+                        self.child = QTreeWidgetItem(self.parent)
+                        self.child.setFlags(self.child.flags() | Qt.ItemIsUserCheckable)
+                        self.child.setText(0, employee)
+                        self.child.setCheckState(0, Qt.Unchecked)
+                except KeyError:
+                    continue
+        # place the tree on the main window
+        #self.setCentralWidget(self.tree)
+      
+        self.show()
+    
+    
+    def runTest(self):
+        self.text.clear()
+        self.tree.setEnabled(False)
+        self.refreshButton.setEnabled(False)
+        print('go')
+        self.runAllTest()
+        #self.thread_run_test.start(self.runAllTest)
+        print('ok')
+
+    
+    def runAllTest(self):
+        self.listScript =[]
+        self.all_processes = []
+        for index in range(len(self.listDirectory)):
+            iterator = QTreeWidgetItemIterator(self.tree,QTreeWidgetItemIterator.Checked)
+            while iterator.value():
+                print('ok123')
+                self.item = iterator.value()
+                res = any(self.item.text(0) in ele for ele in self.DictRunTest[self.listDirectory[index]])
+                if self.fileType in self.item.text(0): 
+                    if res is True:
+                        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',self.item.text(0)) 
+                        #self.pQ = QProcess(self)
+                        #self.pQ.readyReadStandardOutput.connect(self.handle_stdout)
+                        #self.pQ.readyReadStandardError.connect(self.handle_stderr)
+                        #self.pQ.stateChanged.connect(self.handle_state)
+                        #self.pQ.start("python",[f'allTest/{listDirectory[index]}/{self.item.text(0)}'])
+                        #self.pQ.waitForFinished()
+                        pathTest = f'{os.path.dirname(AUTO_TEST_PATH)}/{os.path.basename(AUTO_TEST_PATH)}/{self.listDirectory[index]}/{self.item.text(0)}'
+                        self.listScript.append(pathTest)
+                        #self.all_processes.append(self.pQ)
+                        #self.all_processes.sort(reverse=True)
+                iterator += 1
+        for script in self.listScript:
+            self.pQ = QProcess(self)
+            self.pQ.readyReadStandardOutput.connect(self.handle_stdout)
+            self.pQ.readyReadStandardError.connect(self.handle_stderr)
+            self.pQ.stateChanged.connect(self.handle_state)
+            self.all_processes.append(self.pQ)
+            print('script',script)
+            self.pQ.start("python",[script])
+        
+        print(self.listScript)
+        print (20*'#')
+        self.refreshButton.setEnabled(True)
+        self.tree.setEnabled(True)     
+    
+    def handle_stderr(self):
+        data = self.pQ.readAllStandardError()
+        stderr = bytes(data).decode("utf8")
+        #progress = simple_percent_parser(stderr)
+        #if progress:
+            #self.progress.setValue(progress)
+        self.message(stderr)
+       
+    def handle_stdout(self):
+        data = self.pQ.readAllStandardOutput()
+        stdout = bytes(data).decode("utf8")
+        self.message(stdout)
+
+    def handle_state(self, state):
+        states = {
+            QProcess.NotRunning: 'Finish',
+            QProcess.Starting: 'Starting',
+            QProcess.Running: 'Running',
+        }
+        state_name = states[state]
+        self.message(f"State changed: {state_name}")
+
+    def message(self, s):
+        self.text.appendPlainText(s)
+       
+class AutoRunScript(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        ########################## SCREEN PATH CONVERT #############################
+        DacScreen = os.path.abspath(f"{QT_DESIGNER_PATH}/AutoTest.ui")
+        loadUi(str(DacScreen),self)
+        self.Dict = {}
+        self.DictRunTest ={}
+        # to store files in a list
+        self.listDirectory = []
+        self.dir_list = os.listdir(AUTO_TEST_PATH)
+        self.dir_list.insert(0,'')
+        print('dirList',self.dir_list)
+        self.fileType = ".py"
+        self.index = 0
+        self.pQ = None
+        self.setWindowTitle('AUTOMATION TEST')
+        self.setFixedSize(500, 725)
+        self.setStyleSheet(MainScreenStyle)
+        self.tree.setStyleSheet(MainScreenStyle)
+        self.tree.setHidden(False)
+        self.tree.setHeaderLabels(["automation test"])
+        self.tree.setHeaderLabels(['click refresh to expand test'])
+        #######################################################################
+    
+        self.refreshButton.setStyleSheet(ButtonStyleOff2)
+           # connect button to function on_click
+        self.refreshButton.clicked.connect(self.test_refresh)
+        
+        self.runButton.setStyleSheet(ButtonStyleOff2)
+           # connect button to function on_click
+        self.runButton.clicked.connect(self.runTest)
+        
+        self.Button.setStyleSheet(ButtonStyleOff2)
+           # connect button to function on_click
+        self.Button.clicked.connect(self.testButton)
+        
+        #self.text.setReadOnly(True)
+        
+        self.thread_run_test = QThreadPool()
+     
+        #self.progress = QProgressBar(self)
+        #self.progress.move(10,450)
+        #self.progress.setRange(0, 100)
+    def closeEvent(self, event):
+        """
+        - close dac table
+        """
+        mainWindow.closeRunAutoTest()    
+    def testButton(self):
+        # Kill all child processes
+        for child in self.all_processes:
+            child.kill()
+            #self.pQ.kill()
+        print('end proccess')
+    
+    def test_refresh(self):
+        self.Dict.clear()
+        self.DictRunTest.clear()
+        self.listDirectory.clear()
+        #self.testButton()
+        self.tree.clear()
+        self.tree.setHidden(False)
+        self.tree.setHeaderLabels(["automation test"])
+        for index,(root, dirs, file) in enumerate(os.walk(AUTO_TEST_PATH)):
+            testFile= file.copy()
+            testFile.sort(reverse=True)
+            for f in file:
+                if self.fileType in f:
+                    if index == 0:
+                        continue
+                    if (self.dir_list[index].find(".") == -1):
+                        self.Dict[self.dir_list[index]] = file
+                        self.DictRunTest[self.dir_list[index]] = testFile
+                    
+        for department in self.dir_list[1:]:
+            self.parent = QTreeWidgetItem(self.tree)
+            if (department.find(".") == -1):
+                self.parent.setExpanded(False)
+                self.parent.setText(0,department)
+                self.parent.setFlags(self.parent.flags() | Qt.ItemIsTristate | Qt.ItemIsUserCheckable)
+                self.listDirectory.append(department)
+                self.listDirectory.sort()
+                try:
+                    for self.index_child ,employee in enumerate(self.Dict[department]):
+                        self.child = QTreeWidgetItem(self.parent)
+                        self.child.setFlags(self.child.flags() | Qt.ItemIsUserCheckable)
+                        self.child.setText(0, employee)
+                        self.child.setCheckState(0, Qt.Unchecked)
+                except KeyError:
+                    continue
+        # place the tree on the main window
+        #self.setCentralWidget(self.tree)
+      
+        self.show()
+    
+    
+    def runTest(self):
+        self.text.clear()
+        self.tree.setEnabled(False)
+        self.refreshButton.setEnabled(False)
+        print('go')
+        self.runAllTest()
+        #self.thread_run_test.start(self.runAllTest)
+        print('ok')
+
+    
+    def runAllTest(self):
+        self.listScript =[]
+        self.all_processes = []
+        for index in range(len(self.listDirectory)):
+            iterator = QTreeWidgetItemIterator(self.tree,QTreeWidgetItemIterator.Checked)
+            while iterator.value():
+                print('ok123')
+                self.item = iterator.value()
+                res = any(self.item.text(0) in ele for ele in self.DictRunTest[self.listDirectory[index]])
+                if self.fileType in self.item.text(0): 
+                    if res is True:
+                        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',self.item.text(0)) 
+                        #self.pQ = QProcess(self)
+                        #self.pQ.readyReadStandardOutput.connect(self.handle_stdout)
+                        #self.pQ.readyReadStandardError.connect(self.handle_stderr)
+                        #self.pQ.stateChanged.connect(self.handle_state)
+                        #self.pQ.start("python",[f'allTest/{listDirectory[index]}/{self.item.text(0)}'])
+                        #self.pQ.waitForFinished()
+                        pathTest = f'{os.path.dirname(AUTO_TEST_PATH)}/{os.path.basename(AUTO_TEST_PATH)}/{self.listDirectory[index]}/{self.item.text(0)}'
+                        self.listScript.append(pathTest)
+                        #self.all_processes.append(self.pQ)
+                        #self.all_processes.sort(reverse=True)
+                iterator += 1
+        for script in self.listScript:
+            self.pQ = QProcess(self)
+            self.pQ.readyReadStandardOutput.connect(self.handle_stdout)
+            self.pQ.readyReadStandardError.connect(self.handle_stderr)
+            self.pQ.stateChanged.connect(self.handle_state)
+            self.all_processes.append(self.pQ)
+            print('script',script)
+            self.pQ.start("python",[script])
+        
+        print(self.listScript)
+        print (20*'#')
+        self.refreshButton.setEnabled(True)
+        self.tree.setEnabled(True)     
+    
+    def handle_stderr(self):
+        data = self.pQ.readAllStandardError()
+        stderr = bytes(data).decode("utf8")
+        #progress = simple_percent_parser(stderr)
+        #if progress:
+            #self.progress.setValue(progress)
+        self.message(stderr)
+       
+    def handle_stdout(self):
+        data = self.pQ.readAllStandardOutput()
+        stdout = bytes(data).decode("utf8")
+        self.message(stdout)
+
+    def handle_state(self, state):
+        states = {
+            QProcess.NotRunning: 'Finish',
+            QProcess.Starting: 'Starting',
+            QProcess.Running: 'Running',
+        }
+        state_name = states[state]
+        self.message(f"State changed: {state_name}")
+
+    def message(self, s):
+        self.text.appendPlainText(s)
+      
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ### CREATE AN OBJECT NAMES ###
     mainWindow = MainWindow()
     mainWindow.show()
+    #autoTest = AutoRunScript()
+    #utoTest.show()
     HusaModelWindow = HusaSetModule()
     PyroSetSystem = Bio21PyroSetSystem()
     SetDacValue = SetDacPot()
     PotTableSet = CreatePotTable()
     DacTableCreate = CreateDacTable()
+    RunAutoTest = CreateAutoTest()
     ##############################
     sys.exit(app.exec_())
 
