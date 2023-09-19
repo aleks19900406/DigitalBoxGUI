@@ -25,7 +25,7 @@ IMAGES_PATH = os.path.join("data","images","system")
 IMAGE_PATH_OTHER =os.path.join("data","images","other")
 DATA_SAVE = os.path.join("data","saveData")
 AUTO_TEST_PATH = os.path.join("data","autoTest")
-print(os.path.basename(AUTO_TEST_PATH))
+#print(os.path.basename(AUTO_TEST_PATH))
 ###################### BEGIN PARAMETERS #################################
 VERZIJA_ESP = "3.17"
 VERZIJA_RPI = "3.10"
@@ -41,6 +41,7 @@ beginDacValue = [0,0,0,0,0,0,0,0]
 beginSetVoltage = [0,0,0,0]
 beginSetPot = 0
 beginDacPot = 0
+
 setPwm1 = [0,0]
 setPwm2 = [0,0]
 setPwmOld =[0,0]
@@ -2136,7 +2137,7 @@ class HusaSetModule(QMainWindow):
         HusaScreen = os.path.abspath(f"{QT_DESIGNER_PATH}/HusaSetModel.ui")
         loadUi(str(HusaScreen),self)
         self.setWindowTitle('HUSA SET PB/LB MODULE')
-        self.setFixedSize(370, 400)
+        self.setFixedSize(380, 450)
         ################## ALL LB PB MODEL BUTTON ###################################
         self.setStyleSheet(MainScreenStyle)
         self.MODEL_1.clicked.connect(self.set_model_1)
@@ -2148,13 +2149,15 @@ class HusaSetModule(QMainWindow):
         self.MODEL_7.clicked.connect(self.set_model_7)
         self.MODEL_8.clicked.connect(self.set_model_8)
         self.MODEL_9.clicked.connect(self.set_model_9)
+        self.MODEL_10.clicked.connect(self.set_model_10)
+        self.MODEL_11.clicked.connect(self.set_model_11)
         self.M1_LB.clicked.connect(self.set_LB_model_1)
         self.M2_LB.clicked.connect(self.set_LB_model_2)
         self.M3_LB.clicked.connect(self.set_LB_model_3)
         self.M4_LB.clicked.connect(self.set_LB_model_4)
         self.M5_LB.clicked.connect(self.set_LB_model_5)
         self.M6_LB.clicked.connect(self.set_LB_model_6)
-        for index in range(1,10):
+        for index in range(1,12):
             eval(f'self.MODEL_{index}.setStyleSheet(ButtonStyleOff2)')
         for index in range(1,7):
             eval(f'self.M{index}_LB.setStyleSheet(ButtonStyleOff2)')
@@ -2166,7 +2169,7 @@ class HusaSetModule(QMainWindow):
         mainWindow.closeHusaScreen()    
       ########## AUTO SET HUSA MODEL PB AND LB MODEL ############################
     def set_model_1(self):
-        for index in range(1,10):
+        for index in range(1,12):
             eval(f'self.MODEL_{index}.setStyleSheet(ButtonStyleOff2)')
         for index in range(1,7):
             eval(f'self.M{index}_LB.setStyleSheet(ButtonStyleOff2)')
@@ -2176,7 +2179,7 @@ class HusaSetModule(QMainWindow):
         eval(f'self.M{LB_MODEL}_LB.setStyleSheet(ButtonStyleOn2)')
      
     def set_model_2(self):
-        for index in range(1,10):
+        for index in range(1,12):
             eval(f'self.MODEL_{index}.setStyleSheet(ButtonStyleOff2)')
         for index in range(1,7):
             eval(f'self.M{index}_LB.setStyleSheet(ButtonStyleOff2)')
@@ -2186,7 +2189,7 @@ class HusaSetModule(QMainWindow):
         eval(f'self.M{LB_MODEL}_LB.setStyleSheet(ButtonStyleOn2)')
         
     def set_model_3(self):
-        for index in range(1,10):
+        for index in range(1,12):
             eval(f'self.MODEL_{index}.setStyleSheet(ButtonStyleOff2)')
         for index in range(1,7):
             eval(f'self.M{index}_LB.setStyleSheet(ButtonStyleOff2)')
@@ -2195,7 +2198,7 @@ class HusaSetModule(QMainWindow):
         eval(f'self.M{LB_MODEL}_LB.setStyleSheet(ButtonStyleOn2)')
     
     def set_model_4(self):
-        for index in range(1,10):
+        for index in range(1,12):
             eval(f'self.MODEL_{index}.setStyleSheet(ButtonStyleOff2)')
         for index in range(1,7):
             eval(f'self.M{index}_LB.setStyleSheet(ButtonStyleOff2)')
@@ -2204,7 +2207,7 @@ class HusaSetModule(QMainWindow):
         eval(f'self.M{LB_MODEL}_LB.setStyleSheet(ButtonStyleOn2)')
  
     def set_model_5(self):
-        for index in range(1,10):
+        for index in range(1,12):
             eval(f'self.MODEL_{index}.setStyleSheet(ButtonStyleOff2)')
         for index in range(1,7):
             eval(f'self.M{index}_LB.setStyleSheet(ButtonStyleOff2)')
@@ -2213,7 +2216,7 @@ class HusaSetModule(QMainWindow):
         eval(f'self.M{LB_MODEL}_LB.setStyleSheet(ButtonStyleOn2)')
         
     def set_model_6(self):
-        for index in range(1,10):
+        for index in range(1,12):
             eval(f'self.MODEL_{index}.setStyleSheet(ButtonStyleOff2)')
         for index in range(1,7):
             eval(f'self.M{index}_LB.setStyleSheet(ButtonStyleOff2)')
@@ -2222,7 +2225,7 @@ class HusaSetModule(QMainWindow):
         eval(f'self.M{LB_MODEL}_LB.setStyleSheet(ButtonStyleOn2)')
        
     def set_model_7(self):
-        for index in range(1,10):
+        for index in range(1,12):
             eval(f'self.MODEL_{index}.setStyleSheet(ButtonStyleOff2)')
         for index in range(1,7):
             eval(f'self.M{index}_LB.setStyleSheet(ButtonStyleOff2)')
@@ -2231,7 +2234,7 @@ class HusaSetModule(QMainWindow):
         eval(f'self.M{LB_MODEL}_LB.setStyleSheet(ButtonStyleOn2)')
        
     def set_model_8(self):
-        for index in range(1,10):
+        for index in range(1,12):
             eval(f'self.MODEL_{index}.setStyleSheet(ButtonStyleOff2)')
         for index in range(1,7):
             eval(f'self.M{index}_LB.setStyleSheet(ButtonStyleOff2)')
@@ -2240,12 +2243,30 @@ class HusaSetModule(QMainWindow):
         eval(f'self.M{LB_MODEL}_LB.setStyleSheet(ButtonStyleOn2)')
       
     def set_model_9(self):
-        for index in range(1,10):
+        for index in range(1,12):
             eval(f'self.MODEL_{index}.setStyleSheet(ButtonStyleOff2)')
         for index in range(1,7):
             eval(f'self.M{index}_LB.setStyleSheet(ButtonStyleOff2)')
         self.MODEL_9.setStyleSheet(ButtonStyleOn2)
         PB_MODEL,LB_MODEL=mainWindow.husaAutoSetModule('M9')
+        eval(f'self.M{LB_MODEL}_LB.setStyleSheet(ButtonStyleOn2)')
+    
+    def set_model_10(self):
+        for index in range(1,12):
+            eval(f'self.MODEL_{index}.setStyleSheet(ButtonStyleOff2)')
+        for index in range(1,7):
+            eval(f'self.M{index}_LB.setStyleSheet(ButtonStyleOff2)')
+        self.MODEL_10.setStyleSheet(ButtonStyleOn2)
+        PB_MODEL,LB_MODEL=mainWindow.husaAutoSetModule('M10')
+        eval(f'self.M{LB_MODEL}_LB.setStyleSheet(ButtonStyleOn2)')
+    
+    def set_model_11(self):
+        for index in range(1,12):
+            eval(f'self.MODEL_{index}.setStyleSheet(ButtonStyleOff2)')
+        for index in range(1,7):
+            eval(f'self.M{index}_LB.setStyleSheet(ButtonStyleOff2)')
+        self.MODEL_11.setStyleSheet(ButtonStyleOn2)
+        PB_MODEL,LB_MODEL=mainWindow.husaAutoSetModule('M11')
         eval(f'self.M{LB_MODEL}_LB.setStyleSheet(ButtonStyleOn2)')
     ########## SET ONLY LB MODEL ##################################################    
     def set_LB_model_1(self):
