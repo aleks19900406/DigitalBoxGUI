@@ -190,7 +190,6 @@ def select_model(self,model_name= 'M1'):
     wb = xlrd.open_workbook(file_path)
     Model_PB = wb.sheet_by_index(sheet_by_tag(wb, 'Models_PB'))
     get_all_models_PB = tabular_sheet_to_dict(Model_PB)
-
     Model_LB = wb.sheet_by_index(sheet_by_tag(wb, 'Models_LB'))
     get_all_models_LB = tabular_sheet_to_dict(Model_LB)
     Model_table = wb.sheet_by_index(sheet_by_tag(wb, 'Models_table'))
@@ -206,7 +205,7 @@ def select_model(self,model_name= 'M1'):
             self.box.set_analog_out(1,int(get_all_models_LB[f'M{Model_LB}']['DAC_value']))
             #print('reg model',reg_model,'Model_LB',Model_LB)
            
-        elif model_name == all_models: # M0-M9
+        elif model_name == all_models: # M0-M11
             #print('model',all_models,get_all_models[all_models]['Model_name'],int(get_all_models[all_models]['DAC_value']))
             reg_model = get_all_models_PB[all_models]['reg_model']
             Model_LB = int(models_table[reg_model]['Models_LB'])
