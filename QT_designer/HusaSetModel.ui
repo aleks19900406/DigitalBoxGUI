@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>372</width>
-    <height>398</height>
+    <width>398</width>
+    <height>420</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -276,6 +276,32 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;-when you set PB model LB model avtomatic set to correct model.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="MODEL_11">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>380</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M11</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="MODEL_10">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>380</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>M10</string>
+   </property>
+  </widget>
   <zorder>textBrowser</zorder>
   <zorder>MODEL_5</zorder>
   <zorder>label_2</zorder>
@@ -294,6 +320,8 @@ p, li { white-space: pre-wrap; }
   <zorder>MODEL_1</zorder>
   <zorder>MODEL_4</zorder>
   <zorder>label_3</zorder>
+  <zorder>MODEL_11</zorder>
+  <zorder>MODEL_10</zorder>
  </widget>
  <resources/>
  <connections/>
