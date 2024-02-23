@@ -12,6 +12,7 @@ C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Aplicat
 -additional files:
 C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/DigitalBox
 C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/package
+C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/config_file
 -settings:
 path to save exe file:
 C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Aplication
@@ -19,5 +20,5 @@ C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Aplicat
 !!! copy file from GUI project to GUI application !!!
 - data
 - QT_designer
-
-pyinstaller --noconfirm --onefile --windowed --icon "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/data/images/other/covid19.ico" --add-data "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/DigitalBox;DigitalBox/" --add-data "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/package;package/"  "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/BOX_GUI.py"
+-config_file
+pyinstaller --noconfirm --onefile --windowed --icon "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Aplication/data/images/other/covid19.ico" --add-data "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/DigitalBox;DigitalBox/" --add-data "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/package;package/" "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/BOX_GUI_2.0.py"
