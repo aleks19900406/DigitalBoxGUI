@@ -1,34 +1,50 @@
 ###################### IMPORTS #########################################
-import sys
-import os
-from PyQt5.uic import loadUi
-from PyQt5 import QtWidgets,QtGui
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QMessageBox,QMainWindow,QApplication,QTreeWidgetItemIterator,QTreeWidgetItem,QTreeWidget,QPushButton,QPlainTextEdit
-from PyQt5.QtCore import *
-from time import sleep,time
-from package.tester._clients.das import DAS  # Import DAS class
-from DigitalBox.dasConnect import SERIALCONNECT,WifiEsp32Connect
-from DigitalBox.lib import*
-import serial.tools.list_ports
-import traceback
-import openpyxl
-import subprocess
+import ctypes
 import datetime
+import os
+import subprocess
+import sys
+import traceback
+from time import sleep, time
+
+import openpyxl
+import serial.tools.list_ports
+from PyQt5 import QtGui
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QMessageBox,
+    QPlainTextEdit,
+    QPushButton,
+    QTreeWidget,
+    QTreeWidgetItem,
+    QTreeWidgetItemIterator,
+)
+from PyQt5.uic import loadUi
+
+from DigitalBox.Connection import G800, data
+from DigitalBox.dasConnect import SERIALCONNECT, WifiEsp32Connect
+from DigitalBox.lib import *
+from package.tester._clients.das import DAS  # Import DAS eee
 
 ################## PATH TO DATA FILE ####################################
+
 QT_DESIGNER_PATH = os.path.join("QT_designer")
 BOX_MARKS_PATH = os.path.join("data","boxMarks")
 BOX_DIGITAL_POT_PATH = os.path.join("data","digitalPotTable")
 BOX_DIGITAL_DAC_PATH = os.path.join("data","dacTable")
 IMAGES_PATH = os.path.join("data","images","system")
 IMAGE_PATH_OTHER =os.path.join("data","images","other")
+print('image',IMAGE_PATH_OTHER)
 DATA_SAVE = os.path.join("data","saveData")
 AUTO_TEST_PATH = os.path.join("data","autoTest")
 #print(os.path.basename(AUTO_TEST_PATH))
 ###################### BEGIN PARAMETERS #################################
 VERZIJA_ESP = "3.17"
 VERZIJA_RPI = "3.10"
+DIGITAL_BOX_VERSION = 'V1.1'
 MAIN_TIME_REFRESHING = 1000
 SPACE = '\n'
 DigitalInput = 32
@@ -72,7 +88,27 @@ InputStyleOn  = ("background-color:  rgb(159,255,159);"
 InputStyleOff =  ("background-color: rgb(210,210,210);"
                                 "border-radius: 5px;""font: 10px;")
 ##########################################################################
-
+class Info(ctypes.BigEndianStructure):
+        _pack_ = True
+        _fields_ = [
+            ("model", ctypes.c_uint8),
+            ("version", ctypes.c_uint16),
+            ("pt1000", ctypes.c_uint16),
+            ("RegStates", ctypes.c_uint8),
+            ("system", ctypes.c_uint8),
+            ("Mn", ctypes.c_uint8),
+            ("Mv", ctypes.c_uint16),
+            ("On", ctypes.c_uint16),
+            ("Pr", ctypes.c_uint16),
+            ("Pv", ctypes.c_uint16),
+            ("Sp", ctypes.c_uint16),
+            ("heater_state", ctypes.c_uint16),
+            ("Oc", ctypes.c_uint16),
+            ("Cc", ctypes.c_uint16),
+            ("Ct", ctypes.c_uint16),
+            ("ntc", ctypes.c_uint8),
+            ("meat_probe", ctypes.c_uint8),
+        ]
 class Worker(QObject):
     finished = pyqtSignal()
     stepIncreased = pyqtSignal(int)
@@ -238,6 +274,18 @@ def listConnection():
         LIST_CONNECT.append(f'RPI - 192.168.1.{ip_address}')
     
     return LIST_CONNECT
+
+def listDeviceConnection():
+    """
+    Find all serial connection only Arduino Mega(old box) and ESP32(new box) and convert to list
+    Convert to list all rpi 192.168.1.10'--->192.168.1.90    
+    """
+    LIST_CONNECT =[]
+    LIST_CONNECT.clear()
+    for USB_PORT in serial.tools.list_ports.comports():
+        LIST_CONNECT.append(f'{str(USB_PORT)}')
+    return LIST_CONNECT
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -249,7 +297,7 @@ class MainWindow(QMainWindow):
         self.refreshSaving = 1000
         self.index_on_off = 0
         self.index_out = [0,0,0,0,0,0,0,0]
-        self.index_extras = [0,0,0,0,0,0,0,0]
+        self.index_extras = [0,0,0,0,0,0,0,0,0]
         self.connectParameters = 0
         self.box_is_connected = 0
         self.index_refreshing = 0
@@ -259,7 +307,7 @@ class MainWindow(QMainWindow):
         self.indexButtonSave = 0
         self.repeatSaveData = 0
         self.indexBackup = 0
-        self.setWindowTitle('DIGITAL BOX MAIN')
+        self.setWindowTitle(f'DIGITAL BOX MAIN {DIGITAL_BOX_VERSION}')
         #self.setFixedSize(1920, 1080)
         self.setGeometry(150, 40, 1520, 990)
         #self.setSizeIncrement(1920, 1080)
@@ -297,6 +345,7 @@ class MainWindow(QMainWindow):
         self.OUT7.clicked.connect(self.output7)
         ###################### BUTTON OPEN ADDITIONAL SCREEN ######################
         self.ButtonHusaModel.clicked.connect(self.buttonHusaModel)
+        self.ButtonG800.clicked.connect(self.buttonG800)
         self.ButtonPyroSystem.clicked.connect(self.buttonPyroSystem)
         self.ButtonDacSet.clicked.connect(self.buttonDacSet)
         self.ButtonSetPot.clicked.connect(self.buttonSetPot)
@@ -379,7 +428,6 @@ class MainWindow(QMainWindow):
         self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
         self.startStopSaving.setIcon(self.iconSaveData)
     
-    
     def resetExcelParameters(self):
         """
         - reset parameters when box connection change or button refresh pressed 
@@ -461,7 +509,7 @@ class MainWindow(QMainWindow):
             self.label_saveFile.setVisible(False)
             self.savingBar.setVisible(False)
             self.backupSave.setVisible(False)
-            self.label_errorSaveFile.setText(f"!!! File not saved. Write file name and press enter !!!")
+            self.label_errorSaveFile.setText("!!! File not saved. Write file name and press enter !!!")
             print(traceback.print_exc())
     
     def startStopSave(self):
@@ -591,7 +639,7 @@ class MainWindow(QMainWindow):
                         digitalPot.append(f'setPot{index}')
                     except AttributeError:
                         digitalPot.append(f'setPot{index}')
-                digitalOut.append(f'On/Off')
+                digitalOut.append('On/Off')
                 for index in range(8):
                     try:
                         if self.read_all_lines[3].replace('\n','').split(',')[index] == '':
@@ -624,14 +672,14 @@ class MainWindow(QMainWindow):
                         setVoltage.append(f'setVoltage{index}')
                     except AttributeError:         
                         setVoltage.append(f'setVoltage{index}')
-                readPwm1.append(f'readPwm1')
-                readPwm1.append(f'readDuty1')
-                setPwm1.append(f'setPwm1')
-                setPwm1.append(f'setDuty1')
-                readPwm2.append(f'readPwm2')
-                readPwm2.append(f'readDuty2')
-                setPwm2.append(f'setPwm2')
-                setPwm2.append(f'setDuty2')
+                readPwm1.append('readPwm1')
+                readPwm1.append('readDuty1')
+                setPwm1.append('setPwm1')
+                setPwm1.append('setDuty1')
+                readPwm2.append('readPwm2')
+                readPwm2.append('readDuty2')
+                setPwm2.append('setPwm2')
+                setPwm2.append('setDuty2')
                 for index in range(32):
                     try:
                         if self.read_all_lines[1].replace('\n','').split(',')[index] == '':
@@ -652,8 +700,8 @@ class MainWindow(QMainWindow):
                         dacSet.append(f'setDac{index}')
                     except AttributeError:         
                         dacSet.append(f'setDac{index}') 
-                freqOldBox.append(f'setFreq(duty50%)')
-                dutyOldBox.append(f'setDuty(2kHz)')
+                freqOldBox.append('setFreq(duty50%)')
+                dutyOldBox.append('setDuty(2kHz)')
                 sheetNames.extend(digitalPot)
                 sheetNames.extend(digitalOut)
                 sheetNames.extend(readAdc)
@@ -685,7 +733,7 @@ class MainWindow(QMainWindow):
             else:
                 self.label_errorSaveFile.setVisible(True)
                 self.label_saveFile.setVisible(False)
-                self.label_errorSaveFile.setText(f"!!! CONNECT DIGITAL BOX !!!")
+                self.label_errorSaveFile.setText("!!! CONNECT DIGITAL BOX !!!")
             
             if self.indexButtonSave >=2:
                 self.indexButtonSave =0
@@ -720,6 +768,7 @@ class MainWindow(QMainWindow):
             event.accept()
             mainWindow.close()
             HusaModelWindow.close()
+            deviceG800.close()
             PyroSetSystem.close()
             SetDacValue.close()
             PotTableSet.close()
@@ -961,11 +1010,11 @@ class MainWindow(QMainWindow):
                         digital_pot_text.setText(self.read_all_lines[19].replace('\n','').split(',')[index])
                         digital_pot_text.setFont(QFont('Arial', 10))
                 if name == f'SET_FREQ{SPACE}':
-                        digital_pot_text = eval(f'self.labelSetPwm3_0')
+                        digital_pot_text = eval('self.labelSetPwm3_0')
                         digital_pot_text.setText(self.read_all_lines[21].replace('\n',''))
                         digital_pot_text.setFont(QFont('Arial', 10))
                 if name == f'SET_DUTY{SPACE}':
-                        digital_pot_text = eval(f'self.labelSetPwm3_1')
+                        digital_pot_text = eval('self.labelSetPwm3_1')
                         digital_pot_text.setText(self.read_all_lines[23].replace('\n',''))
                         digital_pot_text.setFont(QFont('Arial', 10))
         except IndexError:
@@ -994,6 +1043,7 @@ class MainWindow(QMainWindow):
             sleep(0.2)
         self.connectBar.setVisible(False)
         self.connectBar.setValue(0)
+    
     def connectBox(self,CONNECTBOX):
         """
         - connect digital box with RPI or direct with digital box(serial connection)
@@ -1073,6 +1123,10 @@ class MainWindow(QMainWindow):
                     self.BOX_VERSION.setVisible(True)
                     self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= {VERZIJA_RPI}. Update box to the latest version if you want to use this application") 
             
+            self.index_on_off =1
+            self.on_off.setIcon(self.iconOff)
+            self.on_off.setIcon(self.iconOn)
+            self.ButtonG800.setStyleSheet(ButtonStyleOff2)
             self.ButtonHusaModel.setStyleSheet(ButtonStyleOff2)
             self.ButtonPyroSystem.setStyleSheet(ButtonStyleOff2)
             self.ButtonDacSet.setStyleSheet(ButtonStyleOff2)
@@ -1080,7 +1134,7 @@ class MainWindow(QMainWindow):
             self.ButtonSetDac.setStyleSheet(ButtonStyleOff2)
             self.ButtonAutomation.setStyleSheet(ButtonStyleOff2)
             self.warningMessageAddFunction.setStyleSheet("color: black")
-            self.warningMessageAddFunction.setText(f"ADDITIONAL FUNCTIONS")     
+            self.warningMessageAddFunction.setText("ADDITIONAL FUNCTIONS")     
         except:
             x = datetime.datetime.now()
             dateAndTime = x.strftime("%c")
@@ -1089,7 +1143,7 @@ class MainWindow(QMainWindow):
                 f.write(f'Das service is not connected to this ip {CONNECTBOX[6:]} \n')
                 f.write('Solution:\n')
                 f.write(f'-- Open supervisor {CONNECTBOX[6:]}:9001 (copy ip to this ip to browser) and check das service \n')
-                f.write(f'-- Reset das service.Das service must be in running state \n')
+                f.write('-- Reset das service.Das service must be in running state \n')
                 f.write('-- Computer and RPI must be in the same domain \n')
                 f.write(f'-- RPI(das {VERZIJA_RPI}), digital box(third generation) and tester({VERZIJA_RPI}) must be updated \n')
                 f.write(f'{errorNumber*2}\n')
@@ -1555,6 +1609,7 @@ class MainWindow(QMainWindow):
        
         self.SetFrequency1.setValue(self.SetPwmBar1.value())
         self.SetPwmBar1.setStyleSheet(f"background-color: rgb({250-int((self.SetPwmBar1.value()/100))},{250-int((self.SetPwmBar1.value()/100))},255)")
+    
     def SetFrequencyBar2(self):
         """
         - set frequency with slider
@@ -1562,6 +1617,7 @@ class MainWindow(QMainWindow):
         """
         self.SetFrequency2.setValue(self.SetPwmBar2.value())
         self.SetPwmBar2.setStyleSheet(f"background-color: rgb({250-int((self.SetPwmBar2.value()/100))},{250-int((self.SetPwmBar2.value()/100))},255)")
+    
     def set_pwm1(self):
         """
         set PWM1 when value change
@@ -1638,11 +1694,34 @@ class MainWindow(QMainWindow):
                 HusaModelWindow.close()
         else:
             self.warningMessageAddFunction.setStyleSheet("color: red")
-            self.warningMessageAddFunction.setText(f"!!! CONNECT DIGITAL BOX !!!") 
+            self.warningMessageAddFunction.setText("!!! CONNECT DIGITAL BOX !!!") 
             self.ButtonHusaModel.setStyleSheet(ButtonStyleOff2)
         self.index_extras[0] +=1
         if self.index_extras[0] >=2:
-            self.index_extras[0] =0 
+            self.index_extras[0] =0
+
+    def buttonG800(self):
+        """
+        - show screen husa if box is connected
+        - if box is not connected show massage error
+        """
+        if (self.index_extras[8] % 2) == 0:
+            self.ButtonG800.setStyleSheet(ButtonStyleOn2)
+            deviceG800.show()
+        else: 
+            self.ButtonG800.setStyleSheet(ButtonStyleOff2)
+            deviceG800.close()
+        self.index_extras[8] +=1
+     
+        if self.index_extras[8] >=2:
+            self.index_extras[8] =0 
+        
+    def closeScreenG800(self):
+        """
+        close G800 close
+        """
+        self.index_extras[8] +=1
+        self.ButtonG800.setStyleSheet(ButtonStyleOff2)
     
     def closeHusaScreen(self):
         """
@@ -1665,7 +1744,7 @@ class MainWindow(QMainWindow):
                 PyroSetSystem.close()
         else:
             self.warningMessageAddFunction.setStyleSheet("color: red")
-            self.warningMessageAddFunction.setText(f"!!! CONNECT DIGITAL BOX !!!") 
+            self.warningMessageAddFunction.setText("!!! CONNECT DIGITAL BOX !!!") 
             self.ButtonPyroSystem.setStyleSheet(ButtonStyleOff2)
             
         self.index_extras[1] +=1
@@ -1755,7 +1834,7 @@ class MainWindow(QMainWindow):
         
         if self.index_refreshing >= 1:
             if (self.index_extras[3] % 2) == 0:
-                self.labelTableOpenError.setText(f"!!! CREATE POT TABLE IS OPEN. GUI STOPPED!!!")
+                self.labelTableOpenError.setText("!!! CREATE POT TABLE IS OPEN. GUI STOPPED!!!")
                 self.labelTableOpenError.setVisible(True)
                 self.ButtonSetPot.setStyleSheet(ButtonStyleOn2)
                 PotTableSet.show()
@@ -1771,7 +1850,7 @@ class MainWindow(QMainWindow):
                 self.DIGITAL_BOX_MAIN.start()
         else:
             self.warningMessagePot.setVisible(True)
-            self.warningMessagePot.setText(f"!!! CONNECT DIGITAL BOX !!!") 
+            self.warningMessagePot.setText("!!! CONNECT DIGITAL BOX !!!") 
             self.ButtonSetPot.setStyleSheet(ButtonStyleOff2)
             
         self.index_extras[3] +=1
@@ -1796,7 +1875,7 @@ class MainWindow(QMainWindow):
         """
         if self.index_refreshing >= 1:
             if (self.index_extras[4] % 2) == 0:
-                self.labelTableOpenError.setText(f"!!! CREATE DAC TABLE IS OPEN. GUI STOPPED!!!")
+                self.labelTableOpenError.setText("!!! CREATE DAC TABLE IS OPEN. GUI STOPPED!!!")
                 self.labelTableOpenError.setVisible(True)
                 self.ButtonSetDac.setStyleSheet(ButtonStyleOn2)
                 DacTableCreate.show()
@@ -1812,7 +1891,7 @@ class MainWindow(QMainWindow):
                 self.DIGITAL_BOX_MAIN.start()
         else:
             self.warningMessageDac.setVisible(True)
-            self.warningMessageDac.setText(f"!!! CONNECT DIGITAL BOX !!!") 
+            self.warningMessageDac.setText("!!! CONNECT DIGITAL BOX !!!") 
             self.ButtonSetDac.setStyleSheet(ButtonStyleOff2)
                 
         self.index_extras[4] +=1
@@ -1925,6 +2004,7 @@ class MainWindow(QMainWindow):
         try:
             readPot = PotTableSet.Pot_value.value()
             TableFirstMin,TableFirstMax = tablePotMaxMin(self,f"{PotTableSet.tableSelection()[0:5]}{PotTableSet.tableSelection()[5]}.1")
+            #print('readPot',readPot)
             #print('table-->',f"{PotTableSet.tableSelection()[0:5]}{PotTableSet.tableSelection()[5]}.1")
             #print('max=',TableFirstMax)
             if beginSetPot != readPot:
@@ -1933,6 +2013,7 @@ class MainWindow(QMainWindow):
                     if readPot <= 255:
                         self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),0],readPot)
                         self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),1,2,3],0)
+                        print('<= 255',readPot)
                     elif readPot > 255 and readPot <= 255*2:
                         self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),0],255)
                         self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),1],readPot-255)
@@ -1999,7 +2080,6 @@ class MainWindow(QMainWindow):
         if beginDacPot != readDac:
             self.box.set_analog_out(int(DacTableCreate.tableSelection())-1,readDac)
             beginDacPot = readDac               
-
 class SetDacPot(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -2467,7 +2547,7 @@ class CreatePotTable(QMainWindow):
         self.lableErrorPot.setVisible(False)
         self.lableErrorPot.setFont(QFont('Arial', 11))
         self.lableErrorPot.setStyleSheet("color: red")
-        self.lableErrorPot.setText(f"Pot value in Table x.1 is > 765. Table x.2 can not be set")
+        self.lableErrorPot.setText("Pot value in Table x.1 is > 765. Table x.2 can not be set")
         ############################## BUTTON STYLE ##################################
         self.iconSaveOn = QtGui.QIcon()
         self.iconSaveOn.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
@@ -2607,7 +2687,6 @@ class CreateDacTable(QMainWindow):
         - close dac table
         """
         mainWindow.closeDacTable()    
-
 class CreateAutoTest(QMainWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -2783,7 +2862,6 @@ class CreateAutoTest(QMainWindow):
 
     def message(self, s):
         self.text.appendPlainText(s)
-       
 class AutoRunScript(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -2951,25 +3029,183 @@ class AutoRunScript(QMainWindow):
         self.message(f"State changed: {state_name}")
 
     def message(self, s):
-        self.text.appendPlainText(s)
+        self.text.appendPlainText(s)    
+class DeviceG800(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        ########################## SCREEN PATH CONVERT #############################
+        self.connected = 0
+        DacTable = os.path.abspath(f"{QT_DESIGNER_PATH}/G800.ui")
+        loadUi(str(DacTable), self)
+        self.setWindowTitle("Logging G800")
+        #self.setFixedSize(600, 600)
+        self.setModel.activated[str].connect(self.setmodel)
+        self.setModel.setStyleSheet(ButtonStyleWhite)
+        self.setModel.setEnabled(False)
+        self.logParameters.isReadOnly()
+        self.deviceDisconnect.clicked.connect(self.disconnect)
+        self.deviceDisconnect.setStyleSheet(ButtonStyleOff2)
+        self.logging = QTimer()
+        self.logging.timeout.connect(self.loggingParameters)  #
+        self.logging.setInterval(1000)
+        self.readDeviceData = QThreadPool()
+        self.counter = 0
+        self.DeviceConnect.activated[str].connect(self.deviceBox)
+        self.DeviceConnect.setEditable(True)
+        self.DeviceConnect.setStyleSheet(ButtonStyleWhite)
+        self.DeviceConnect.addItems(listDeviceConnection())
+        self.data = data
+        #self.buttonTimer = QTimer()
+        #self.buttonTimer.setSingleShot(True)
+        #self.buttonTimer.setInterval(100)  #  3 seconds
+        #self.buttonTimer.timeout.connect(self.button_clicked)
+         ################## DIGITAL OUTPUT #########################################
+        for index in range(22):
+            #eval(f'self.buttonT{index}.pressed.connect(self.buttonTimer.start)')
+            #eval(f'self.buttonT{index}.released.connect(self.buttonTimer.stop)')
+            eval(f'self.buttonT{index}.clicked.connect(self.button_clicked)')
+            eval(f'self.buttonT{index}.setStyleSheet(ButtonStyleOff2)')
       
+    def button_clicked(self):
+        try:
+            sender = int(self.sender().text().replace('T',''))
+            self.logParameters.append(f"{self.timeDisplay}->Button press: {self.sender().text()}")
+            self.device.button(index=sender)
+        except Exception:
+            self.disconnect()
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
+                f.write('Digital box is disconnected \n')
+                f.write(f'{errorNumber*2}\n')
+                f.write(traceback.format_exc())
+                f.write(f'{errorNumber*2}\n')
+            f.close()
+    
+    def loggingParameters(self):
+        self.time = QDateTime.currentDateTime()
+        self.timeDisplay = self.time.toString("dd-MM-yyyy hh:mm:ss")
+        self.counter += 1
+        self.readDeviceData.start(self.get_param)
+        if self.counter > 33:
+            self.logParameters.clear()
+            self.counter = 0
+
+    def deviceBox(self, CONNECTBOX):
+        """
+        - connect digital box with RPI or direct with digital box(serial connection)
+        - check if version is correct
+        - show warning message if version is not correct
+        """
+        try:
+            if CONNECTBOX[0:3] =='COM':
+                self.device = G800(CONNECTBOX[0:5].replace(' ',''))
+                self.device.connect()
+                self.setModel.addItems(self.data['LUTS']['Models'])
+                self.connected = 1
+                sleep(1)
+                self.logging.start()
+                self.DeviceConnect.setStyleSheet(ButtonStyleOn)
+                self.setModel.setEnabled(True)
+            else:
+                sleep(2)
+                self.device.disconnect()
+                self.index_refreshing = 0
+        except:
+            self.disconnect()
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
+                f.write('Device is not conncected \n')
+                f.write('Solution:\n')
+                f.write('-- Connenct to the correct comport !!!\n')
+                f.write(f'{errorNumber*2}\n')
+                f.write(traceback.format_exc())
+                f.write(f'{errorNumber*2}\n')
+            f.close()
+    
+    def disconnect(self):
+        self.setModel.setEnabled(False)
+        self.logging.start()
+        self.DeviceConnect.setStyleSheet(ButtonStyleOff2)
+        self.setModel.setStyleSheet(ButtonStyleOff2)
+        self.DeviceConnect.clear()
+        self.DeviceConnect.addItems(listDeviceConnection())
+        self.logging.stop()
+        if self.connected == 1:
+            self.device.disconnect()
+
+    def getAllModels(self):
+        self.setModel.clear()
+        self.setModel.addItems(mainWindow.getModel()[1])
+
+    def setmodel(self, model):
+        self.logging.stop()
+        sleep(0.2)
+        self.setModel.setStyleSheet(ButtonStyleOn)
+        self.device.set_model(self.data['LUTS']['Models'].index(f'{model}'))
+        sleep(1)
+        self.logging.start()
+    def get_param(self):
+        try:
+            getparam =  self.device.get_command('Reg')
+            allParam = Info.from_buffer_copy(getparam)
+            parameters = {'model' : self.data['LUTS']['Models'][allParam.model],
+                        'version':f'{(allParam.version >> 8) & 0xFF}.{allParam.version & 0xFF}',
+                        'pt1000': allParam.pt1000/10,
+                        'RegStates':self.data['LUTS']['States'][allParam.RegStates],
+                        'system':self.data['LUTS']['Systems'][allParam.system],
+                        'Ntc':allParam.ntc,
+                        'Probe':allParam.meat_probe}
+            self.logParameters.append(f"{self.timeDisplay}->{parameters}")
+        except AttributeError:
+            self.disconnect()
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
+                f.write('Digital box is disconnected \n')
+                f.write(f'{errorNumber*2}\n')
+                f.write(traceback.format_exc())
+                f.write(f'{errorNumber*2}\n')
+            f.close()
+        except ValueError:
+            pass
+        except RuntimeError:
+            self.disconnect()
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
+                f.write('Digital box is disconnected \n')
+                f.write(f'{errorNumber*2}\n')
+                f.write(traceback.format_exc())
+                f.write(f'{errorNumber*2}\n')
+            f.close()
+
+    def closeEvent(self, event):
+        """
+        - close G800 
+        """
+        mainWindow.closeScreenG800()
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ### CREATE AN OBJECT NAMES ###
     mainWindow = MainWindow()
     mainWindow.show()
-    #autoTest = AutoRunScript()
-    #utoTest.show()
+    # autoTest = AutoRunScript()
+    # autoTest.show()
     HusaModelWindow = HusaSetModule()
     PyroSetSystem = Bio21PyroSetSystem()
     SetDacValue = SetDacPot()
     PotTableSet = CreatePotTable()
     DacTableCreate = CreateDacTable()
     RunAutoTest = CreateAutoTest()
+    deviceG800 = DeviceG800()
+    #deviceG800.show()
     ##############################
     sys.exit(app.exec_())
-
-
-
-
-
