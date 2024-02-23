@@ -1,0 +1,401 @@
+
+{
+    "FCTUC_cfg": {
+        "Complement": true,
+        "SendCommand": "FCTON",
+        "Relays":       { "LUT": "Relays",        "GetCommand": "RelayGet",     "SetCommand": "RelaySet",       "SetAllSubCmd": "99", "SetDelayCommand": "RelaySetDelay",  "StartupState": [ "EN_3V3_ESP32", "V_CAP_PROC" ],  "SetAllIgnore": [ "EN_3V3_ESP32", "V_CAP_PROC" ] },
+        "Analog":       { "LUT": "Analog",        "GetCommand": "AnalogGet",    "GetAllSubCmd": "98"},
+        "TempSensors":  { "LUT": "TempSensors",   "GetCommand": "TempGet",      "GetAllSubCmd": "98"},
+        "Inputs":       { "LUT": "Inputs",        "GetCommand": "InputGet",     "GetAllSubCmd": "99"},
+        "Buttons":      { "LUT": "BTNS",          "GetCommand": "BtnGet",       "GetAllSubCmd": "99",           "SetCommand": "BtnTrigger"},
+    },
+    "LogUC_cfg": {
+        "DropdownListGetSetModel": 
+            { "LUT": "Models",            "SelectedItem": "MF_60",    "SendCommand": "GetModel"},
+        "DropdownListSendCommand": 
+            { "LUT": "SendCommands",       "SelectedItem": "Info",  "SendCommand": "Info"},
+        "ButtonSideStaticCmds": [
+            {"Name": "Reg",             "State": true,  "SendCommand": "Reg", "AutoSendCmds": [] },
+            {"Name": "Steam",           "State": true,  "SendCommand": "Steam", "AutoSendCmds": [] },
+            {"Name": "Inverter",        "State": true,  "SendCommand": "Inverter", "AutoSendCmds": [] },
+            {"Name": "Reset",           "State": false, "SendCommand": "Reset", "AutoSendCmds": [] },
+            {"Name": "DDLWT_Stts",      "State": false, "SendCommand": "DDLWT_Stts", "AutoSendCmds": [] }
+        ],
+        "CheckBoxFilters": [
+            {"Name": "LinKL",           "State": false, "StartRngCmd": 0x0F14, "EndRngCmd": 0x0F15},
+            {"Name": "LinUI",           "State": false, "StartRngCmd": 0xFFBC, "EndRngCmd": 0xFFBD},
+            {"Name": "ClassB",          "State": true,  "StartRngCmd": 0x0F00, "EndRngCmd": 0x0FFF},
+            {"Name": "Peripherals",     "State": true,  "StartRngCmd": 0x1001, "EndRngCmd": 0x1FFF},
+            {"Name": "Reg",             "State": true,  "StartRngCmd": 0xFFAA, "EndRngCmd": 0xFFAA},
+            {"Name": "Steam",           "State": true,  "StartRngCmd": 0xFFAB, "EndRngCmd": 0xFFAB},
+            {"Name": "Inverter",        "State": true,  "StartRngCmd": 0xFFAC, "EndRngCmd": 0xFFAC},
+            {"Name": "FCT",             "State": false, "StartRngCmd": 0x0302, "EndRngCmd": 0x0A02},
+        ]
+    },
+    "LUTS": {
+        "SendCommands":{
+            "Info":             "0x0002",
+            "GetModel":         "0x0020",
+            "GetLed":           "0x0100",
+            "BtnTrigger":       "0x0400",
+            "BtnGet":           "0x0302",
+            "TempGet":          "0x0402",
+            "RelaySet":         "0x0602",
+            "AnalogGet":        "0x0702",
+            "InputGet":         "0x0802",
+            "RelaySetDelay":    "0x0A02",
+            "RelayGet":         "0x1001",
+            "Reg":              "0xFFAA",
+            "Steam":            "0xFFAB",
+            "Inverter":         "0xFFAC",
+            "TempSenors":       "0xFFAD",
+            "SYT_Stts":         "0xFFBA",
+            "DDLWT_Stts":       "0xFFBB",
+            "FCTON":            "0xFFCA",
+            "Reset":            "0xFFFF"
+        },
+        "Models": [ "UNKNOWN", "MF_60", "MFSA_60", "PYRO_60", "PYROSA_60", "CSTEAM_60", "CMW_60", "CMWPY_60", "CSTEAM_45", "CMW_45", "CMWPY_45", "3IN1_45", "FCT_ALL", "MAX" ],
+        "Systems": [
+            "None", "C", "CL", "FPH", "CI", "UICL", "UI", "UL", "IL", "ULF", "UIF", "UIL", "ILF", "LF", "IF", "L", "F",
+            "AQUA", "PYRO", "DEFROST", "KEEPWARM", "PLATEWARM", "AIRFRY", "PROOFING", "DEHYDRATE", "REHEAT", "PRESERVING", "STERILISE_BOTTLES", "OVEN_DRYING", "FROZEN_BAKE", "PICA_BAKE", "ECO",
+            "MW", "C_MW", "ULF_MW", "UIF_MW", "UC_MW", "AIRFRY_MW",
+            "STEAM", "REGENERATE", "STEAM_CLEAN", "SOUSVIDE", "DESCALE", "C_SA", "UL_SA", "UIF_SA",
+            "OFF", "MAX"
+        ],
+        "SteamAssist": [ "OFF", "INT1", "INT2", "INT3" ],
+        "Relays": [ "HEAT_UP", "HEAT_LOW", "HEAT_INFRA", "HEAT_FAN", "FAN_OVEN", "N_SW", "L_SW", "FAN_COOL", "THERMO_ACT", "DOOR_ACT", "MW_STIRRER_MOT", "PYRO_LOCK", "PUMP_OUT", "PUMP_IN", "FAN_COOL2X", "LIGHT", "MW_INVERTER", "STEAM_GEN", "EN_3V3_ESP32", "V_CAP_PROC"],
+        "Inputs": [ "DOOR_SENSE1", "DOOR_SENSE2", "DOOR_LOCK_SWITCH1", "DOOR_LOCK_SWITCH2", "TANK_SENSE", "REED_WATER_LEVEL ", "ZC", "FLOW"],
+        "Analog": [ "MAIN_REF1", "MAIN1", "MAIN_REF2", "MAIN2", "VCAP", "PCB1", "PCB2", "12V", "PT1000_GRILL", "STEAM", "FOOD", "INV_IB", "HW_CONF" ],
+        "TempSensors": [ "OVEN", "PCB", "GRILL", "STEAM", "MEAT_PROBE"],
+        "ComPecFrameIDs": [ "MF_10", "MF_90", "SF_101", "SF_150", "SF_151", "SF_152", "SF_153", "SF_154", "SF_155", "SF_156", "SF_157", "SF_158", "SF_159", "SF_160", "MF_20", "MF_21", "MF_26", "MF_30", "MF_99", "SF_100", "SF_120", "SF_125", "SF_130", "SF_140"],
+        "BTNS": [ "T0", "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12", "T13", "T14", "T15", "T16", "T17", "T18", "T19", "T20", "T21" ],
+        "UI_OVRD": ["OFF", "REG", "BTNS"],
+        "Switch": ["CLOSED", "OPEN"],
+        "Activity": ["UNLOCKED", "LOCKED", "", "", "ERROR", "", "", "", "INIT", "", "", "", "DISABLED"],
+        "States": ["OFF", "ON", "MTN"],
+        "ComState": [ "NO_ERROR", "SYNC_ERROR", "ID_ERROR", "LENGTH_ERROR", "CRC_ERROR", "TIMEOUT_ERROR", "DROPPED_FRAME_ERROR", "COMPLEMENT_ERROR", "HANDELED_FRAME_DEBUG", "RECV_FRAME_DEBUG", "SENT_FRAME_DEBUG" ],
+        "ZCStates": ["NONE", "OFF", "ON", "NOISE"],
+        "BTNState": ["NO_PRESS", "SHORT_PRESS", "MEDIUM_PRESS", "LONG_PRESS", "DOUBLE_CLICK", "PRESSED", "RELEASED" ],
+        "TempSensorStates": ["SHORT", "OK", "OPEN"],
+        "RegSteps": [ "STEP_UNKNOWN", "STEP_1", "STEP_2", "STEP_3", "STEP_4", "STEP_5", "STEP_PREHEAT" ],
+        "SteamStates": [ "OFF", "ON", "STARTING", "WATER_TANK_MISSING", "DOOR_OPEN", "RESET", "NO_FLOW", "ERROR", "DISABLED" ],
+        "SteamSubStates": [ "EMPTY", "DRAINING", "FILLING", "COOLDOWN", "FULL", "START", "FIRST_STEP", "SECOND_STEP", "AVG_CALC" ],
+        "FlowSensorStates": [ "TIMEOUT", "DONE", "PAUSED", "IDLE", "PUMP_IN", "PUMP_OUT" ],
+        "InverterStates": [ "OFF", "ON", "PAUSE", "RETRY", "RESET", "ERROR", "DISABLED" ],
+        "Errors":[
+            "ERROR_0_PT_OPEN",
+            "ERROR_1_PT_FAIL",
+            "ERROR_2_MEAT_PROBE_FAIL",
+            "ERROR_3_COM",
+            "ERROR_4_TOUCH",
+            "ERROR_5_LB_OVER_TEMP",
+            "ERROR_6_PYRO_LOCK",
+            "ERROR_7_RELAY_PSU",
+            "ERROR_8_PB_OVER_TEMP",
+            "ERROR_9_INVERTER",
+            "ERROR_10_PYRO_HEATUP_FAIL",
+            "ERROR_11_WATER_FLOW",
+            "ERROR_12_STEAM_GENERATOR",
+            "ERROR_13_STEAM_NTC",
+            "ERROR_14_ACTIVATION_WHILE_CLEANING",
+            "ERROR_15_ZEROCROSS",
+            "ERROR_16_MAX_OPERATION_TIME",
+            "ERROR_17_MP_PLUGGED_IN_MW_PYRO_MODE",
+            "ERROR_18_50_60_HZ_FREQ_UNSTABLE",
+            "ERROR_19_OSCILATOR_CALIBRATION_FAIL",
+            "ERROR_20_CHECKSUM",
+            "ERROR_21_FUSE_BITS",
+            "ERROR_22_NTC_PCB_FAIL",
+            "ERROR_23",
+            "ERROR_24",
+            "ERROR_25",
+            "ERROR_26",
+            "ERROR_27",
+            "ERROR_28",
+            "ERROR_29",
+            "ERROR_30",
+            "ERROR_31"
+        ],
+        "SubErrors": [
+            "PEC_ERROR_BUTTON_0",
+            "PEC_ERROR_BUTTON_1",
+            "PEC_ERROR_BUTTON_2",
+            "PEC_ERROR_BUTTON_3",
+            "PEC_ERROR_BUTTON_4",
+            "PEC_ERROR_BUTTON_5",
+            "PEC_ERROR_BUTTON_6",
+            "PEC_ERROR_BUTTON_7",
+            "PEC_ERROR_BUTTON_8",
+            "PEC_ERROR_BUTTON_9",
+            "PEC_ERROR_BUTTON_10",
+            "PEC_ERROR_BUTTON_11",
+            "PEC_ERROR_BUTTON_12",
+            "PEC_ERROR_BUTTON_13",
+            "PEC_ERROR_BUTTON_14",
+            "PEC_ERROR_BUTTON_15",
+            "PEC_ERROR_BUTTON_16",
+            "PEC_ERROR_BUTTON_17",
+            "PEC_ERROR_TOUCH_CAP",
+            "PEC_ERROR_TOUCH_VDD",
+            "PEC_ERROR_COM",
+            "PEC_ERROR_ENABLE",
+            "PEC_ERROR_DOOR_LOCK",
+            "PEC_ERROR_RELAY_WATCHDOG",
+            "PEC_ERROR_VCAP",
+            "PEC_ERROR_ADC_PT1000_OPEN",
+            "PEC_ERROR_ADC_PT1000_SHORT",
+            "PEC_ERROR_ADC_PT1000_REF",
+            "PEC_ERROR_PT1000_DIFF",
+            "PEC_ERROR_NTC_OPEN",
+            "PEC_ERROR_NTC_SHORT",
+            "PEC_ERROR_NTC_DIFF",
+            "PEC_ERROR_DRIFT_MAX_TEMP",
+            "PEC_ERROR_DRIFT_AMBIENT",
+            "PEC_ERROR_DRIFT_STUCK",
+            "PEC_ERROR_DRIFT_MAX_NTC",
+            "PEC_ERROR_DRIFT_RELAYS",
+            "PEC_ERROR_PUMP_EXCEPTION_1",
+            "PEC_ERROR_PUMP_EXCEPTION_2",
+            "PEC_SYSTEM_DETECTION",
+            "RESERVE_0", "RESERVE_1", "RESERVE_2", "RESERVE_3", "RESERVE_4", "RESERVE_5", "RESERVE_6", "RESERVE_7"
+        ],
+    },
+    "Commands": {
+        "0x0000": {"Type": "Format",    "String": "Exception ",                     "Formating": []},
+        "0x0002": {"Type": "String",    "String": "",                               "Formating": []},
+        "0x0020": {"Type": "Format",    "String": "Model get/set OK ",              "Formating": [
+            {"LUT": "Models",           "before_value": "",                         "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "PB Ver: ",                 "after_value": "_",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "",                         "after_value": "_",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "",                         "after_value": "",      "size": 4, "type_size": 2, "type": "unsigned", "spacing": ".",  "multiple": false },
+            {"LUT": null,               "before_value": "",                         "after_value": ", ",    "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "crc: ",                    "after_value": ", ",    "size": 8, "type_size": 4, "type": "hex",      "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "KL Ver: ",                 "after_value": "",      "size": 2, "type_size": 1, "type": "unsigned", "spacing": "_",  "multiple": false },
+            {"LUT": null,               "before_value": "",                         "after_value": "",      "size": 2, "type_size": 1, "type": "unsigned", "spacing": ".",  "multiple": false },
+            {"LUT": null,               "before_value": "",                         "after_value": ", ",    "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Reg Ver: ",                "after_value": ", ",    "size": 2, "type_size": 1, "type": "unsigned", "spacing": ".",  "multiple": false },
+            {"LUT": null,               "before_value": "ESP Ver: ",                "after_value": "",      "size": 2, "type_size": 1, "type": "unsigned", "spacing": "_",  "multiple": false },
+            {"LUT": null,               "before_value": "",                         "after_value": "",      "size": 2, "type_size": 1, "type": "unsigned", "spacing": ".",  "multiple": false },
+            {"LUT": null,               "before_value": "",                         "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0302": {"Type": "FormatList","String": "BTN: ",                          "Formating": [
+            {"LUT": null,               "before_value": "",                         "after_value": "  ",    "size": 1, "type_size": 1, "type": "hex",      "spacing": "",   "multiple": false }
+        ]},
+        "0x0402": {"Type": "FormatList","String": "TS: ",                           "Formating": [
+            {"LUT": null,               "before_value": "",                         "after_value": "  ",    "size": 1, "type_size": 1, "type": "hex",      "spacing": "",   "multiple": false }
+        ]},
+        "0x0702": {"Type": "FormatList","String": "AI: ",                           "Formating": [
+            {"LUT": null,               "before_value": "",                         "after_value": "  ",    "size": 1, "type_size": 1, "type": "hex",      "spacing": "",   "multiple": false }
+        ]},
+        "0x0802": {"Type": "FormatList","String": "DI: ",                           "Formating": [
+            {"LUT": null,               "before_value": "",                         "after_value": "  ",    "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0A02": {"Type": "Format",    "String": "Relay delay set ",               "Formating": []},
+        "0x0F01": {"Type": "Format",    "String": "IDAC OFF ",                      "Formating": [
+            {"LUT": null,               "before_value": "Ref: ",                    "after_value": "",      "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F02": {"Type": "Format",    "String": "IDAC OFF ",                      "Formating": [
+            {"LUT": null,               "before_value": "Vcap: ",                   "after_value": "",      "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F03": {"Type": "Format",    "String": "IDAC ON ",                       "Formating": [
+            {"LUT": null,               "before_value": "Main1: ",                  "after_value": "",      "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F04": {"Type": "Format",    "String": "IDAC ON ",                       "Formating": [
+            {"LUT": null,               "before_value": "Main2: ",                  "after_value": "",      "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F05": {"Type": "Format",    "String": "IDAC ON ",                        "Formating": [
+            {"LUT": null,               "before_value": "Ref: ",                    "after_value": "",      "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F06": {"Type": "Format",    "String": "IDAC ON ",                       "Formating": [
+            {"LUT": null,               "before_value": "Vcap: ",                   "after_value": "",      "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F07": {"Type": "Format",    "String": "NTC ",                        	"Formating": [
+            {"LUT": null,               "before_value": "diff high: ",              "after_value": "",      "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F08": {"Type": "Format",    "String": "PT main ",                     	"Formating": [
+            {"LUT": null,               "before_value": " diff high: ",             "after_value": "",      "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F09": {"Type": "Format",    "String": "PT ref ",                     	"Formating": [
+            {"LUT": null,               "before_value": "diff high: ",              "after_value": "",      "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F0A": {"Type": "Format",    "String": "Wd pec",                         "Formating": []},
+        "0x0F0B": {"Type": "Format",    "String": "Enable pec",                     "Formating": []},
+        "0x0F0C": {"Type": "Format",    "String": "Inv ADC filter",                 "Formating": []},
+        "0x0F0D": {"Type": "Format",    "String": "Max limit: ",                    "Formating": [
+            {"LUT": null,               "before_value": "PT: ",                     "after_value": "°C ",   "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Reached: ",                "after_value": "°C",    "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F0E": {"Type": "Format",    "String": "Drift 5min PT<(NTC-10°C): ",     "Formating": [
+            {"LUT": null,               "before_value": "PT:",                      "after_value": "°C",    "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F0F": {"Type": "Format",    "String": "Drift PT 8min temp<120°C: ",     "Formating": [
+            {"LUT": null,               "before_value": "Max-min: ",                "after_value": "°C ",   "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Setpoint: ",               "after_value": "°C ",   "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Elapsed: ",             	"after_value": "s",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F10": {"Type": "Format",    "String": "Drift Relay after 30sec: ",      "Formating": []},
+        "0x0F11": {"Type": "Format",    "String": "Drift PT 3h PT>(NTC+20°C): ",	"Formating": [
+            {"LUT": null,               "before_value": "PT: ",                     "after_value": "°C",    "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F12": {"Type": "Format",    "String": "Drift Pyro system detection: ",	"Formating": [
+            {"LUT": null,               "before_value": "DetectCount:",         	"after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F13": {"Type": "Format",    "String": "Drift NTC>85°C",                 "Formating": [
+            {"LUT": null,               "before_value": "NTC:",                     "after_value": "°C",    "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F14": {"Type": "Format",    "String": "Lin_KL: ",                       "Formating": [
+            {"LUT": "ComState",         "before_value": "State: ",                  "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "ComPecFrameIDs",   "before_value": "ID: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "FrID: 0x",                 "after_value": " ",     "size": 1, "type_size": 1, "type": "hex",      "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "FrSize: ",                 "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": " 0x",                      "after_value": " ",     "size": 1, "type_size": 1, "type": "hex",      "spacing": "",   "multiple": true  },
+            {"LUT": null,               "before_value": "Calccrc: 0x",              "after_value": " ",     "size": 2, "type_size": 2, "type": "hex",      "spacing": "",   "multiple": false }
+        ]},
+        "0x0F15": {"Type": "Format",    "String": "LinLog_KL:",                     "Formating": [
+            {"LUT": "ComPecFrameIDs",   "before_value": "ID: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "FrID: 0x",                 "after_value": " ",     "size": 1, "type_size": 1, "type": "hex",      "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "FrSize: ",                 "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "SchID: ",                  "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "ComPecFrameIDs",   "before_value": "SchFrameID: ",             "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "SchSize: ",                "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F18": {"Type": "Format",    "String": "Buttons CMOD error",             "Formating": []},
+        "0x0F19": {"Type": "Format",    "String": "Buttons VDD error ",             "Formating": []},
+        "0x0F20": {"Type": "Format",    "String": "Button error: ",                 "Formating": [
+            {"LUT": null,               "before_value": "T",                        "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F21": {"Type": "Format",    "String": "COM err",                        "Formating": []},
+        "0x0F22": {"Type": "Format",    "String": "Dl err: ",                       "Formating": [
+            {"LUT": null,               "before_value": "State:",                   "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "DoorL1:",                  "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "DoorL2:",                  "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "DoorS1:",                  "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "DoorS2:",                  "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "UnLockedFlag:",            "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "CanResetFlag:",            "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x0F23": {"Type": "Format",    "String": "Err counters: ",                 "Formating": []},
+        "0x0F24": {"Type": "Format",    "String": "Err: ",                          "Formating": [
+            {"LUT": "SubErrors",        "before_value": "",                         "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x1001": {"Type": "Format",    "String": "Relay: ",                        "Formating": [
+            {"LUT": "Relays",           "before_value": "",                         "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "States",           "before_value": "",                         "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x1002": {"Type": "Format",    "String": "ZC ",                            "Formating": [
+            {"LUT": "ZCStates",         "before_value": "",                         "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x1003": {"Type": "Format",    "String": "Temp sensor: ",                  "Formating": [
+            {"LUT": "TempSensors",      "before_value": "",                         "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "TempSensorStates", "before_value": "",                         "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0x1004": {"Type": "Format",    "String": "Button: ",                       "Formating": [
+            {"LUT": null,               "before_value": "T",                        "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0xFFAA": {"Type": "Format",    "String": "Model: ",                        "Formating": [
+            {"LUT": "Models",           "before_value": "",                         "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "V: ",                      "after_value": " ",     "size": 2, "type_size": 1, "type": "unsigned", "spacing": ".",  "multiple": false },
+            {"LUT": null,               "before_value": "Pt: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "States",           "before_value": "Reg: ",                    "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "Systems",          "before_value": "Sys: ",                    "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Mn: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Mv: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "On: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Pr: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Pv: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Sp: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Hs: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Oc: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Cc: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Ct: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Ntc: ",                    "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Probe: ",                  "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0xFFAB": {"Type": "Format",    "String": "Steam: ",                        "Formating": [
+            {"LUT": "SteamStates",      "before_value": "",                         "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "SteamSubStates",   "before_value": "Sst: ",                    "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "FlowSensorStates", "before_value": "Fst: ",                    "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "SteamAssist",      "before_value": "Sa: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "St: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "F: ",                      "after_value": "ul ",   "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Fc: ",                     "after_value": "ul ",   "size": 4, "type_size": 4, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Yy: ",                     "after_value": "ul ",   "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Pk: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Ps",                       "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": true  },
+            {"LUT": null,               "before_value": "(Ps<Pk)c: ",               "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Sdcc: ",                   "after_value": " ",     "size": 1, "type_size": 1, "type": "signed",   "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Oc: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Rdc: ",                    "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Sdc: ",                    "after_value": "",      "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0xFFAC": {"Type": "Format",    "String": "Inverter: ",                     "Formating": [
+            {"LUT": "InverterStates",   "before_value": "",                         "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "Systems",          "before_value": "Sys: ",                    "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Pwr: ",                    "after_value": "W ",    "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "F: ",                      "after_value": "Hz ",   "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Fo: ",                     "after_value": "Hz ",   "size": 1, "type_size": 1, "type": "signed",   "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Per: ",                    "after_value": "% ",    "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Sc: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Oc: ",                     "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Dc: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Ec: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Rc: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0xFFBA": {"Type": "Format",    "String": "SysTweek Status: ",              "Formating": [
+            {"LUT": null,               "before_value": "Dly: ",                    "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Temp: ",                   "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Dur: ",                    "after_value": "",      "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0xFFBB": {"Type": "Format",    "String": "DDLWT Status: ",                 "Formating": [
+            {"LUT": "Switch",           "before_value": "Door_Sw:",                 "after_value": "     ", "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "Switch",           "before_value": "Door_Lock_Sw:",            "after_value": "     ", "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "Activity",         "before_value": "Door_Lock:",               "after_value": "     ", "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "Switch",           "before_value": "Water_Tank_Sw:",           "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0xFFBC": {"Type": "Format",    "String": "Lin_UI: ",                       "Formating": [
+            {"LUT": "ComState",         "before_value": "State: ",                  "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "ComPecFrameIDs",   "before_value": "ID: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "FrID: 0x",                 "after_value": " ",     "size": 1, "type_size": 1, "type": "hex",      "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "FrSize: ",                 "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": " 0x",                      "after_value": " ",     "size": 1, "type_size": 1, "type": "hex",      "spacing": "",   "multiple": true  },
+            {"LUT": null,               "before_value": "Calccrc: 0x",              "after_value": " ",     "size": 2, "type_size": 2, "type": "hex",      "spacing": "",   "multiple": false }
+        ]},
+        "0xFFBD": {"Type": "Format",    "String": "LinLog_UI:",                     "Formating": [
+            {"LUT": "ComPecFrameIDs",   "before_value": "ID: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "FrID: 0x",                 "after_value": " ",     "size": 1, "type_size": 1, "type": "hex",      "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "FrSize: ",                 "after_value": " ",     "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "SchID: ",                  "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "ComPecFrameIDs",   "before_value": "SchFrameID: ",             "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "SchSize: ",                "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }
+        ]},
+        "0xFFCA": {"Type": "Format",    "String": "FCT: ",                          "Formating": [
+            {"LUT": "States",           "before_value": "",                         "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": " ",   "multiple": false }
+        ]},
+        "0xFFDA": {"Type": "Format",    "String": "UI_OVRD_REG: ",                  "Formating": [
+            {"LUT": "Systems",          "before_value": "Sys: ",                    "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Pw: ",                     "after_value": "0 W ",  "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Sp: ",                     "after_value": " °C ",  "size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "Step: ",                   "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "States",           "before_value": "Light: ",                  "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "SteamAssist",      "before_value": "Sa: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",    "multiple": false },
+            {"LUT": "States",           "before_value": "Sf: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "States",           "before_value": "Stby: ",                   "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": "States",           "before_value": "Lp: ",                     "after_value": " ",     "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "LED br: ",                 "after_value": " % ",   "size": 1, "type_size": 1, "type": "unsigned", "spacing": "",   "multiple": false }  
+        ]},
+        "0xFFFA": {"Type": "String",    "String": "Log: ",                          "Formating": []},
+        "0xFFFB": {"Type": "Format",    "String": "UI_OVRD: ",                      "Formating": [
+            {"LUT": "UI_OVRD",          "before_value": "",                         "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": " ",   "multiple": false }
+        ]},
+        "0xFFFC": {"Type": "FormatList","String": "Errors: ",                       "Formating": [
+            {"LUT": "Errors",           "before_value": "",                         "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": " ",   "multiple": false }
+        ]}, 
+        "0xFFFD": {"Type": "FormatList","String": "SubErrors: ",                    "Formating": [
+            {"LUT": "SubErrors",        "before_value": "",                         "after_value": "",      "size": 1, "type_size": 1, "type": "unsigned", "spacing": " ",   "multiple": false }
+        ]},
+        "0xFFFF": {"Type": "Format",    "String": "Reset: ",                        "Formating": [
+            {"LUT": null,               "before_value": "LINE: ",                   "after_value": ",     ","size": 2, "type_size": 2, "type": "unsigned", "spacing": "",   "multiple": false },
+            {"LUT": null,               "before_value": "FILE: ",                   "after_value": " ",     "size": 1, "type_size": 1, "type": "string",   "spacing": "",   "multiple": false }
+        ]},
+      }
+}
