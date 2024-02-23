@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1217</width>
+    <height>629</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="label_connect">
+   <property name="geometry">
+    <rect>
+     <x>640</x>
+     <y>10</y>
+     <width>111</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="text">
+    <string>SET MODEL :</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="setModel">
+   <property name="geometry">
+    <rect>
+     <x>760</x>
+     <y>20</y>
+     <width>201</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+  </widget>
+  <widget class="QTextBrowser" name="logParameters">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>80</y>
+     <width>961</width>
+     <height>541</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="deviceDisconnect">
+   <property name="geometry">
+    <rect>
+     <x>430</x>
+     <y>20</y>
+     <width>81</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>refresh</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="DeviceConnect">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>20</y>
+     <width>291</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="frame">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT0">
+   <property name="geometry">
+    <rect>
+     <x>980</x>
+     <y>110</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T0</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+   <property name="autoRepeatDelay">
+    <number>300</number>
+   </property>
+   <property name="autoRepeatInterval">
+    <number>100</number>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT1">
+   <property name="geometry">
+    <rect>
+     <x>1040</x>
+     <y>110</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T1</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT2">
+   <property name="geometry">
+    <rect>
+     <x>1100</x>
+     <y>110</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T2</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT3">
+   <property name="geometry">
+    <rect>
+     <x>1160</x>
+     <y>110</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T3</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT7">
+   <property name="geometry">
+    <rect>
+     <x>1160</x>
+     <y>160</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T7</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT5">
+   <property name="geometry">
+    <rect>
+     <x>1040</x>
+     <y>160</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T5</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT6">
+   <property name="geometry">
+    <rect>
+     <x>1100</x>
+     <y>160</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T6</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT4">
+   <property name="geometry">
+    <rect>
+     <x>980</x>
+     <y>160</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T4</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT11">
+   <property name="geometry">
+    <rect>
+     <x>1160</x>
+     <y>210</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T11</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT9">
+   <property name="geometry">
+    <rect>
+     <x>1040</x>
+     <y>210</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T9</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT10">
+   <property name="geometry">
+    <rect>
+     <x>1100</x>
+     <y>210</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T10</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT8">
+   <property name="geometry">
+    <rect>
+     <x>980</x>
+     <y>210</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T8</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT15">
+   <property name="geometry">
+    <rect>
+     <x>1160</x>
+     <y>260</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T15</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT13">
+   <property name="geometry">
+    <rect>
+     <x>1040</x>
+     <y>260</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T13</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT14">
+   <property name="geometry">
+    <rect>
+     <x>1100</x>
+     <y>260</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T14</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT12">
+   <property name="geometry">
+    <rect>
+     <x>980</x>
+     <y>260</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T12</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT19">
+   <property name="geometry">
+    <rect>
+     <x>1160</x>
+     <y>310</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T19</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT17">
+   <property name="geometry">
+    <rect>
+     <x>1040</x>
+     <y>310</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T17</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT16">
+   <property name="geometry">
+    <rect>
+     <x>980</x>
+     <y>310</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T16</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT18">
+   <property name="geometry">
+    <rect>
+     <x>1100</x>
+     <y>310</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T18</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT21">
+   <property name="geometry">
+    <rect>
+     <x>1040</x>
+     <y>360</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T21</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonT20">
+   <property name="geometry">
+    <rect>
+     <x>980</x>
+     <y>360</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>T20</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_connect_2">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>10</y>
+     <width>111</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="text">
+    <string>DEVICE CONNECT:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>1050</x>
+     <y>60</y>
+     <width>101</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>BUTTONS</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
