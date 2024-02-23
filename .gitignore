@@ -1,3 +1,4 @@
+
 **/__pycache__/*
 *.pyc
 # Notebook Checkpoints
@@ -5,4 +6,7 @@
 */.ipynb_checkpoints/*
 __pycache__/
 *.vscode
-BOX_MARKS/
+*.spec
+data/saveData/*
+ALL_ERROR.txt
+check_error.txt

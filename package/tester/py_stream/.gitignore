@@ -1,0 +1,34 @@
+# Editor files
+.idea/
+.vscode/**
+!.vscode/tasks.json
+!.vscode/cspell.json
+
+# ipython files
+.ipynb_checkpoints/
+
+# build files
+build/
+documentation/_build/
+__pycache__*
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+.env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
