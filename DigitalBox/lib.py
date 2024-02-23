@@ -8,7 +8,6 @@ from package.tester.helpers.fileio import (
     sheet_by_tag,
     tabular_sheet_to_dict,
 )
-from threading import Timer
 ######################## PATH TO THE PARAMETERS ###############################
 HUSA_USER_INTERFACE = join("data", "husa","user_interface")
 BIO21_USER_INTERFACE = join("data", "bio21","digital_box")
@@ -96,7 +95,7 @@ def set_digital_pot(self,temp: int,tableIndex = 1,slider =1,chipSelect = 1):
         else:
             tableMaxSlider =tableMaxMin[1]
         res = int((dict_table.get(temp)or dict_table[min(dict_table.keys(), key=lambda key: abs(key - temp))]))
-        
+        #print('res',res)
         if slider==1:
             if tableMaxSlider <= 255:
                 if res <= 255:
