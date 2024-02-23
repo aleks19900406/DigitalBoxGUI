@@ -28,16 +28,13 @@ from DigitalBox.Connection import G800, data
 from DigitalBox.dasConnect import SERIALCONNECT, WifiEsp32Connect
 from DigitalBox.lib import *
 from package.tester._clients.das import DAS  # Import DAS eee
-
+from pathlib import Path
 ################## PATH TO DATA FILE ####################################
-
-QT_DESIGNER_PATH = os.path.join("QT_designer")
 BOX_MARKS_PATH = os.path.join("data","boxMarks")
 BOX_DIGITAL_POT_PATH = os.path.join("data","digitalPotTable")
 BOX_DIGITAL_DAC_PATH = os.path.join("data","dacTable")
 IMAGES_PATH = os.path.join("data","images","system")
 IMAGE_PATH_OTHER =os.path.join("data","images","other")
-print('image',IMAGE_PATH_OTHER)
 DATA_SAVE = os.path.join("data","saveData")
 AUTO_TEST_PATH = os.path.join("data","autoTest")
 #print(os.path.basename(AUTO_TEST_PATH))
@@ -289,7 +286,7 @@ def listDeviceConnection():
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        Window1 = os.path.abspath(f"{QT_DESIGNER_PATH}/Main_screen.ui")
+        Window1 =Path('QT_designer/Main_screen.ui')
         loadUi(str(Window1),self)
         f = open("check_error.txt", "w")
         f.write("")
@@ -2084,7 +2081,7 @@ class SetDacPot(QMainWindow):
     def __init__(self):
         super().__init__()
         ########################## SCREEN PATH CONVERT #############################
-        DacScreen = os.path.abspath(f"{QT_DESIGNER_PATH}/DacTable.ui")
+        DacScreen = Path('QT_designer/DacTable.ui')
         loadUi(str(DacScreen),self)
         self.setWindowTitle('SET DAC')
         self.setFixedSize(960, 705)
@@ -2214,7 +2211,7 @@ class HusaSetModule(QMainWindow):
     def __init__(self):
         super().__init__()
         ########################## SCREEN PATH CONVERT #############################
-        HusaScreen = os.path.abspath(f"{QT_DESIGNER_PATH}/HusaSetModel.ui")
+        HusaScreen = Path('QT_designer/HusaSetModel.ui')
         loadUi(str(HusaScreen),self)
         self.setWindowTitle('HUSA SET PB/LB MODULE')
         self.setFixedSize(380, 450)
@@ -2388,7 +2385,7 @@ class Bio21PyroSetSystem(QMainWindow):
     def __init__(self):
         super().__init__()
         ########################## SCREEN PATH CONVERT #############################
-        PyroScreen = os.path.abspath(f"{QT_DESIGNER_PATH}/Bio21PyroSetSystem.ui")
+        PyroScreen = Path('QT_designer/Bio21PyroSetSystem.ui')
         loadUi(str(PyroScreen),self)
         self.setWindowTitle('Pyro set system')
         self.setFixedSize(425, 360)
@@ -2529,7 +2526,7 @@ class CreatePotTable(QMainWindow):
     def __init__(self):
         super().__init__()
         ########################## SCREEN PATH CONVERT #############################
-        PotTable = os.path.abspath(f"{QT_DESIGNER_PATH}/CreatePotTable.ui")
+        PotTable = Path('QT_designer/CreatePotTable.ui')
         loadUi(str(PotTable),self)
         self.setWindowTitle('Create lookup Pot table')
         self.setFixedSize(470, 210)
@@ -2617,7 +2614,7 @@ class CreateDacTable(QMainWindow):
     def __init__(self):
         super().__init__()
         ########################## SCREEN PATH CONVERT #############################
-        DacTable = os.path.abspath(f"{QT_DESIGNER_PATH}/CreateDacTable.ui")
+        DacTable = Path('QT_designer/CreateDacTable.ui')
         loadUi(str(DacTable),self)
         self.setWindowTitle('Create lookup Dac table ')
         self.setFixedSize(470, 210)
@@ -2866,7 +2863,7 @@ class AutoRunScript(QMainWindow):
     def __init__(self):
         super().__init__()
         ########################## SCREEN PATH CONVERT #############################
-        DacScreen = os.path.abspath(f"{QT_DESIGNER_PATH}/AutoTest.ui")
+        DacScreen = Path('QT_designer/AutoTest.ui')
         loadUi(str(DacScreen),self)
         self.Dict = {}
         self.DictRunTest ={}
@@ -3035,7 +3032,7 @@ class DeviceG800(QMainWindow):
         super().__init__()
         ########################## SCREEN PATH CONVERT #############################
         self.connected = 0
-        DacTable = os.path.abspath(f"{QT_DESIGNER_PATH}/G800.ui")
+        DacTable = Path('QT_designer/G800.ui')
         loadUi(str(DacTable), self)
         self.setWindowTitle("Logging G800")
         #self.setFixedSize(600, 600)
