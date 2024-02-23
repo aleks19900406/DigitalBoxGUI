@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1534</width>
-    <height>1009</height>
+    <width>1530</width>
+    <height>1000</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -955,7 +955,7 @@ p, li { white-space: pre-wrap; }
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>../data/images/other/hisense.png</pixmap>
+     <pixmap>../../../../../.designer/data/images/other/hisense.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -1193,36 +1193,6 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="text">
      <string>min</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_connect">
-    <property name="geometry">
-     <rect>
-      <x>950</x>
-      <y>30</y>
-      <width>111</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
-    </property>
-    <property name="text">
-     <string>BOX CONNECT:</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="INPUT_22">
@@ -2773,7 +2743,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
+      <y>0</y>
       <width>1121</width>
       <height>31</height>
      </rect>
@@ -3562,8 +3532,8 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QPushButton" name="ButtonCreateAutoTest">
     <property name="geometry">
      <rect>
-      <x>1060</x>
-      <y>870</y>
+      <x>1200</x>
+      <y>880</y>
       <width>121</width>
       <height>51</height>
      </rect>
@@ -3582,6 +3552,52 @@ selection-color: rgb(255, 170, 0);</string>
     </property>
     <property name="flat">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ButtonG800">
+    <property name="geometry">
+     <rect>
+      <x>1060</x>
+      <y>880</y>
+      <width>121</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>G800</string>
+    </property>
+    <property name="autoRepeat">
+     <bool>false</bool>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
+    </property>
+    <property name="default">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_connect">
+    <property name="geometry">
+     <rect>
+      <x>960</x>
+      <y>30</y>
+      <width>81</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>BOX CONNECT:</string>
     </property>
    </widget>
    <zorder>label_digital_pot</zorder>
@@ -3642,7 +3658,6 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>digital_pot5</zorder>
    <zorder>labelADC2</zorder>
    <zorder>PotMin0</zorder>
-   <zorder>label_connect</zorder>
    <zorder>INPUT_22</zorder>
    <zorder>labelPwm2_1</zorder>
    <zorder>INPUT_19</zorder>
@@ -3757,13 +3772,15 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>barOpenAutoTest</zorder>
    <zorder>setEnvironmentText</zorder>
    <zorder>ButtonCreateAutoTest</zorder>
+   <zorder>ButtonG800</zorder>
+   <zorder>label_connect</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1534</width>
+     <width>1530</width>
      <height>21</height>
     </rect>
    </property>
