@@ -5,6 +5,7 @@ import os
 import subprocess
 import sys
 import traceback
+from pathlib import Path
 from time import sleep, time
 
 import openpyxl
@@ -28,7 +29,7 @@ from DigitalBox.Connection import G800, data
 from DigitalBox.dasConnect import SERIALCONNECT, WifiEsp32Connect
 from DigitalBox.lib import *
 from package.tester._clients.das import DAS  # Import DAS eee
-from pathlib import Path
+
 ################## PATH TO DATA FILE ####################################
 BOX_MARKS_PATH = os.path.join("data","boxMarks")
 BOX_DIGITAL_POT_PATH = os.path.join("data","digitalPotTable")
@@ -37,7 +38,6 @@ IMAGES_PATH = os.path.join("data","images","system")
 IMAGE_PATH_OTHER =os.path.join("data","images","other")
 DATA_SAVE = os.path.join("data","saveData")
 AUTO_TEST_PATH = os.path.join("data","autoTest")
-#print(os.path.basename(AUTO_TEST_PATH))
 ###################### BEGIN PARAMETERS #################################
 VERZIJA_ESP = "3.17"
 VERZIJA_RPI = "3.10"
@@ -424,7 +424,6 @@ class MainWindow(QMainWindow):
         self.iconSaveData = QtGui.QIcon()
         self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
         self.startStopSaving.setIcon(self.iconSaveData)
-    
     def resetExcelParameters(self):
         """
         - reset parameters when box connection change or button refresh pressed 
@@ -811,6 +810,7 @@ class MainWindow(QMainWindow):
         """
         global MAIN_TIME_REFRESHING
         if self.digitalPotIndex == 0:
+          
             tbegin = time()
             try:
                 #self.time_show.start(self.showTime)
@@ -859,6 +859,7 @@ class MainWindow(QMainWindow):
         check all input(read_adc,read_pwm,check_digital_pot, check_DAC_pot)
         extra timer for long executing function 
         """
+        print('check all')
         self.digitalPotIndex = 1
         sleep(0.2)
         try:
@@ -1266,8 +1267,10 @@ class MainWindow(QMainWindow):
         if self.index_on_off >=2:
             self.index_on_off = 0
             self.on_off.setIcon(self.iconOff)
+            deviceG800.boxOffDeviceDisconnected()
         else:
-             self.on_off.setIcon(self.iconOn)
+            self.on_off.setIcon(self.iconOn)
+            deviceG800.boxOnDeviceDisconnect()
     
     def output0(self):
         self.index_out[0] +=1
@@ -3032,21 +3035,23 @@ class DeviceG800(QMainWindow):
         super().__init__()
         ########################## SCREEN PATH CONVERT #############################
         self.connected = 0
+        self.counter = 0
         DacTable = Path('QT_designer/G800.ui')
         loadUi(str(DacTable), self)
         self.setWindowTitle("Logging G800")
-        #self.setFixedSize(600, 600)
+        self.setFixedSize(1220, 670)
+        self.device_connect.setText('DEVICE CONNECT:')
+        self.device_connect.setStyleSheet("color: gray")
         self.setModel.activated[str].connect(self.setmodel)
         self.setModel.setStyleSheet(ButtonStyleWhite)
         self.setModel.setEnabled(False)
         self.logParameters.isReadOnly()
-        self.deviceDisconnect.clicked.connect(self.disconnect)
+        self.deviceDisconnect.clicked.connect(self.disconnectAll)
         self.deviceDisconnect.setStyleSheet(ButtonStyleOff2)
         self.logging = QTimer()
         self.logging.timeout.connect(self.loggingParameters)  #
         self.logging.setInterval(1000)
         self.readDeviceData = QThreadPool()
-        self.counter = 0
         self.DeviceConnect.activated[str].connect(self.deviceBox)
         self.DeviceConnect.setEditable(True)
         self.DeviceConnect.setStyleSheet(ButtonStyleWhite)
@@ -3060,11 +3065,13 @@ class DeviceG800(QMainWindow):
         for index in range(22):
             #eval(f'self.buttonT{index}.pressed.connect(self.buttonTimer.start)')
             #eval(f'self.buttonT{index}.released.connect(self.buttonTimer.stop)')
-            eval(f'self.buttonT{index}.clicked.connect(self.button_clicked)')
+            eval(f'self.buttonT{index}.pressed.connect(self.button_clicked)')
             eval(f'self.buttonT{index}.setStyleSheet(ButtonStyleOff2)')
+            eval(f'self.buttonT{index}.setEnabled(False)')
       
     def button_clicked(self):
         try:
+            self.counter += 1
             sender = int(self.sender().text().replace('T',''))
             self.logParameters.append(f"{self.timeDisplay}->Button press: {self.sender().text()}")
             self.device.button(index=sender)
@@ -3091,9 +3098,8 @@ class DeviceG800(QMainWindow):
 
     def deviceBox(self, CONNECTBOX):
         """
-        - connect digital box with RPI or direct with digital box(serial connection)
-        - check if version is correct
-        - show warning message if version is not correct
+        - connect device G800
+        - show warning message if device is disconnected
         """
         try:
             if CONNECTBOX[0:3] =='COM':
@@ -3102,15 +3108,23 @@ class DeviceG800(QMainWindow):
                 self.setModel.addItems(self.data['LUTS']['Models'])
                 self.connected = 1
                 sleep(1)
+                self.device_connect.setText('CONNECT:')
+                self.device_connect.setStyleSheet("color: green")
                 self.logging.start()
+                for index in range(22):
+                    eval(f'self.buttonT{index}.setEnabled(True)')
                 self.DeviceConnect.setStyleSheet(ButtonStyleOn)
                 self.setModel.setEnabled(True)
             else:
                 sleep(2)
+                self.device_connect.setText('DEVICE DISCONNECTED:')
+                self.device_connect.setStyleSheet("color: red")
+                self.connected = 0
                 self.device.disconnect()
-                self.index_refreshing = 0
         except:
             self.disconnect()
+            self.device_connect.setText('DEVICE DISCONNECTED:')
+            self.device_connect.setStyleSheet("color: red")
             x = datetime.datetime.now()
             dateAndTime = x.strftime("%c")
             with open('check_error.txt', 'a') as f:
@@ -3123,16 +3137,42 @@ class DeviceG800(QMainWindow):
                 f.write(f'{errorNumber*2}\n')
             f.close()
     
-    def disconnect(self):
+    def disconnectAll(self):
+        self.device_connect.setText('DEVICE CONNECT:')
+        self.device_connect.setStyleSheet("color: gray")
+        self.DeviceConnect.setEnabled(True)
         self.setModel.setEnabled(False)
-        self.logging.start()
+        for index in range(22):
+            eval(f'self.buttonT{index}.setEnabled(False)')
         self.DeviceConnect.setStyleSheet(ButtonStyleOff2)
         self.setModel.setStyleSheet(ButtonStyleOff2)
         self.DeviceConnect.clear()
         self.DeviceConnect.addItems(listDeviceConnection())
         self.logging.stop()
         if self.connected == 1:
+            print('off')
+            self.connected = 0
             self.device.disconnect()
+    
+    def boxOffDeviceDisconnected(self):
+        if self.connected == 1:
+            print('offf')
+            self.logging.stop()
+            self.device.disconnect()
+            self.DeviceConnect.setEnabled(False)
+            self.setModel.setEnabled(False)
+            for index in range(22):
+                eval(f'self.buttonT{index}.setEnabled(False)')
+    
+    def boxOnDeviceDisconnect(self):
+        if self.connected == 1:
+            sleep(1)
+            self.device.connect()
+            self.logging.start()
+            self.setModel.setEnabled(True)
+            self.DeviceConnect.setEnabled(True)
+            for index in range(22):
+                eval(f'self.buttonT{index}.setEnabled(True)')
 
     def getAllModels(self):
         self.setModel.clear()
@@ -3145,6 +3185,7 @@ class DeviceG800(QMainWindow):
         self.device.set_model(self.data['LUTS']['Models'].index(f'{model}'))
         sleep(1)
         self.logging.start()
+    
     def get_param(self):
         try:
             getparam =  self.device.get_command('Reg')
@@ -3158,7 +3199,7 @@ class DeviceG800(QMainWindow):
                         'Probe':allParam.meat_probe}
             self.logParameters.append(f"{self.timeDisplay}->{parameters}")
         except AttributeError:
-            self.disconnect()
+            self.disconnectAll()
             x = datetime.datetime.now()
             dateAndTime = x.strftime("%c")
             with open('check_error.txt', 'a') as f:
@@ -3171,7 +3212,7 @@ class DeviceG800(QMainWindow):
         except ValueError:
             pass
         except RuntimeError:
-            self.disconnect()
+            self.disconnectAll()
             x = datetime.datetime.now()
             dateAndTime = x.strftime("%c")
             with open('check_error.txt', 'a') as f:
@@ -3187,6 +3228,7 @@ class DeviceG800(QMainWindow):
         - close G800 
         """
         mainWindow.closeScreenG800()
+        self.disconnectAll()
 
 
 if __name__ == "__main__":
