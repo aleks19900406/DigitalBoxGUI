@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1217</width>
-    <height>629</height>
+    <width>1226</width>
+    <height>657</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,10 +64,10 @@
   <widget class="QTextBrowser" name="logParameters">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>10</x>
      <y>80</y>
-     <width>961</width>
-     <height>541</height>
+     <width>951</width>
+     <height>571</height>
     </rect>
    </property>
    <property name="font">
@@ -75,11 +75,26 @@
      <pointsize>10</pointsize>
     </font>
    </property>
+   <property name="verticalScrollBarPolicy">
+    <enum>Qt::ScrollBarAsNeeded</enum>
+   </property>
+   <property name="horizontalScrollBarPolicy">
+    <enum>Qt::ScrollBarAsNeeded</enum>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QAbstractScrollArea::AdjustIgnored</enum>
+   </property>
+   <property name="autoFormatting">
+    <set>QTextEdit::AutoNone</set>
+   </property>
+   <property name="textInteractionFlags">
+    <set>Qt::TextBrowserInteraction</set>
+   </property>
   </widget>
   <widget class="QPushButton" name="deviceDisconnect">
    <property name="geometry">
     <rect>
-     <x>430</x>
+     <x>510</x>
      <y>20</y>
      <width>81</width>
      <height>31</height>
@@ -99,7 +114,7 @@
     <rect>
      <x>130</x>
      <y>20</y>
-     <width>291</width>
+     <width>361</width>
      <height>31</height>
     </rect>
    </property>
@@ -135,6 +150,9 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
    </property>
    <property name="autoRepeatDelay">
     <number>300</number>
@@ -605,12 +623,12 @@
     <string>Ctrl+S</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_connect_2">
+  <widget class="QLabel" name="device_connect">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>10</y>
-     <width>111</width>
+     <width>121</width>
      <height>51</height>
     </rect>
    </property>
