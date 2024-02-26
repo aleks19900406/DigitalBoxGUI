@@ -1,14 +1,17 @@
-from enum import Enum, auto
-from time import sleep, time
 import ctypes
+from enum import Enum, auto
+from pathlib import Path
+from time import sleep
+
 import json5
+
 from package.tester.py_stream.stream.byte import SerialStream
 from package.tester.py_stream.stream.specializations.hisense import (
         ChecksumType,
         DeviceFamily,
         HisenseStrem,
 )
-from pathlib import Path
+
 path_to_json = Path('./config_file/G800_configs.json')
 with open(path_to_json) as file:
     # Load the JSON data from the file into a Python object
