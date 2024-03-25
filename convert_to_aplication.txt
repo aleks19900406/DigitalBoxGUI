@@ -21,4 +21,4 @@ C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Aplicat
 - data
 - QT_designer
 -config_file
-pyinstaller --noconfirm --onefile --windowed --icon "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Aplication/data/images/other/covid19.ico" --add-data "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/DigitalBox;DigitalBox/" --add-data "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/package;package/" "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/BOX_GUI_2.0.py"
+pyinstaller --noconfirm --onefile --windowed --icon "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Aplication/data/images/other/covid19.ico" --add-data "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/DigitalBox;DigitalBox/" --add-data "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/package;package/" "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/BOX_GUI.py"
