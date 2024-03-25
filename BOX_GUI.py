@@ -1121,9 +1121,11 @@ class MainWindow(QMainWindow):
                     self.BOX_VERSION.setVisible(True)
                     self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= {VERZIJA_RPI}. Update box to the latest version if you want to use this application") 
             
-            self.index_on_off =1
-            self.on_off.setIcon(self.iconOff)
-            self.on_off.setIcon(self.iconOn)
+            if self.box_is_connected == 0:
+                self.box_is_connected = 1
+                self.index_on_off = 0
+                self.on_off.setIcon(self.iconOff)
+            #self.on_off.setIcon(self.iconOn)
             self.ButtonG800.setStyleSheet(ButtonStyleOff2)
             self.ButtonHusaModel.setStyleSheet(ButtonStyleOff2)
             self.ButtonPyroSystem.setStyleSheet(ButtonStyleOff2)
@@ -1150,9 +1152,9 @@ class MainWindow(QMainWindow):
             f.close()
 
         self.connectParameters = 1
-        self.box_is_connected +=1
-        if self.box_is_connected >=2:
-            self.box_is_connected =0     
+        #self.box_is_connected +=1
+        #if self.box_is_connected >=2:
+        #    self.box_is_connected =0     
     
     def digitalPotTable(self,potTable):
         """
@@ -1244,7 +1246,7 @@ class MainWindow(QMainWindow):
                 eval(f'self.labelDigitalPot{index}.setStyleSheet(MainScreenStyle)')
                 eval(f'self.digital_pot{index}.setStyleSheet(MainScreenStyle)')
             self.AllTable = listDigitalPotTable()
-            self.on_off.setIcon(self.iconOff)
+            #self.on_off.setIcon(self.iconOff)
             for index in range(8):
                 eval(f'self.OUT{index}.setStyleSheet(ButtonStyleOff2)')
                 eval(f'self.OUT{index}.setIcon(self.iconSwitchOff)')
