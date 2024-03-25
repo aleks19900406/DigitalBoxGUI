@@ -41,7 +41,7 @@ AUTO_TEST_PATH = os.path.join("data","autoTest")
 ###################### BEGIN PARAMETERS #################################
 VERZIJA_ESP = "3.17"
 VERZIJA_RPI = "3.10"
-DIGITAL_BOX_VERSION = 'V1.1'
+DIGITAL_BOX_VERSION = 'V1.2'
 MAIN_TIME_REFRESHING = 1000
 SPACE = '\n'
 DigitalInput = 32
@@ -3039,15 +3039,34 @@ class DeviceG800(QMainWindow):
         DacTable = Path('QT_designer/G800.ui')
         loadUi(str(DacTable), self)
         self.setWindowTitle("Logging G800")
-        self.setFixedSize(1220, 670)
+        self.setFixedSize(1500, 660)
         self.device_connect.setText('DEVICE CONNECT:')
         self.device_connect.setStyleSheet("color: gray")
         self.setModel.activated[str].connect(self.setmodel)
         self.setModel.setStyleSheet(ButtonStyleWhite)
         self.setModel.setEnabled(False)
         self.logParameters.isReadOnly()
+        # Create a QTextCursor object
         self.deviceDisconnect.clicked.connect(self.disconnectAll)
         self.deviceDisconnect.setStyleSheet(ButtonStyleOff2)
+        self.button_get_model.clicked.connect(self.get_model)
+        self.button_get_model.setStyleSheet(ButtonStyleOff2)
+        
+        self.button_log_stop.clicked.connect(self.buttonLogStop)
+        self.button_log_stop.setStyleSheet(ButtonStyleOff2)
+        
+        self.button_log_start.clicked.connect(self.buttonLogStart)
+        self.button_log_start.setStyleSheet(ButtonStyleOff2)
+        
+        self.button_log_clear.clicked.connect(self.buttonLogClear)
+        self.button_log_clear.setStyleSheet(ButtonStyleOff2)
+        
+        self.button_steam_log.clicked.connect(self.buttonSteam)
+        self.button_steam_log.setStyleSheet(ButtonStyleOff2)
+    
+        self.button_activate.clicked.connect(self.buttonsActivate)
+        self.button_activate.setStyleSheet(ButtonStyleOff2)
+        
         self.logging = QTimer()
         self.logging.timeout.connect(self.loggingParameters)  #
         self.logging.setInterval(1000)
@@ -3057,14 +3076,17 @@ class DeviceG800(QMainWindow):
         self.DeviceConnect.setStyleSheet(ButtonStyleWhite)
         self.DeviceConnect.addItems(listDeviceConnection())
         self.data = data
+        self.get_model_index = 0
+        self.steam_button_index = 0
+        self.steam_log_ON = 0
+        self.activate_button_index = 0
         #self.buttonTimer = QTimer()
         #self.buttonTimer.setSingleShot(True)
         #self.buttonTimer.setInterval(100)  #  3 seconds
         #self.buttonTimer.timeout.connect(self.button_clicked)
          ################## DIGITAL OUTPUT #########################################
+        
         for index in range(22):
-            #eval(f'self.buttonT{index}.pressed.connect(self.buttonTimer.start)')
-            #eval(f'self.buttonT{index}.released.connect(self.buttonTimer.stop)')
             eval(f'self.buttonT{index}.pressed.connect(self.button_clicked)')
             eval(f'self.buttonT{index}.setStyleSheet(ButtonStyleOff2)')
             eval(f'self.buttonT{index}.setEnabled(False)')
@@ -3076,7 +3098,6 @@ class DeviceG800(QMainWindow):
             self.logParameters.append(f"{self.timeDisplay}->Button press: {self.sender().text()}")
             self.device.button(index=sender)
         except Exception:
-            self.disconnect()
             x = datetime.datetime.now()
             dateAndTime = x.strftime("%c")
             with open('check_error.txt', 'a') as f:
@@ -3087,14 +3108,42 @@ class DeviceG800(QMainWindow):
                 f.write(f'{errorNumber*2}\n')
             f.close()
     
+    def buttonLogStart(self):
+        self.logging.start()
+    
+    def buttonsActivate(self):
+        if (self.activate_button_index % 2) == 0:
+            self.logging.stop()
+            self.button_activate.setStyleSheet(ButtonStyleOn2)
+            for index in range(22):
+                eval(f'self.buttonT{index}.setEnabled(True)')
+        else:
+            self.logging.start()
+            self.button_activate.setStyleSheet(ButtonStyleOff2)
+            for index in range(22):
+                eval(f'self.buttonT{index}.setEnabled(False)')
+        self.activate_button_index += 1
+    
+    
+    def buttonLogStop(self):
+        self.logging.stop()
+    
+    def buttonLogClear(self):
+        self.logParameters.clear()
+    
+    def buttonSteam(self):
+        if (self.steam_button_index % 2) == 0:
+            self.steam_log_ON = 1
+            self.button_steam_log.setStyleSheet(ButtonStyleOn2)
+        else:
+            self.steam_log_ON = 0
+            self.button_steam_log.setStyleSheet(ButtonStyleOff2)
+        self.steam_button_index +=1
+    
     def loggingParameters(self):
         self.time = QDateTime.currentDateTime()
         self.timeDisplay = self.time.toString("dd-MM-yyyy hh:mm:ss")
-        self.counter += 1
         self.readDeviceData.start(self.get_param)
-        if self.counter > 33:
-            self.logParameters.clear()
-            self.counter = 0
 
     def deviceBox(self, CONNECTBOX):
         """
@@ -3111,9 +3160,8 @@ class DeviceG800(QMainWindow):
                 self.device_connect.setText('CONNECT:')
                 self.device_connect.setStyleSheet("color: green")
                 self.logging.start()
-                for index in range(22):
-                    eval(f'self.buttonT{index}.setEnabled(True)')
                 self.DeviceConnect.setStyleSheet(ButtonStyleOn)
+                self.DeviceConnect.setEnabled(False)
                 self.setModel.setEnabled(True)
             else:
                 sleep(2)
@@ -3137,6 +3185,9 @@ class DeviceG800(QMainWindow):
                 f.write(f'{errorNumber*2}\n')
             f.close()
     
+    def get_model(self):
+        self.get_model_index = 1
+        
     def disconnectAll(self):
         self.device_connect.setText('DEVICE CONNECT:')
         self.device_connect.setStyleSheet("color: gray")
@@ -3148,17 +3199,17 @@ class DeviceG800(QMainWindow):
         self.setModel.setStyleSheet(ButtonStyleOff2)
         self.DeviceConnect.clear()
         self.DeviceConnect.addItems(listDeviceConnection())
+        self.button_activate.setStyleSheet(ButtonStyleOff2)
         self.logging.stop()
         if self.connected == 1:
-            print('off')
             self.connected = 0
             self.device.disconnect()
     
     def boxOffDeviceDisconnected(self):
         if self.connected == 1:
-            print('offf')
             self.logging.stop()
             self.device.disconnect()
+            self.button_activate.setStyleSheet(ButtonStyleOff2)
             self.DeviceConnect.setEnabled(False)
             self.setModel.setEnabled(False)
             for index in range(22):
@@ -3171,8 +3222,6 @@ class DeviceG800(QMainWindow):
             self.logging.start()
             self.setModel.setEnabled(True)
             self.DeviceConnect.setEnabled(True)
-            for index in range(22):
-                eval(f'self.buttonT{index}.setEnabled(True)')
 
     def getAllModels(self):
         self.setModel.clear()
@@ -3183,21 +3232,30 @@ class DeviceG800(QMainWindow):
         sleep(0.2)
         self.setModel.setStyleSheet(ButtonStyleOn)
         self.device.set_model(self.data['LUTS']['Models'].index(f'{model}'))
-        sleep(1)
+        sleep(2)
         self.logging.start()
     
     def get_param(self):
         try:
-            getparam =  self.device.get_command('Reg')
-            allParam = Info.from_buffer_copy(getparam)
-            parameters = {'model' : self.data['LUTS']['Models'][allParam.model],
-                        'version':f'{(allParam.version >> 8) & 0xFF}.{allParam.version & 0xFF}',
-                        'pt1000': allParam.pt1000/10,
-                        'RegStates':self.data['LUTS']['States'][allParam.RegStates],
-                        'system':self.data['LUTS']['Systems'][allParam.system],
-                        'Ntc':allParam.ntc,
-                        'Probe':allParam.meat_probe}
+            if self.get_model_index == 1:
+                self.get_model_index = 0
+                self.logParameters.append(f"{ self.device.get_model()}")
+            parameters = self.device.get_parameters()
             self.logParameters.append(f"{self.timeDisplay}->{parameters}")
+            # STEAM PARAMETERS
+            if self.steam_log_ON ==1 or parameters['system'] == 'STEAM' or parameters['system'] == 'REGENERATE' or parameters['system'] == 'STEAM_CLEAN' or parameters['system'] == 'SOUSVIDE' or parameters['system'] == 'DESCALE':
+                steam_log =self.device.get_steam_parameters()
+                self.logParameters.append(f"{self.timeDisplay}->{steam_log}")
+                if steam_log is None:
+                    self.logParameters.append(f"{self.timeDisplay}->steam log is disable")
+                    self.steam_log_ON =0
+                    self.steam_button_index =0
+                    self.button_steam_log.setStyleSheet(ButtonStyleOff2)
+            cursor = self.logParameters.textCursor()
+            # Set the cursor position to the end of the document
+            cursor.setPosition(self.logParameters.document().characterCount() -1 )
+            # Apply the cursor
+            self.logParameters.setTextCursor(cursor)
         except AttributeError:
             self.disconnectAll()
             x = datetime.datetime.now()
@@ -3210,6 +3268,8 @@ class DeviceG800(QMainWindow):
                 f.write(f'{errorNumber*2}\n')
             f.close()
         except ValueError:
+            pass
+        except TypeError:
             pass
         except RuntimeError:
             self.disconnectAll()
