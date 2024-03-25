@@ -331,11 +331,17 @@ class G800:
         sleep(0.2)
         try:
             ret =self.h1.read(timeout=self.h1.TIMEOUT)
+        except RuntimeError: 
+            self.h1.close()
+            ret = None
         except Exception:
             ret = None
-        finally:
             self.h1.close()
-            self.h1.open()
+            try:
+                self.h1.open()
+            except Exception:
+                parameters ='Device disconnected'
+                ret = None
         try:
             if ret is None:
                 Model = GetModel.from_buffer_copy( bytearray(b""))     
