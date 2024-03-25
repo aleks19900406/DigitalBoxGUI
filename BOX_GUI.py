@@ -3039,7 +3039,7 @@ class DeviceG800(QMainWindow):
         DacTable = Path('QT_designer/G800.ui')
         loadUi(str(DacTable), self)
         self.setWindowTitle("Logging G800")
-        self.setFixedSize(1500, 660)
+        self.setFixedSize(1550, 660)
         self.device_connect.setText('DEVICE CONNECT:')
         self.device_connect.setStyleSheet("color: gray")
         self.setModel.activated[str].connect(self.setmodel)
