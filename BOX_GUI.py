@@ -3170,7 +3170,7 @@ class DeviceG800(QMainWindow):
                 self.connected = 0
                 self.device.disconnect()
         except:
-            self.disconnect()
+            self.device.disconnect()
             self.device_connect.setText('DEVICE DISCONNECTED:')
             self.device_connect.setStyleSheet("color: red")
             x = datetime.datetime.now()
