@@ -7,7 +7,7 @@ import sys
 import traceback
 from pathlib import Path
 from time import sleep, time
-
+from collections import deque
 import openpyxl
 import serial.tools.list_ports
 from PyQt5 import QtGui
@@ -39,16 +39,16 @@ IMAGE_PATH_OTHER =os.path.join("data","images","other")
 DATA_SAVE = os.path.join("data","saveData")
 AUTO_TEST_PATH = os.path.join("data","autoTest")
 ###################### BEGIN PARAMETERS #################################
-VERZIJA_ESP = "3.17"
+VERZIJA_ESP = "3.19"
 VERZIJA_RPI = "3.10"
-DIGITAL_BOX_VERSION = 'V1.2'
+DIGITAL_BOX_VERSION = 'V1.3'
 MAIN_TIME_REFRESHING = 1000
 SPACE = '\n'
 DigitalInput = 32
 change_input = []
 for input in range(DigitalInput):
     change_input.append(False)
-change_parameters =[0,0,0,0,0,0,0,0,0]
+change_parameters =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 beginPotValue = [0,0,0,0,0,0]
 beginDacValue = [0,0,0,0,0,0,0,0]
 beginSetVoltage = [0,0,0,0]
@@ -293,7 +293,7 @@ class MainWindow(QMainWindow):
         f.close()
         self.refreshSaving = 1000
         self.index_on_off = 0
-        self.index_out = [0,0,0,0,0,0,0,0]
+        self.index_out = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         self.index_extras = [0,0,0,0,0,0,0,0,0]
         self.connectParameters = 0
         self.box_is_connected = 0
@@ -306,7 +306,7 @@ class MainWindow(QMainWindow):
         self.indexBackup = 0
         self.setWindowTitle(f'DIGITAL BOX MAIN {DIGITAL_BOX_VERSION}')
         #self.setFixedSize(1920, 1080)
-        self.setGeometry(150, 40, 1520, 990)
+        self.setGeometry(150, 40, 1530, 1050)
         #self.setSizeIncrement(1920, 1080)
         self.setStyleSheet(MainScreenStyle)
         self.on_off.clicked.connect(self.button_OnOff)
@@ -340,6 +340,14 @@ class MainWindow(QMainWindow):
         self.OUT5.clicked.connect(self.output5)
         self.OUT6.clicked.connect(self.output6)
         self.OUT7.clicked.connect(self.output7)
+        self.OUT8.clicked.connect(self.output8)
+        self.OUT9.clicked.connect(self.output9)
+        self.OUT10.clicked.connect(self.output10)
+        self.OUT11.clicked.connect(self.output11)
+        self.OUT12.clicked.connect(self.output12)
+        self.OUT13.clicked.connect(self.output13)
+        self.OUT14.clicked.connect(self.output14)
+        self.OUT15.clicked.connect(self.output15)
         ###################### BUTTON OPEN ADDITIONAL SCREEN ######################
         self.ButtonHusaModel.clicked.connect(self.buttonHusaModel)
         self.ButtonG800.clicked.connect(self.buttonG800)
@@ -1150,7 +1158,10 @@ class MainWindow(QMainWindow):
                 f.write(traceback.format_exc())
                 f.write(f'{errorNumber*2}\n')
             f.close()
-
+        self.BOX_VERSION.setFont(QFont('Arial', 10))
+        self.BOX_VERSION.setStyleSheet("color: black")
+        self.BOX_VERSION.setVisible(True)
+        self.BOX_VERSION.setText(f"ARDUINO MEGA/ESP32 SW = {VERSION}")
         self.connectParameters = 1
         #self.box_is_connected +=1
         #if self.box_is_connected >=2:
@@ -1353,6 +1364,87 @@ class MainWindow(QMainWindow):
         else:
             self.OUT7.setStyleSheet(ButtonStyleOn2)
             self.OUT7.setIcon(self.iconSwitchOn)
+ 
+    def output8(self):
+        self.index_out[8] +=1
+        if self.index_out[8] >= 2:
+            self.index_out[8] = 0
+            self.OUT8.setStyleSheet(ButtonStyleOff2) 
+            self.OUT8.setIcon(self.iconSwitchOff)
+        else:
+            self.OUT8.setStyleSheet(ButtonStyleOn2)
+            self.OUT8.setIcon(self.iconSwitchOn)
+    
+    def output9(self):
+        self.index_out[9] +=1
+        if self.index_out[9] >=2:
+            self.index_out[9] =0 
+            self.OUT9.setStyleSheet(ButtonStyleOff2) 
+            self.OUT9.setIcon(self.iconSwitchOff)
+        else:
+            self.OUT9.setStyleSheet(ButtonStyleOn2)
+            self.OUT9.setIcon(self.iconSwitchOn)
+    
+    def output10(self):
+        self.index_out[10] +=1
+        if self.index_out[10] >=2:
+            self.index_out[10] =0  
+            self.OUT10.setStyleSheet(ButtonStyleOff2)
+            self.OUT10.setIcon(self.iconSwitchOff) 
+        else:
+            self.OUT10.setStyleSheet(ButtonStyleOn2)
+            self.OUT10.setIcon(self.iconSwitchOn)
+    
+    def output11(self):
+        self.index_out[11] +=1
+        if self.index_out[11] >=2:
+            self.index_out[11] = 0  
+            self.OUT11.setStyleSheet(ButtonStyleOff2)
+            self.OUT11.setIcon(self.iconSwitchOff) 
+        else:
+            self.OUT11.setStyleSheet(ButtonStyleOn2)
+            self.OUT11.setIcon(self.iconSwitchOn)
+    
+    def output12(self):
+        self.index_out[12] +=1
+        if self.index_out[12] >=2:
+            self.index_out[12] =0
+            self.OUT12.setStyleSheet(ButtonStyleOff2)
+            self.OUT12.setIcon(self.iconSwitchOff)
+        else:
+            self.OUT12.setStyleSheet(ButtonStyleOn2)
+            self.OUT12.setIcon(self.iconSwitchOn)   
+    
+    def output13(self):
+        self.index_out[13] +=1
+        if self.index_out[13] >=2:
+            self.index_out[13] =0  
+            self.OUT13.setStyleSheet(ButtonStyleOff2)
+            self.OUT13.setIcon(self.iconSwitchOff)
+        else:
+            self.OUT13.setStyleSheet(ButtonStyleOn2)
+            self.OUT13.setIcon(self.iconSwitchOn)
+    
+    def output14(self):
+        self.index_out[14] +=1
+        if self.index_out[14] >=2:
+            self.index_out[14] =0
+            self.OUT14.setStyleSheet(ButtonStyleOff2)
+            self.OUT14.setIcon(self.iconSwitchOff)
+        else:
+            self.OUT14.setStyleSheet(ButtonStyleOn2)
+            self.OUT14.setIcon(self.iconSwitchOn) 
+    
+    def output15(self):
+        self.index_out[15] +=1
+        if self.index_out[15] >=2:
+            self.index_out[15] =0
+            self.OUT15.setStyleSheet(ButtonStyleOff2)
+            self.OUT15.setIcon(self.iconSwitchOff)
+        else:
+            self.OUT15.setStyleSheet(ButtonStyleOn2)
+            self.OUT15.setIcon(self.iconSwitchOn)
+ 
  ##################################### SLIDERS #################################################   
     def SetDigitalPot0(self):
         """
@@ -1438,7 +1530,7 @@ class MainWindow(QMainWindow):
         """
         set all output parameters and on/off button when state change
         """
-        begin_parameter = [self.index_on_off,self.index_out[0],self.index_out[1],self.index_out[2],self.index_out[3],self.index_out[4],self.index_out[5],self.index_out[6],self.index_out[7]]
+        begin_parameter = [self.index_on_off,self.index_out[0],self.index_out[1],self.index_out[2],self.index_out[3],self.index_out[4],self.index_out[5],self.index_out[6],self.index_out[7],self.index_out[8],self.index_out[9],self.index_out[10],self.index_out[11],self.index_out[12],self.index_out[13],self.index_out[14],self.index_out[15]]
         if begin_parameter != change_parameters or self.connectParameters == 1:
             #print(begin_parameter,change_parameters)
             if (self.index_on_off % 2) == 0:
@@ -1449,13 +1541,17 @@ class MainWindow(QMainWindow):
                 #self.on_off.setIcon(self.iconOn)
                 self.box.main = 1
                 change_parameters[0]= 1
-            
-            parameter_true = tuple([i for i, val in enumerate(begin_parameter[1:]) if  val])
+            my_deque = deque(begin_parameter[1:])
+            # Rotate the deque by 16 positions to the right
+            my_deque.rotate(8)
+            parameter_true = tuple([i for i, val in enumerate( my_deque) if  val])
             if parameter_true:
+                print('true',parameter_true)
                 activate_output(self,parameter_true,True)
             
-            parameter_false = tuple([i for i, val in enumerate(begin_parameter[1:]) if not val])
+            parameter_false = tuple([i for i, val in enumerate( my_deque) if not val])
             if parameter_false:
+                print('false',parameter_false)
                 activate_output(self,parameter_false,False) 
    
             if (self.index_out[0] % 2) == 0:
@@ -1528,7 +1624,76 @@ class MainWindow(QMainWindow):
             else:
                 change_parameters[8]= 1
                 self.OUT7.setStyleSheet(ButtonStyleOn2)
-                self.OUT7.setIcon(self.iconSwitchOn) 
+                self.OUT7.setIcon(self.iconSwitchOn)
+            if (self.index_out[8] % 2) == 0:
+                change_parameters[9]= 0
+                self.OUT8.setStyleSheet(ButtonStyleOff2)
+                self.OUT8.setIcon(self.iconSwitchOff) 
+            else:
+                change_parameters[9]= 1
+                self.OUT8.setStyleSheet(ButtonStyleOn2)
+                self.OUT8.setIcon(self.iconSwitchOn)
+            
+            if (self.index_out[9] % 2) == 0:
+                change_parameters[10]= 0
+                self.OUT9.setStyleSheet(ButtonStyleOff2)
+                self.OUT9.setIcon(self.iconSwitchOff) 
+            else:
+                change_parameters[10]= 1
+                self.OUT9.setStyleSheet(ButtonStyleOn2)
+                self.OUT9.setIcon(self.iconSwitchOn)
+            if (self.index_out[10] % 2) == 0:
+                change_parameters[11]= 0
+                self.OUT10.setStyleSheet(ButtonStyleOff2)
+                self.OUT10.setIcon(self.iconSwitchOff) 
+            else:
+                change_parameters[11]= 1
+                self.OUT10.setStyleSheet(ButtonStyleOn2)
+                self.OUT10.setIcon(self.iconSwitchOn)
+            
+            if (self.index_out[11] % 2) == 0:
+                change_parameters[12]= 0
+                self.OUT11.setStyleSheet(ButtonStyleOff2)
+                self.OUT11.setIcon(self.iconSwitchOff) 
+            else:
+                change_parameters[12]= 1
+                self.OUT11.setStyleSheet(ButtonStyleOn2)
+                self.OUT11.setIcon(self.iconSwitchOn)
+            
+            if (self.index_out[12] % 2) == 0:
+                change_parameters[13]= 0
+                self.OUT12.setStyleSheet(ButtonStyleOff2)
+                self.OUT12.setIcon(self.iconSwitchOff) 
+            else:
+                change_parameters[13]= 1
+                self.OUT12.setStyleSheet(ButtonStyleOn2)
+                self.OUT12.setIcon(self.iconSwitchOn)
+            
+            if (self.index_out[13] % 2) == 0:
+                change_parameters[14]= 0
+                self.OUT13.setStyleSheet(ButtonStyleOff2)
+                self.OUT13.setIcon(self.iconSwitchOff) 
+            else:
+                change_parameters[14]= 1
+                self.OUT13.setStyleSheet(ButtonStyleOn2)
+                self.OUT13.setIcon(self.iconSwitchOn)
+            if (self.index_out[14] % 2) == 0:
+                change_parameters[15]= 0
+                self.OUT14.setStyleSheet(ButtonStyleOff2)
+                self.OUT14.setIcon(self.iconSwitchOff) 
+            else:
+                change_parameters[15]= 1
+                self.OUT14.setStyleSheet(ButtonStyleOn2)
+                self.OUT14.setIcon(self.iconSwitchOn)
+            
+            if (self.index_out[15] % 2) == 0:
+                change_parameters[16]= 0
+                self.OUT15.setStyleSheet(ButtonStyleOff2)
+                self.OUT15.setIcon(self.iconSwitchOff) 
+            else:
+                change_parameters[16]= 1
+                self.OUT15.setStyleSheet(ButtonStyleOn2)
+                self.OUT15.setIcon(self.iconSwitchOn)
             self.connectParameters = 0
    
     def check_digital_pot(self):

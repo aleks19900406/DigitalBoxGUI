@@ -70,8 +70,8 @@ class SERIALCONNECT():
         self.comport = comport
         self._main = 0
         self._digital_in = []
-        self._digital_out = [0,0,0,0,0,0,0,0]
-        self.digital_out_value = [0,0,0,0,0,0,0,0]
+        self._digital_out = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        self.digital_out_value = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         self.LIST_POT_VALUE =[0,0,0,0,0,0]
         self.LIST_DAC_VALUE =[32768,32768,32768,32768,32768,32768,32768,32768]
         self._set_pwm1 = 0
@@ -108,6 +108,7 @@ class SERIALCONNECT():
             self.ser.write(f'{CHECK_VERSION}'.encode())
             sleep(SEND_TIME)
             VERSION = self.ser.readline().decode().strip()
+            print('VERZIJA:',VERSION)
         except:
             print('Device disconnected')
             x = datetime.datetime.now()
@@ -445,8 +446,8 @@ class WifiEsp32Connect():
         self.comport = comport
         self._main = 0
         self._digital_in = []
-        self._digital_out = [0,0,0,0,0,0,0,0]
-        self.digital_out_value = [0,0,0,0,0,0,0,0]
+        self._digital_out = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        self.digital_out_value = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         self.LIST_POT_VALUE =[0,0,0,0,0,0]
         self.LIST_DAC_VALUE =[32768,32768,32768,32768,32768,32768,32768,32768]
         self._set_pwm1 = 0

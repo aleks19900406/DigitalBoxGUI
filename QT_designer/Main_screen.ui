@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1530</width>
-    <height>1000</height>
+    <height>1032</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -119,8 +119,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_21">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>880</y>
+      <x>370</x>
+      <y>890</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -150,8 +150,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_26">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>930</y>
+      <x>20</x>
+      <y>940</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -320,9 +320,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>660</x>
-      <y>800</y>
+      <y>790</y>
       <width>71</width>
-      <height>51</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -375,8 +375,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_18">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>880</y>
+      <x>160</x>
+      <y>890</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -391,7 +391,7 @@ p, li { white-space: pre-wrap; }
       <x>1020</x>
       <y>760</y>
       <width>20</width>
-      <height>211</height>
+      <height>251</height>
      </rect>
     </property>
     <property name="orientation">
@@ -428,8 +428,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_31">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>930</y>
+      <x>370</x>
+      <y>940</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -522,8 +522,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_16">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>880</y>
+      <x>20</x>
+      <y>890</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -554,8 +554,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_25">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>930</y>
+      <x>510</x>
+      <y>940</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -567,8 +567,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_2">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>780</y>
+      <x>160</x>
+      <y>790</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -632,7 +632,7 @@ p, li { white-space: pre-wrap; }
       <x>620</x>
       <y>80</y>
       <width>20</width>
-      <height>901</height>
+      <height>921</height>
      </rect>
     </property>
     <property name="orientation">
@@ -655,8 +655,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_12">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>830</y>
+      <x>300</x>
+      <y>840</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -714,8 +714,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_13">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>830</y>
+      <x>370</x>
+      <y>840</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -770,9 +770,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>840</x>
-      <y>800</y>
+      <y>790</y>
       <width>71</width>
-      <height>51</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -801,8 +801,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_23">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>880</y>
+      <x>510</x>
+      <y>890</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -828,9 +828,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>750</x>
-      <y>800</y>
+      <y>790</y>
       <width>71</width>
-      <height>51</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -847,9 +847,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>930</x>
-      <y>800</y>
+      <y>790</y>
       <width>71</width>
-      <height>51</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -878,8 +878,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_9">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>830</y>
+      <x>90</x>
+      <y>840</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -926,8 +926,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_1">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>780</y>
+      <x>90</x>
+      <y>790</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -965,13 +965,13 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>840</x>
-      <y>890</y>
+      <y>840</y>
       <width>71</width>
-      <height>51</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>switch5</string>
+     <string>switch6</string>
     </property>
     <property name="iconSize">
      <size>
@@ -983,8 +983,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_24">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>930</y>
+      <x>440</x>
+      <y>940</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1046,13 +1046,13 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>930</x>
-      <y>890</y>
+      <y>840</y>
       <width>71</width>
-      <height>51</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>switch6</string>
+     <string>switch7</string>
     </property>
     <property name="iconSize">
      <size>
@@ -1198,8 +1198,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_22">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>880</y>
+      <x>440</x>
+      <y>890</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1232,8 +1232,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_19">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>880</y>
+      <x>230</x>
+      <y>890</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1316,8 +1316,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_30">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>930</y>
+      <x>300</x>
+      <y>940</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1393,8 +1393,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_28">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>930</y>
+      <x>160</x>
+      <y>940</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1425,8 +1425,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_3">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>780</y>
+      <x>230</x>
+      <y>790</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1575,8 +1575,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_27">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>930</y>
+      <x>90</x>
+      <y>940</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1633,8 +1633,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_11">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>830</y>
+      <x>230</x>
+      <y>840</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1688,9 +1688,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>660</x>
-      <y>890</y>
+      <y>840</y>
       <width>71</width>
-      <height>51</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -1911,8 +1911,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_14">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>830</y>
+      <x>440</x>
+      <y>840</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -1945,8 +1945,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_0">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>780</y>
+      <x>20</x>
+      <y>790</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2035,8 +2035,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_5">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>780</y>
+      <x>370</x>
+      <y>790</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2113,8 +2113,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_29">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>930</y>
+      <x>230</x>
+      <y>940</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2248,8 +2248,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_10">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>830</y>
+      <x>160</x>
+      <y>840</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2261,8 +2261,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="INPUT_17">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>880</y>
+      <x>90</x>
+      <y>890</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2467,8 +2467,8 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QPushButton" name="INPUT_8">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>830</y>
+      <x>20</x>
+      <y>840</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2568,8 +2568,8 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QPushButton" name="INPUT_7">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>780</y>
+      <x>510</x>
+      <y>790</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2581,8 +2581,8 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QPushButton" name="INPUT_6">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>780</y>
+      <x>440</x>
+      <y>790</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2615,8 +2615,8 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QPushButton" name="INPUT_4">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>780</y>
+      <x>300</x>
+      <y>790</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2729,8 +2729,8 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QPushButton" name="INPUT_15">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>830</y>
+      <x>510</x>
+      <y>840</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2880,8 +2880,8 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QPushButton" name="INPUT_20">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>880</y>
+      <x>300</x>
+      <y>890</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -2927,13 +2927,13 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>750</x>
-      <y>890</y>
+      <y>840</y>
       <width>71</width>
-      <height>51</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>switch4</string>
+     <string>switch5</string>
     </property>
     <property name="iconSize">
      <size>
@@ -3600,6 +3600,161 @@ selection-color: rgb(255, 170, 0);</string>
      <string>BOX CONNECT:</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="OUT9">
+    <property name="geometry">
+     <rect>
+      <x>750</x>
+      <y>890</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>switch9</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>15</width>
+      <height>46</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT14">
+    <property name="geometry">
+     <rect>
+      <x>840</x>
+      <y>940</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>switch14</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>15</width>
+      <height>46</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT15">
+    <property name="geometry">
+     <rect>
+      <x>930</x>
+      <y>940</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>switch15</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>15</width>
+      <height>46</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT12">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>940</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>switch12</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>15</width>
+      <height>46</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT13">
+    <property name="geometry">
+     <rect>
+      <x>750</x>
+      <y>940</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>switch13</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>15</width>
+      <height>46</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT8">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>890</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>switch8</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>15</width>
+      <height>46</height>
+     </size>
+    </property>
+    <property name="shortcut">
+     <string>Ctrl+S</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT11">
+    <property name="geometry">
+     <rect>
+      <x>930</x>
+      <y>890</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>switch11</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>15</width>
+      <height>46</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="OUT10">
+    <property name="geometry">
+     <rect>
+      <x>840</x>
+      <y>890</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>switch10</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>15</width>
+      <height>46</height>
+     </size>
+    </property>
+   </widget>
    <zorder>label_digital_pot</zorder>
    <zorder>labelPwm1_0</zorder>
    <zorder>label_connect_2</zorder>
@@ -3774,6 +3929,14 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>ButtonCreateAutoTest</zorder>
    <zorder>ButtonG800</zorder>
    <zorder>label_connect</zorder>
+   <zorder>OUT9</zorder>
+   <zorder>OUT14</zorder>
+   <zorder>OUT15</zorder>
+   <zorder>OUT12</zorder>
+   <zorder>OUT13</zorder>
+   <zorder>OUT8</zorder>
+   <zorder>OUT11</zorder>
+   <zorder>OUT10</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
