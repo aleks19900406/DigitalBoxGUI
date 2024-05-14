@@ -14,9 +14,12 @@ from stream.specializations.hisense import (
 
 path_to_json = glob.glob("./config_file/*.json")
 path_to_json.sort(key=os.path.getmtime)
+#print(path_to_json[-1])
 with open(path_to_json[-1]) as file:
     # Load the JSON data from the file into a Python object
-        data = json5.load(file)
+    data = json5.load(file)
+
+import serial
 DEVICE_NUMBER = 1
 FRAME_TYPE = 105
 FRAME_SUBTYPE = 0
@@ -130,20 +133,25 @@ class G800:
         SERIAL1_PARAMS = {"device":self.comport}
         self.s1 = SerialStream(SERIAL1_PARAMS,self.baudrate)
         self.h1 = HisenseStrem(self.s1, DeviceFamily.OVEN,ChecksumType.CHECKSUM16)
-
+        self.esp = serial.Serial(
+        port=self.comport,  # Adjust the port name as necessary
+        baudrate=self.baudrate,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        bytesize=serial.EIGHTBITS,
+        timeout= 0.2)
     def connect(self):
-        try:
-            self.h1.open()
-            sleep(1)
-        except RuntimeError:
-            pass
-        
-        
+        self.h1.open()
     def disconnect(self):
-        try:
-            self.h1.close()
-        except AttributeError:
-            pass
+        self.h1.close()
+
+    def connectESP(self):
+        if self.esp.isOpen():
+            self.esp.close()
+        self.esp.open()
+    
+    def disconnectESP(self):
+        self.esp.close()
 
     def button(self,index:int=0,repeat:int = 1):
         HisenseStrem.N_TRIES = 1
@@ -156,7 +164,13 @@ class G800:
                 self.h1.write([(DEVICE_NUMBER,FRAME_HEADER, commands)])
                 sleep(0.2)
             except Exception:
-                pass
+                self.h1.close()
+                self.h1.open()
+                continue
+        self.h1.write([(DEVICE_NUMBER,FRAME_HEADER, commandsUnlock)])
+        sleep(0.2)
+        self.h1.close()
+        self.h1.open()
             
     def get_command(self,command:str):
         commands = data["LUTS"]["SendCommands"][command]
@@ -165,7 +179,7 @@ class G800:
         self.h1.write([(DEVICE_NUMBER,FRAME_HEADER, allCommand)])
         sleep(0.2)
         try:
-            ret =self.h1.read(timeout=self.h1.TIMEOUT)
+            ret =self.h1.read()
         except Exception:
             ret = None
         finally:
@@ -180,24 +194,17 @@ class G800:
     def get_parameters(self):
         parameters = None
         commands = data["LUTS"]["SendCommands"]['Reg']
-        HisenseStrem.N_TRIES = 1
+        HisenseStrem.N_TRIES = 10
         allCommand = bytearray(CommandGet(int(commands,  16)))
+        self.h1.write([(DEVICE_NUMBER,FRAME_HEADER, allCommand)])
+        sleep(0.2)
         try:
-            self.h1.write([(DEVICE_NUMBER,FRAME_HEADER, allCommand)])
-            sleep(0.2)
-            ret =self.h1.read(timeout=self.h1.TIMEOUT)
-        
-        except RuntimeError: 
-            self.h1.close()
-            ret = None
+            ret =self.h1.read()
         except Exception:
             ret = None
+        finally:
             self.h1.close()
-            try:
-                self.h1.open()
-            except Exception:
-                parameters ='Device disconnected'
-                ret = None
+            self.h1.open()
         try:
             if ret is None:
                 allParam = Info.from_buffer_copy( bytearray(b""))     
@@ -223,38 +230,25 @@ class G800:
                         'Probe':allParam.meat_probe}
         except ValueError:
             self.h1.close()
-            try:
-                self.h1.open()
-            except Exception:
-                parameters ='Device disconnected'
+            self.h1.open()
             pass
-        except IndexError:
-            self.h1.close()
-            pass
-            
 
         return parameters
     
     def get_steam_parameters(self):
         parameters = None
         commands = data["LUTS"]["SendCommands"]['Steam']
-        HisenseStrem.N_TRIES = 1
+        HisenseStrem.N_TRIES = 10
         allCommand = bytearray(CommandGet(int(commands,  16)))
+        self.h1.write([(DEVICE_NUMBER,FRAME_HEADER, allCommand)])
+        sleep(0.2)
         try:
-            self.h1.write([(DEVICE_NUMBER,FRAME_HEADER, allCommand)])
-            sleep(0.2)
-            ret =self.h1.read(timeout=self.h1.TIMEOUT)
-        except RuntimeError: 
-            self.h1.close()
-            ret = None
+            ret =self.h1.read()
         except Exception:
             ret = None
+        finally:
             self.h1.close()
-            try:
-                self.h1.open()
-            except Exception:
-                parameters ='Steam_param_off'
-                ret = None
+            self.h1.open()
         try:
             if ret is None:
                 steamParam = Steam.from_buffer_copy( bytearray(b""))     
@@ -280,13 +274,7 @@ class G800:
                         'Sdc' :steamParam.Sdc,}
         except ValueError:
             self.h1.close()
-            try:
-                self.h1.open()
-            except Exception:
-                parameters ='Steam_param_off'
-            pass
-        except IndexError:
-            self.h1.close()
+            self.h1.open()
             pass
         return parameters
 
@@ -313,35 +301,26 @@ class G800:
         sleep(0.2)
         try:
             self.h1.read(timeout=self.h1.TIMEOUT)
-        except RuntimeError: 
-            self.h1.close()
         except Exception:
+            pass
+        finally:
             self.h1.close()
-            try:
-                self.h1.open()
-            except Exception:
-                pass
+            self.h1.open()
 
     def get_model(self):
-        parameters = None
         commands = data["LUTS"]["SendCommands"]["GetModel"]
         HisenseStrem.N_TRIES = 10
         Command = bytearray(CommandGet(int(commands,  16)))
         self.h1.write([(DEVICE_NUMBER,FRAME_HEADER, Command)])
         sleep(0.2)
+        #print(DEVICE_NUMBER,FRAME_HEADER, Command)
         try:
-            ret =self.h1.read(timeout=self.h1.TIMEOUT)
-        except RuntimeError: 
-            self.h1.close()
-            ret = None
+            ret =self.h1.read()
         except Exception:
             ret = None
+        finally:
             self.h1.close()
-            try:
-                self.h1.open()
-            except Exception:
-                parameters ='Device disconnected'
-                ret = None
+            self.h1.open()
         try:
             if ret is None:
                 Model = GetModel.from_buffer_copy( bytearray(b""))     
@@ -355,13 +334,28 @@ class G800:
                         'ESPVer' :f'{(Model.ESPVer >> 8) & 0xFF}_{Model.ESPVer & 0xFF}_{(Model.Esp1 >> 8) & 0xFF}.{Model.Esp1 & 0xFF}.{Model.Esp2}',}
         except ValueError:
             self.h1.close()
-            try:
-                self.h1.open()
-            except Exception:
-                parameters =None
-            pass
-        except IndexError:
-            self.h1.close()
+            self.h1.open()
             pass
         return parameters
     
+    def button_ESP(self,index,repeat=1,press=1):
+        """_summary_
+
+        Args:
+            index (_type_): _description_
+            repeat (int, optional): _description_. Defaults to 1.
+            press (int, optional): _description_. Defaults to 1.
+        """
+        if int(index) <= 9:
+            index = f'0{index}'
+        for _ in range(repeat):
+            self.esp.write(f"RAW TOUCH {press}{index}\r".encode())
+            sleep(0.1)
+    def change_language(self,index):
+        """_summary_
+
+        Args:
+            index (_type_): _description_
+        """
+        index = "{:02d}".format(index)
+        self.esp.write(f"RAW LANG {index}\r".encode())
