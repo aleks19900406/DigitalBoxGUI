@@ -39,9 +39,12 @@ IMAGE_PATH_OTHER =os.path.join("data","images","other")
 DATA_SAVE = os.path.join("data","saveData")
 AUTO_TEST_PATH = os.path.join("data","autoTest")
 ###################### BEGIN PARAMETERS #################################
+ALL_LANGUAGES =['English','German','Nederlands','Polish ','French','Italiano','Spanish','Slovenian','Danish','Norwegian','Finnish',
+                'Swedish','Russian','kazakhstan','Ukraine','Czech','Slovak','Croatian','Serbian','Greek','Hungarian','Chinese',
+                'Portugese','Romanian','Bulgarian','Estonian','Lithuanian','Latvian']
 VERZIJA_ESP = "3.19"
 VERZIJA_RPI = "3.10"
-DIGITAL_BOX_VERSION = 'V1.3'
+DIGITAL_BOX_VERSION = 'V1.4'
 MAIN_TIME_REFRESHING = 1000
 SPACE = '\n'
 DigitalInput = 32
@@ -282,6 +285,16 @@ def listDeviceConnection():
     for USB_PORT in serial.tools.list_ports.comports():
         LIST_CONNECT.append(f'{str(USB_PORT)}')
     return LIST_CONNECT
+
+def listLanguages():
+    """
+    return all H800 languages
+    """
+    LIST_LANG =[]
+    LIST_LANG.clear()
+    for lang in ALL_LANGUAGES:
+        LIST_LANG.append(f'{str(lang)}')
+    return LIST_LANG
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -582,7 +595,7 @@ class MainWindow(QMainWindow):
             self.refreshSaving = self.excelRefresh.value()
 
         digitalPot = [self.readDigitalPot0,self.readDigitalPot1,self.readDigitalPot2,self.readDigitalPot3,self.readDigitalPot4,self.readDigitalPot5]
-        digitalOut = [bool(self.index_on_off),bool(self.index_out[0]),bool(self.index_out[1]),bool(self.index_out[2]),bool(self.index_out[3]),bool(self.index_out[4]),bool(self.index_out[5]),bool(self.index_out[6]),bool(self.index_out[7])]
+        digitalOut = [bool(self.index_on_off),bool(self.index_out[0]),bool(self.index_out[1]),bool(self.index_out[2]),bool(self.index_out[3]),bool(self.index_out[4]),bool(self.index_out[5]),bool(self.index_out[6]),bool(self.index_out[7]),bool(self.index_out[8]),bool(self.index_out[9]),bool(self.index_out[10]),bool(self.index_out[11]),bool(self.index_out[12]),bool(self.index_out[13]),bool(self.index_out[14]),bool(self.index_out[15]),]
         
         readPwm1= [self.read_pwm_all[0]['f'],self.read_pwm_all[0]['d']]
         readPwm2= [self.read_pwm_all[1]['f'],self.read_pwm_all[1]['d']]
@@ -644,7 +657,7 @@ class MainWindow(QMainWindow):
                     except AttributeError:
                         digitalPot.append(f'setPot{index}')
                 digitalOut.append('On/Off')
-                for index in range(8):
+                for index in range(16):
                     try:
                         if self.read_all_lines[3].replace('\n','').split(',')[index] == '':
                             digitalOut.append(f'switch{index}')
@@ -867,7 +880,6 @@ class MainWindow(QMainWindow):
         check all input(read_adc,read_pwm,check_digital_pot, check_DAC_pot)
         extra timer for long executing function 
         """
-        print('check all')
         self.digitalPotIndex = 1
         sleep(0.2)
         try:
@@ -1075,6 +1087,7 @@ class MainWindow(QMainWindow):
                 if VERSION >= VERZIJA_RPI:
                     self.index_refreshing +=1
                     self.DIGITAL_BOX_MAIN.start()
+                    self.dateTimeTimer.start()
                     self.BOX_VERSION.setVisible(False)
                     self.warningMessagePot.setVisible(False)
                     self.warningMessageDac.setVisible(False)
@@ -1546,12 +1559,10 @@ class MainWindow(QMainWindow):
             my_deque.rotate(8)
             parameter_true = tuple([i for i, val in enumerate( my_deque) if  val])
             if parameter_true:
-                print('true',parameter_true)
                 activate_output(self,parameter_true,True)
             
             parameter_false = tuple([i for i, val in enumerate( my_deque) if not val])
             if parameter_false:
-                print('false',parameter_false)
                 activate_output(self,parameter_false,False) 
    
             if (self.index_out[0] % 2) == 0:
@@ -2180,7 +2191,6 @@ class MainWindow(QMainWindow):
                     if readPot <= 255:
                         self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),0],readPot)
                         self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),1,2,3],0)
-                        print('<= 255',readPot)
                     elif readPot > 255 and readPot <= 255*2:
                         self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),0],255)
                         self.box.set_digital_pot([int(PotTableSet.tableSelection()[5]),1],readPot-255)
@@ -2863,7 +2873,6 @@ class CreateAutoTest(QMainWindow):
         self.listDirectory = []
         self.dir_list = os.listdir(AUTO_TEST_PATH)
         self.dir_list.insert(0,'')
-        print('dirList',self.dir_list)
         self.fileType = ".py"
         self.index = 0
         self.pQ = None
@@ -2915,7 +2924,6 @@ class CreateAutoTest(QMainWindow):
         for child in self.all_processes:
             child.kill()
             #self.pQ.kill()
-        print('end proccess')
     
     def test_refresh(self):
         self.Dict.clear()
@@ -2962,11 +2970,8 @@ class CreateAutoTest(QMainWindow):
         self.text.clear()
         self.tree.setEnabled(False)
         self.refreshButton.setEnabled(False)
-        print('go')
         self.runAllTest()
         #self.thread_run_test.start(self.runAllTest)
-        print('ok')
-
     
     def runAllTest(self):
         self.listScript =[]
@@ -2974,7 +2979,6 @@ class CreateAutoTest(QMainWindow):
         for index in range(len(self.listDirectory)):
             iterator = QTreeWidgetItemIterator(self.tree,QTreeWidgetItemIterator.Checked)
             while iterator.value():
-                print('ok123')
                 self.item = iterator.value()
                 res = any(self.item.text(0) in ele for ele in self.DictRunTest[self.listDirectory[index]])
                 if self.fileType in self.item.text(0): 
@@ -3203,40 +3207,29 @@ class DeviceG800(QMainWindow):
         ########################## SCREEN PATH CONVERT #############################
         self.connected = 0
         self.counter = 0
-        DacTable = Path('QT_designer/G800.ui')
+        DacTable = Path('QT_designer/H800.ui')
         loadUi(str(DacTable), self)
-        self.setWindowTitle("Logging G800")
-        self.setFixedSize(1550, 660)
+        self.setWindowTitle("H800")
+        self.setFixedSize(640, 610)
         self.device_connect.setText('DEVICE CONNECT:')
         self.device_connect.setStyleSheet("color: gray")
-        self.setModel.activated[str].connect(self.setmodel)
-        self.setModel.setStyleSheet(ButtonStyleWhite)
-        self.setModel.setEnabled(False)
-        self.logParameters.isReadOnly()
+        self.setLanguage.activated[str].connect(self.setlanguage)
+        self.setLanguage.setStyleSheet(ButtonStyleWhite)
+        self.setLanguage.setEnabled(False)
+        self.setLanguage.addItems(listLanguages())
         # Create a QTextCursor object
         self.deviceDisconnect.clicked.connect(self.disconnectAll)
         self.deviceDisconnect.setStyleSheet(ButtonStyleOff2)
-        self.button_get_model.clicked.connect(self.get_model)
-        self.button_get_model.setStyleSheet(ButtonStyleOff2)
-        
-        self.button_log_stop.clicked.connect(self.buttonLogStop)
-        self.button_log_stop.setStyleSheet(ButtonStyleOff2)
-        
-        self.button_log_start.clicked.connect(self.buttonLogStart)
-        self.button_log_start.setStyleSheet(ButtonStyleOff2)
-        
-        self.button_log_clear.clicked.connect(self.buttonLogClear)
-        self.button_log_clear.setStyleSheet(ButtonStyleOff2)
-        
-        self.button_steam_log.clicked.connect(self.buttonSteam)
-        self.button_steam_log.setStyleSheet(ButtonStyleOff2)
-    
-        self.button_activate.clicked.connect(self.buttonsActivate)
-        self.button_activate.setStyleSheet(ButtonStyleOff2)
-        
-        self.logging = QTimer()
-        self.logging.timeout.connect(self.loggingParameters)  #
-        self.logging.setInterval(1000)
+        self.button_production.pressed.connect(self.enter_production)
+        self.button_production.setStyleSheet(ButtonStyleOff2)
+        self.button_touch_all.pressed.connect(self.touch_test)
+        self.button_touch_all.setStyleSheet(ButtonStyleOff2)
+        self.button_agging.pressed.connect(self.agging_mode)
+        self.button_agging.setStyleSheet(ButtonStyleOff2)
+        self.button_demo.pressed.connect(self.demo_mode)
+        self.button_demo.setStyleSheet(ButtonStyleOff2)
+        self.button_reset.pressed.connect(self.reset)
+        self.button_reset.setStyleSheet(ButtonStyleOff2)
         self.readDeviceData = QThreadPool()
         self.DeviceConnect.activated[str].connect(self.deviceBox)
         self.DeviceConnect.setEditable(True)
@@ -3252,65 +3245,61 @@ class DeviceG800(QMainWindow):
         #self.buttonTimer.setInterval(100)  #  3 seconds
         #self.buttonTimer.timeout.connect(self.button_clicked)
          ################## DIGITAL OUTPUT #########################################
-        
+        self.button_production.setEnabled(False)  
+        self.button_touch_all.setEnabled(False)  
+        self.button_agging.setEnabled(False)  
+        self.button_demo.setEnabled(False)  
+        self.button_reset.setEnabled(False)   
         for index in range(22):
             eval(f'self.buttonT{index}.pressed.connect(self.button_clicked)')
             eval(f'self.buttonT{index}.setStyleSheet(ButtonStyleOff2)')
             eval(f'self.buttonT{index}.setEnabled(False)')
       
     def button_clicked(self):
-        try:
-            self.counter += 1
-            sender = int(self.sender().text().replace('T',''))
-            self.logParameters.append(f"{self.timeDisplay}->Button press: {self.sender().text()}")
-            self.device.button(index=sender)
-        except Exception:
-            x = datetime.datetime.now()
-            dateAndTime = x.strftime("%c")
-            with open('check_error.txt', 'a') as f:
-                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
-                f.write('Digital box is disconnected \n')
-                f.write(f'{errorNumber*2}\n')
-                f.write(traceback.format_exc())
-                f.write(f'{errorNumber*2}\n')
-            f.close()
+        self.counter += 1
+        sender = int(self.sender().text().replace('T',''))
+        self.device.button_ESP(index=sender)
     
-    def buttonLogStart(self):
-        self.logging.start()
+    def enter_production(self):
+        self.device.disconnectESP()
+        self.device.connectESP()
+        sleep(7)
+        self.device.button_ESP(0)
+        sleep(1)
+        self.device.button_ESP(1)
+        self.device.button_ESP(4)
+        self.device.button_ESP(5)
+
+    def touch_test(self):
+        self.device.button_ESP(16)
+        sleep(1)
+        for index in range(22):
+            self.device.button_ESP(index)
+            sleep(0.2)
     
-    def buttonsActivate(self):
-        if (self.activate_button_index % 2) == 0:
-            self.logging.stop()
-            self.button_activate.setStyleSheet(ButtonStyleOn2)
-            for index in range(22):
-                eval(f'self.buttonT{index}.setEnabled(True)')
-        else:
-            self.logging.start()
-            self.button_activate.setStyleSheet(ButtonStyleOff2)
-            for index in range(22):
-                eval(f'self.buttonT{index}.setEnabled(False)')
-        self.activate_button_index += 1
+    def agging_mode(self):
+        self.device.disconnectESP()
+        self.device.connectESP()
+        sleep(7)
+        self.device.button_ESP(0)
+        sleep(1)
+        self.device.button_ESP(8)
+        self.device.button_ESP(1)
+        self.device.button_ESP(4)
     
-    
-    def buttonLogStop(self):
-        self.logging.stop()
-    
-    def buttonLogClear(self):
-        self.logParameters.clear()
-    
-    def buttonSteam(self):
-        if (self.steam_button_index % 2) == 0:
-            self.steam_log_ON = 1
-            self.button_steam_log.setStyleSheet(ButtonStyleOn2)
-        else:
-            self.steam_log_ON = 0
-            self.button_steam_log.setStyleSheet(ButtonStyleOff2)
-        self.steam_button_index +=1
-    
-    def loggingParameters(self):
-        self.time = QDateTime.currentDateTime()
-        self.timeDisplay = self.time.toString("dd-MM-yyyy hh:mm:ss")
-        self.readDeviceData.start(self.get_param)
+    def demo_mode(self):
+        self.device.disconnectESP()
+        self.device.connectESP()
+        sleep(7)
+        self.device.button_ESP(0)
+        sleep(1)
+        self.device.button_ESP(1)
+        self.device.button_ESP(5)
+        self.device.button_ESP(9)
+
+    def reset(self):
+        self.device.disconnectESP()
+        self.device.connectESP()
 
     def deviceBox(self, CONNECTBOX):
         """
@@ -3319,25 +3308,32 @@ class DeviceG800(QMainWindow):
         """
         try:
             if CONNECTBOX[0:3] =='COM':
-                self.device = G800(CONNECTBOX[0:5].replace(' ',''))
-                self.device.connect()
-                self.setModel.addItems(self.data['LUTS']['Models'])
+                #print(CONNECTBOX[0:5].replace(' ',''))
+                self.device = G800(CONNECTBOX[0:5].replace(' ',''),baudrate=1000000)
+                self.device.connectESP()
                 self.connected = 1
                 sleep(1)
                 self.device_connect.setText('CONNECT:')
                 self.device_connect.setStyleSheet("color: green")
-                self.logging.start()
                 self.DeviceConnect.setStyleSheet(ButtonStyleOn)
                 self.DeviceConnect.setEnabled(False)
-                self.setModel.setEnabled(True)
+                self.setLanguage.setEnabled(True)
+                     
+                for index in range(22):
+                    eval(f'self.buttonT{index}.setEnabled(True)')
+                self.button_production.setEnabled(True)  
+                self.button_touch_all.setEnabled(True)  
+                self.button_agging.setEnabled(True)  
+                self.button_demo.setEnabled(True)  
+                self.button_reset.setEnabled(True)   
             else:
                 sleep(2)
                 self.device_connect.setText('DEVICE DISCONNECTED:')
                 self.device_connect.setStyleSheet("color: red")
                 self.connected = 0
-                self.device.disconnect()
+                self.device.disconnectESP()
         except:
-            self.device.disconnect()
+            self.device.disconnectESP()
             self.device_connect.setText('DEVICE DISCONNECTED:')
             self.device_connect.setStyleSheet("color: red")
             x = datetime.datetime.now()
@@ -3351,104 +3347,55 @@ class DeviceG800(QMainWindow):
                 f.write(traceback.format_exc())
                 f.write(f'{errorNumber*2}\n')
             f.close()
-    
-    def get_model(self):
-        self.get_model_index = 1
         
     def disconnectAll(self):
         self.device_connect.setText('DEVICE CONNECT:')
         self.device_connect.setStyleSheet("color: gray")
         self.DeviceConnect.setEnabled(True)
-        self.setModel.setEnabled(False)
+        self.setLanguage.setEnabled(False)
         for index in range(22):
             eval(f'self.buttonT{index}.setEnabled(False)')
+        self.button_production.setEnabled(False)  
+        self.button_touch_all.setEnabled(False)  
+        self.button_agging.setEnabled(False)  
+        self.button_demo.setEnabled(False)  
+        self.button_reset.setEnabled(False)   
         self.DeviceConnect.setStyleSheet(ButtonStyleOff2)
-        self.setModel.setStyleSheet(ButtonStyleOff2)
+        self.setLanguage.setStyleSheet(ButtonStyleOff2)
         self.DeviceConnect.clear()
         self.DeviceConnect.addItems(listDeviceConnection())
-        self.button_activate.setStyleSheet(ButtonStyleOff2)
-        self.logging.stop()
         if self.connected == 1:
             self.connected = 0
-            self.device.disconnect()
-    
+            self.device.disconnectESP()
+    def setlanguage(self,lang):
+        self.device.change_language(self.setLanguage.currentIndex())
+        self.setLanguage.setStyleSheet(ButtonStyleOn)
+        
     def boxOffDeviceDisconnected(self):
         if self.connected == 1:
-            self.logging.stop()
-            self.device.disconnect()
-            self.button_activate.setStyleSheet(ButtonStyleOff2)
+            self.device.disconnectESP()
             self.DeviceConnect.setEnabled(False)
-            self.setModel.setEnabled(False)
+            self.setLanguage.setEnabled(False)
             for index in range(22):
                 eval(f'self.buttonT{index}.setEnabled(False)')
-    
+            self.button_production.setEnabled(False)  
+            self.button_touch_all.setEnabled(False)  
+            self.button_agging.setEnabled(False)  
+            self.button_demo.setEnabled(False)  
+            self.button_reset.setEnabled(False)   
     def boxOnDeviceDisconnect(self):
         if self.connected == 1:
             sleep(1)
-            self.device.connect()
-            self.logging.start()
-            self.setModel.setEnabled(True)
+            self.device.connectESP()
             self.DeviceConnect.setEnabled(True)
+            for index in range(22):
+                eval(f'self.buttonT{index}.setEnabled(True)')
+            self.button_production.setEnabled(True)  
+            self.button_touch_all.setEnabled(True)  
+            self.button_agging.setEnabled(True)  
+            self.button_demo.setEnabled(True)  
+            self.button_reset.setEnabled(True)   
 
-    def getAllModels(self):
-        self.setModel.clear()
-        self.setModel.addItems(mainWindow.getModel()[1])
-
-    def setmodel(self, model):
-        self.logging.stop()
-        sleep(0.2)
-        self.setModel.setStyleSheet(ButtonStyleOn)
-        self.device.set_model(self.data['LUTS']['Models'].index(f'{model}'))
-        sleep(2)
-        self.logging.start()
-    
-    def get_param(self):
-        try:
-            if self.get_model_index == 1:
-                self.get_model_index = 0
-                self.logParameters.append(f"{ self.device.get_model()}")
-            parameters = self.device.get_parameters()
-            self.logParameters.append(f"{self.timeDisplay}->{parameters}")
-            # STEAM PARAMETERS
-            if self.steam_log_ON ==1 or parameters['system'] == 'STEAM' or parameters['system'] == 'REGENERATE' or parameters['system'] == 'STEAM_CLEAN' or parameters['system'] == 'SOUSVIDE' or parameters['system'] == 'DESCALE':
-                steam_log =self.device.get_steam_parameters()
-                self.logParameters.append(f"{self.timeDisplay}->{steam_log}")
-                if steam_log is None:
-                    self.logParameters.append(f"{self.timeDisplay}->steam log is disable")
-                    self.steam_log_ON =0
-                    self.steam_button_index =0
-                    self.button_steam_log.setStyleSheet(ButtonStyleOff2)
-            cursor = self.logParameters.textCursor()
-            # Set the cursor position to the end of the document
-            cursor.setPosition(self.logParameters.document().characterCount() -1 )
-            # Apply the cursor
-            self.logParameters.setTextCursor(cursor)
-        except AttributeError:
-            self.disconnectAll()
-            x = datetime.datetime.now()
-            dateAndTime = x.strftime("%c")
-            with open('check_error.txt', 'a') as f:
-                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
-                f.write('Digital box is disconnected \n')
-                f.write(f'{errorNumber*2}\n')
-                f.write(traceback.format_exc())
-                f.write(f'{errorNumber*2}\n')
-            f.close()
-        except ValueError:
-            pass
-        except TypeError:
-            pass
-        except RuntimeError:
-            self.disconnectAll()
-            x = datetime.datetime.now()
-            dateAndTime = x.strftime("%c")
-            with open('check_error.txt', 'a') as f:
-                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
-                f.write('Digital box is disconnected \n')
-                f.write(f'{errorNumber*2}\n')
-                f.write(traceback.format_exc())
-                f.write(f'{errorNumber*2}\n')
-            f.close()
 
     def closeEvent(self, event):
         """
