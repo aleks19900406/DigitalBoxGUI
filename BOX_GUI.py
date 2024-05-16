@@ -39,9 +39,9 @@ IMAGE_PATH_OTHER =os.path.join("data","images","other")
 DATA_SAVE = os.path.join("data","saveData")
 AUTO_TEST_PATH = os.path.join("data","autoTest")
 ###################### BEGIN PARAMETERS #################################
-ALL_LANGUAGES =['English','German','Nederlands','Polish ','French','Italiano','Spanish','Slovenian','Danish','Norwegian','Finnish',
-                'Swedish','Russian','kazakhstan','Ukraine','Czech','Slovak','Croatian','Serbian','Greek','Hungarian','Chinese',
-                'Portugese','Romanian','Bulgarian','Estonian','Lithuanian','Latvian']
+ALL_LANGUAGES =['EN-English','DE-German','NL-Nederlands','PL-Polish ','FR-French','IT-Italiano','ES-Spanish','SL-Slovenian','DA-Danish','NO-Norwegian','FI-Finnish',
+                'SV-Swedish','RU-Russian','KK-Kazakhstan','UK-Ukraine','CS-Czech','SK-Slovak','HR-Croatian','SR-Serbian','EL-Greek','HU-Hungarian','SCN-Chinese',
+                'PT-Portugese','RO-Romanian','BL-Bulgarian','ET-Estonian','LT-Lithuanian','LV-Latvian']
 VERZIJA_ESP = "3.19"
 VERZIJA_RPI = "3.10"
 DIGITAL_BOX_VERSION = 'V1.4'
@@ -595,7 +595,7 @@ class MainWindow(QMainWindow):
             self.refreshSaving = self.excelRefresh.value()
 
         digitalPot = [self.readDigitalPot0,self.readDigitalPot1,self.readDigitalPot2,self.readDigitalPot3,self.readDigitalPot4,self.readDigitalPot5]
-        digitalOut = [bool(self.index_on_off),bool(self.index_out[0]),bool(self.index_out[1]),bool(self.index_out[2]),bool(self.index_out[3]),bool(self.index_out[4]),bool(self.index_out[5]),bool(self.index_out[6]),bool(self.index_out[7]),bool(self.index_out[8]),bool(self.index_out[9]),bool(self.index_out[10]),bool(self.index_out[11]),bool(self.index_out[12]),bool(self.index_out[13]),bool(self.index_out[14]),bool(self.index_out[15]),]
+        digitalOut = [self.index_on_off,self.index_out[0],self.index_out[1],self.index_out[2],self.index_out[3],self.index_out[4],self.index_out[5],self.index_out[6],self.index_out[7],self.index_out[8],self.index_out[9],self.index_out[10],self.index_out[11],self.index_out[12],self.index_out[13],self.index_out[14],self.index_out[15],]
         
         readPwm1= [self.read_pwm_all[0]['f'],self.read_pwm_all[0]['d']]
         readPwm2= [self.read_pwm_all[1]['f'],self.read_pwm_all[1]['d']]
@@ -608,7 +608,7 @@ class MainWindow(QMainWindow):
         allParameters.extend(self.readPwm1)
         allParameters.extend(readPwm2)
         allParameters.extend(self.readPwm2)
-        allParameters.extend(self.read_input)
+        allParameters.extend([1 if b else 0 for b in self.read_input])
         allParameters.extend(dacSet)
         allParameters.extend(self.readPwmOld)
         RowName = self.sheet.cell(row = self.indexSaveData+2, column = 1) 
