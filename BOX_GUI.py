@@ -941,7 +941,7 @@ class MainWindow(QMainWindow):
                         
                 if name == f'OUTPUT{SPACE}':
                     try:
-                        for index in range(8):
+                        for index in range(16):
                             output_text = eval(f'self.OUT{index}')
                             if self.read_all_lines[3].replace('\n','').split(',')[index] == '':
                                 output_text.setText(f'out{index}')
@@ -949,6 +949,7 @@ class MainWindow(QMainWindow):
                                 output_text.setText(self.read_all_lines[3].replace('\n','').split(',')[index])
                     except IndexError:
                         output_text.setText(f'out{index}')
+                
                 if name == f'DIGITAL_POT{SPACE}':
                     try:
                         for index in range(6):
@@ -962,7 +963,6 @@ class MainWindow(QMainWindow):
                         digital_pot_text.setText(f'digitalPot{index}')
                     except AttributeError:
                         print('!!! POT not enough slider !!!')
-                
                 
                 if name == f'DAC_POT{SPACE}':
                     try:
@@ -978,7 +978,6 @@ class MainWindow(QMainWindow):
                     except AttributeError:
                         print('!!! DAC not enough slider !!!')
                 
-                
                 if name == f'READ_ADC{SPACE}':
                     try:
                         for index in range(4):
@@ -990,7 +989,6 @@ class MainWindow(QMainWindow):
                             digital_pot_text.setFont(QFont('Arial', 10))
                     except IndexError:
                         digital_pot_text.setText(f'ADC{index}')
-                
                 
                 if name == f'SET_VOLTAGE{SPACE}':
                     try:
@@ -3210,7 +3208,7 @@ class DeviceG800(QMainWindow):
         DacTable = Path('QT_designer/H800.ui')
         loadUi(str(DacTable), self)
         self.setWindowTitle("H800")
-        self.setFixedSize(640, 610)
+        self.setFixedSize(640, 430)
         self.device_connect.setText('DEVICE CONNECT:')
         self.device_connect.setStyleSheet("color: gray")
         self.setLanguage.activated[str].connect(self.setlanguage)
@@ -3230,7 +3228,12 @@ class DeviceG800(QMainWindow):
         self.button_demo.setStyleSheet(ButtonStyleOff2)
         self.button_reset.pressed.connect(self.reset)
         self.button_reset.setStyleSheet(ButtonStyleOff2)
-        self.readDeviceData = QThreadPool()
+        self.reset_lang.pressed.connect(self.resetLang)
+        self.reset_lang.setStyleSheet(ButtonStyleOff2)
+        self.AutoLanguage = QTimer()
+        self.AutoLanguage.timeout.connect(self.change_lang)  # 
+        self.AutoLanguage.setInterval(MAIN_TIME_REFRESHING)
+        self.checkBox_auto_lang.stateChanged.connect(self.doCheck)
         self.DeviceConnect.activated[str].connect(self.deviceBox)
         self.DeviceConnect.setEditable(True)
         self.DeviceConnect.setStyleSheet(ButtonStyleWhite)
@@ -3240,21 +3243,44 @@ class DeviceG800(QMainWindow):
         self.steam_button_index = 0
         self.steam_log_ON = 0
         self.activate_button_index = 0
-        #self.buttonTimer = QTimer()
-        #self.buttonTimer.setSingleShot(True)
-        #self.buttonTimer.setInterval(100)  #  3 seconds
-        #self.buttonTimer.timeout.connect(self.button_clicked)
+        self.time_lang_change = 1000
+        self.lang_index = 0
+        self.lang_max_index = 0
          ################## DIGITAL OUTPUT #########################################
         self.button_production.setEnabled(False)  
         self.button_touch_all.setEnabled(False)  
         self.button_agging.setEnabled(False)  
         self.button_demo.setEnabled(False)  
-        self.button_reset.setEnabled(False)   
+        self.button_reset.setEnabled(False)
         for index in range(22):
             eval(f'self.buttonT{index}.pressed.connect(self.button_clicked)')
             eval(f'self.buttonT{index}.setStyleSheet(ButtonStyleOff2)')
             eval(f'self.buttonT{index}.setEnabled(False)')
-      
+    
+    def resetLang(self):
+        self.setLanguage.clear()
+        self.setLanguage.addItems(listLanguages())
+    
+    def doCheck(self):
+        if self.checkBox_auto_lang.isChecked():
+            # Checkbox is checked
+            self.lang_max_index = max([index for index,i in enumerate(ALL_LANGUAGES)])
+            self.AutoLanguage.start()
+        else:
+            self.AutoLanguage.stop()
+        
+    def change_lang(self):
+        self.setLanguage.clear()
+        if self.lang_index == self.lang_max_index:
+            self.lang_index = 0
+        if self.time_lang_change != self.change_language_time.value():
+            self.time_lang_change = self.change_language_time.value()
+            self.AutoLanguage.setInterval(int(self.change_language_time.value()*1000))
+        self.device.change_language(self.lang_index)
+        lang_name =''.join([i for index,i in enumerate(ALL_LANGUAGES) if index == self.lang_index])
+        self.setLanguage.addItem(lang_name)
+        self.lang_index += 1
+    
     def button_clicked(self):
         self.counter += 1
         sender = int(self.sender().text().replace('T',''))
@@ -3308,7 +3334,6 @@ class DeviceG800(QMainWindow):
         """
         try:
             if CONNECTBOX[0:3] =='COM':
-                #print(CONNECTBOX[0:5].replace(' ',''))
                 self.device = G800(CONNECTBOX[0:5].replace(' ',''),baudrate=1000000)
                 self.device.connectESP()
                 self.connected = 1
@@ -3349,6 +3374,10 @@ class DeviceG800(QMainWindow):
             f.close()
         
     def disconnectAll(self):
+        self.AutoLanguage.stop()
+        self.setLanguage.clear()
+        self.setLanguage.addItems(listLanguages())
+        sleep(1)
         self.device_connect.setText('DEVICE CONNECT:')
         self.device_connect.setStyleSheet("color: gray")
         self.DeviceConnect.setEnabled(True)
@@ -3367,6 +3396,7 @@ class DeviceG800(QMainWindow):
         if self.connected == 1:
             self.connected = 0
             self.device.disconnectESP()
+    
     def setlanguage(self,lang):
         self.device.change_language(self.setLanguage.currentIndex())
         self.setLanguage.setStyleSheet(ButtonStyleOn)
@@ -3383,6 +3413,7 @@ class DeviceG800(QMainWindow):
             self.button_agging.setEnabled(False)  
             self.button_demo.setEnabled(False)  
             self.button_reset.setEnabled(False)   
+    
     def boxOnDeviceDisconnect(self):
         if self.connected == 1:
             sleep(1)
@@ -3395,7 +3426,6 @@ class DeviceG800(QMainWindow):
             self.button_agging.setEnabled(True)  
             self.button_demo.setEnabled(True)  
             self.button_reset.setEnabled(True)   
-
 
     def closeEvent(self, event):
         """
