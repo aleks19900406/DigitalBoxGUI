@@ -25,7 +25,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.uic import loadUi
 
-from DigitalBox.Connection import G800, data
+from DigitalBox.Connection import G800,BIO24, data
 from DigitalBox.dasConnect import SERIALCONNECT, WifiEsp32Connect
 from DigitalBox.lib import *
 from package.tester._clients.das import DAS  # Import DAS eee
@@ -44,7 +44,7 @@ ALL_LANGUAGES =['EN-English','DE-German','NL-Nederlands','PL-Polish ','FR-French
                 'PT-Portugese','RO-Romanian','BL-Bulgarian','ET-Estonian','LT-Lithuanian','LV-Latvian']
 VERZIJA_ESP = "3.19"
 VERZIJA_RPI = "3.10"
-DIGITAL_BOX_VERSION = 'V1.4'
+DIGITAL_BOX_VERSION = 'V1.5'
 MAIN_TIME_REFRESHING = 1000
 SPACE = '\n'
 DigitalInput = 32
@@ -307,7 +307,7 @@ class MainWindow(QMainWindow):
         self.refreshSaving = 1000
         self.index_on_off = 0
         self.index_out = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        self.index_extras = [0,0,0,0,0,0,0,0,0]
+        self.index_extras = [0,0,0,0,0,0,0,0,0,0]
         self.connectParameters = 0
         self.box_is_connected = 0
         self.index_refreshing = 0
@@ -364,6 +364,7 @@ class MainWindow(QMainWindow):
         ###################### BUTTON OPEN ADDITIONAL SCREEN ######################
         self.ButtonHusaModel.clicked.connect(self.buttonHusaModel)
         self.ButtonG800.clicked.connect(self.buttonG800)
+        self.ButtonBIO24.clicked.connect(self.buttonBio24)
         self.ButtonPyroSystem.clicked.connect(self.buttonPyroSystem)
         self.ButtonDacSet.clicked.connect(self.buttonDacSet)
         self.ButtonSetPot.clicked.connect(self.buttonSetPot)
@@ -445,6 +446,7 @@ class MainWindow(QMainWindow):
         self.iconSaveData = QtGui.QIcon()
         self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
         self.startStopSaving.setIcon(self.iconSaveData)
+    
     def resetExcelParameters(self):
         """
         - reset parameters when box connection change or button refresh pressed 
@@ -552,6 +554,7 @@ class MainWindow(QMainWindow):
                 self.saveDataThread.start(self.saveToCsv)
                 self.timeSave =self.indexSaveData * 0.001     # calculation saving time
                 if self.indexSaveData > 3000:
+                    print('saving')
                     self.savingBar.setVisible(True)
                     self.backupSave.setVisible(True)
                     self.saveBarThread.start()
@@ -597,8 +600,8 @@ class MainWindow(QMainWindow):
         digitalPot = [self.readDigitalPot0,self.readDigitalPot1,self.readDigitalPot2,self.readDigitalPot3,self.readDigitalPot4,self.readDigitalPot5]
         digitalOut = [self.index_on_off,self.index_out[0],self.index_out[1],self.index_out[2],self.index_out[3],self.index_out[4],self.index_out[5],self.index_out[6],self.index_out[7],self.index_out[8],self.index_out[9],self.index_out[10],self.index_out[11],self.index_out[12],self.index_out[13],self.index_out[14],self.index_out[15],]
         
-        readPwm1= [self.read_pwm_all[0]['f'],self.read_pwm_all[0]['d']]
-        readPwm2= [self.read_pwm_all[1]['f'],self.read_pwm_all[1]['d']]
+        readPwm1= [int(self.read_pwm_all[0]['f']),int(self.read_pwm_all[0]['d'])]
+        readPwm2= [int(self.read_pwm_all[1]['f']),int(self.read_pwm_all[1]['d'])]
         dacSet = [self.readDac0,self.readDac1,self.readDac2,self.readDac3,self.readDac4,self.readDac5,self.readDac6,self.readDac7]
         allParameters.extend(digitalPot)
         allParameters.extend(digitalOut)
@@ -791,6 +794,7 @@ class MainWindow(QMainWindow):
             PotTableSet.close()
             DacTableCreate.close()
             RunAutoTest.close()
+            deviceBio24.close()
             
              
         else:
@@ -1146,6 +1150,7 @@ class MainWindow(QMainWindow):
                 self.on_off.setIcon(self.iconOff)
             #self.on_off.setIcon(self.iconOn)
             self.ButtonG800.setStyleSheet(ButtonStyleOff2)
+            self.ButtonBIO24.setStyleSheet(ButtonStyleOff2)
             self.ButtonHusaModel.setStyleSheet(ButtonStyleOff2)
             self.ButtonPyroSystem.setStyleSheet(ButtonStyleOff2)
             self.ButtonDacSet.setStyleSheet(ButtonStyleOff2)
@@ -1878,8 +1883,7 @@ class MainWindow(QMainWindow):
 
     def buttonG800(self):
         """
-        - show screen husa if box is connected
-        - if box is not connected show massage error
+        - show screen G800 
         """
         if (self.index_extras[8] % 2) == 0:
             self.ButtonG800.setStyleSheet(ButtonStyleOn2)
@@ -1891,7 +1895,29 @@ class MainWindow(QMainWindow):
      
         if self.index_extras[8] >=2:
             self.index_extras[8] =0 
-        
+    
+    def buttonBio24(self):
+        """
+        - show screen Bio24 
+        """
+        if (self.index_extras[9] % 2) == 0:
+            self.ButtonBIO24.setStyleSheet(ButtonStyleOn2)
+            deviceBio24.show()
+        else: 
+            self.ButtonBIO24.setStyleSheet(ButtonStyleOff2)
+            deviceBio24.close()
+        self.index_extras[9] +=1
+     
+        if self.index_extras[9] >=2:
+            self.index_extras[9] =0 
+     
+    def closeScreenBio24(self):
+        """
+        close G800 close
+        """
+        self.index_extras[9] +=1
+        self.ButtonBIO24.setStyleSheet(ButtonStyleOff2)
+    
     def closeScreenG800(self):
         """
         close G800 close
@@ -3230,10 +3256,17 @@ class DeviceG800(QMainWindow):
         self.button_reset.setStyleSheet(ButtonStyleOff2)
         self.reset_lang.pressed.connect(self.resetLang)
         self.reset_lang.setStyleSheet(ButtonStyleOff2)
+        self.reset_auto_button.pressed.connect(self.resetButton)
+        self.reset_auto_button.setStyleSheet(ButtonStyleOff2)
         self.AutoLanguage = QTimer()
         self.AutoLanguage.timeout.connect(self.change_lang)  # 
         self.AutoLanguage.setInterval(MAIN_TIME_REFRESHING)
+        self.AutoButton = QTimer()
+        self.AutoButton.timeout.connect(self.timer_button)  # 
+        self.AutoButton.setInterval(MAIN_TIME_REFRESHING)
+        self.buttonAutoThread = QThreadPool()
         self.checkBox_auto_lang.stateChanged.connect(self.doCheck)
+        self.checkBox_button_click.stateChanged.connect(self.doAutoButton)
         self.DeviceConnect.activated[str].connect(self.deviceBox)
         self.DeviceConnect.setEditable(True)
         self.DeviceConnect.setStyleSheet(ButtonStyleWhite)
@@ -3246,12 +3279,14 @@ class DeviceG800(QMainWindow):
         self.time_lang_change = 1000
         self.lang_index = 0
         self.lang_max_index = 0
+        self.saveButtonPush = []
          ################## DIGITAL OUTPUT #########################################
         self.button_production.setEnabled(False)  
         self.button_touch_all.setEnabled(False)  
         self.button_agging.setEnabled(False)  
         self.button_demo.setEnabled(False)  
         self.button_reset.setEnabled(False)
+    
         for index in range(22):
             eval(f'self.buttonT{index}.pressed.connect(self.button_clicked)')
             eval(f'self.buttonT{index}.setStyleSheet(ButtonStyleOff2)')
@@ -3260,7 +3295,8 @@ class DeviceG800(QMainWindow):
     def resetLang(self):
         self.setLanguage.clear()
         self.setLanguage.addItems(listLanguages())
-    
+    def resetButton(self):
+        self.saveButtonPush.clear()
     def doCheck(self):
         if self.checkBox_auto_lang.isChecked():
             # Checkbox is checked
@@ -3268,7 +3304,13 @@ class DeviceG800(QMainWindow):
             self.AutoLanguage.start()
         else:
             self.AutoLanguage.stop()
-        
+    def doAutoButton(self):
+        if self.checkBox_button_click.isChecked():
+            # Checkbox is checked
+            self.AutoButton.start()
+        else:
+            self.AutoButton.stop()
+    
     def change_lang(self):
         self.setLanguage.clear()
         if self.lang_index == self.lang_max_index:
@@ -3281,9 +3323,21 @@ class DeviceG800(QMainWindow):
         self.setLanguage.addItem(lang_name)
         self.lang_index += 1
     
+    def timer_button(self):
+        self.buttonAutoThread.start(self.autoButtonRunning)
+        
+        
+    def autoButtonRunning(self):
+        print(self.saveButtonPush)
+        for buttonPush in self.saveButtonPush:
+            self.device.button_ESP(index=buttonPush)
+    
+    
     def button_clicked(self):
         self.counter += 1
         sender = int(self.sender().text().replace('T',''))
+        self.saveButtonPush.append(sender)
+        print('saving',self.saveButtonPush)
         self.device.button_ESP(index=sender)
     
     def enter_production(self):
@@ -3433,13 +3487,330 @@ class DeviceG800(QMainWindow):
         """
         mainWindow.closeScreenG800()
         self.disconnectAll()
+class DeviceBio24(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        ########################## SCREEN PATH CONVERT #############################
+        self.connected = 0
+        self.counter = 0
+        self.refreshSaving = 1000
+        DacTable = Path('QT_designer/Bio24.ui')
+        loadUi(str(DacTable), self)
+        self.setWindowTitle("BIO24")
+        self.setFixedSize(605, 470)
+        self.device_connect.setText('DEVICE CONNECT:')
+        self.device_connect.setStyleSheet("color: gray")
+        # Create a QTextCursor object
+        self.label_errorSaveFile.setVisible(False)
+        self.label_errorSaveFile.setFont(QFont('Arial', 12))
+        self.label_errorSaveFile.setStyleSheet("color: red")
+        self.DeviceConnect.activated[str].connect(self.deviceBox)
+        self.DeviceConnect.setEditable(True)
+        self.DeviceConnect.setStyleSheet(ButtonStyleWhite)
+        self.DeviceConnect.addItems(listDeviceConnection())
+        self.deviceDisconnect.clicked.connect(self.disconnectAll)
+        self.deviceDisconnect.setStyleSheet(ButtonStyleOff2)
+        # EXCEL FILE
+        self.ExcelFile.addItems(dataFile())
+        ##################### SAVE DATA ##########################################
+        self.ExcelFile.activated[str].connect(self.excelFile)
+        self.ExcelFile.setEditable(True)
+        self.ExcelFile.setStyleSheet(ButtonStyleWhite)
+        self.indexButtonSave = 0
+        self.index_refreshing = 0
+        self.indexSaveData = 0
+        self.indexButtonSave = 0
+        self.repeatSaveData = 0
+        self.indexBackup = 0
+        self.savingBar.setVisible(False)
+        self.backupSave.setVisible(False)
+        self.backupSave.setStyleSheet("color: red")
+        self.startStopSaving.clicked.connect(self.startStopSave)
+        self.startStopSaving.setEnabled(False)
+        self.startStopSaving.setStyleSheet(ButtonStyleOff2)
+        self.refreshSaveData = QTimer()
+        self.refreshSaveData.timeout.connect(self.savingData)  # 
+        self.refreshSaveData.setInterval(MAIN_TIME_REFRESHING)
+        self.iconSaveData = QtGui.QIcon()
+        self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
+        self.startStopSaving.setIcon(self.iconSaveData)
+        self.timer_relay_state = QTimer()
+        self.timer_relay_state.timeout.connect(self.check_relay_state)  # 
+        self.timer_relay_state.setInterval(300)
+        self.saveDataThread = QThreadPool()
+        self.saveBarThread = QThread()
+        self.worker = Worker()
+        self.worker.stepIncreased.connect(self.SaveBarShow)
+        self.worker.moveToThread(self.saveBarThread)
+        self.saveBarThread.started.connect(self.worker.task)
+    def check_relay_state(self):
+        """
+        color relay state ON/OFF
+        """
+        for index,state in enumerate(list(self.device.check_relay().values())):
+            try:
+                if state == 'ON':
+                    eval(f'self.RELAY_{index}.setStyleSheet(InputStyleOn)')
+                    change_input[index] = True
 
+                elif state == 'OFF':
+                    eval(f'self.RELAY_{index}.setStyleSheet(InputStyleOff)')
+                    change_input[index] = False       
+            except Exception:
+                print('erro box')
+                continue
+    
+    def deviceBox(self, CONNECTBOX):
+        """
+        - connect device BIO24
+        - show warning message if device is disconnected
+        """
+        try:
+            if CONNECTBOX[0:3] =='COM':
+                self.device = BIO24(CONNECTBOX[0:5].replace(' ',''),baudrate=115200)
+                self.device.connect()
+                self.connected = 1
+                sleep(1)
+                self.device_connect.setText('CONNECT:')
+                self.device_connect.setStyleSheet("color: green")
+                self.DeviceConnect.setStyleSheet(ButtonStyleOn)
+                self.DeviceConnect.setEnabled(False)
+                self.timer_relay_state.start()
+                self.index_refreshing = 1
+            else:
+                sleep(2)
+                self.device_connect.setText('DEVICE DISCONNECTED:')
+                self.device_connect.setStyleSheet("color: red")
+                self.connected = 0
+                self.device.disconnect()
+                self.timer_relay_state.stop()
+                self.index_refreshing = 0
+        except:
+            self.device.disconnect()
+            self.index_refreshing = 0
+            self.timer_relay_state.stop()
+            self.device_connect.setText('DEVICE DISCONNECTED:')
+            self.device_connect.setStyleSheet("color: red")
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
+                f.write('Device is not conncected \n')
+                f.write('Solution:\n')
+                f.write('-- Connenct to the correct comport !!!\n')
+                f.write(f'{errorNumber*2}\n')
+                f.write(traceback.format_exc())
+                f.write(f'{errorNumber*2}\n')
+            f.close()
+        
+    def disconnectAll(self):
+        """
+        -disconnect device with button
+        """
+        self.device_connect.setText('DEVICE CONNECT:')
+        self.device_connect.setStyleSheet("color: gray")
+        self.DeviceConnect.setEnabled(True)
+        self.DeviceConnect.setStyleSheet(ButtonStyleOff2)
+        self.DeviceConnect.clear()
+        for index in range(22):
+            eval(f'self.RELAY_{index}.setStyleSheet(InputStyleOff)')
+        self.DeviceConnect.addItems(listDeviceConnection())
+        if self.connected == 1:
+            self.connected = 0
+            self.device.disconnect()
+            self.index_refreshing = 0
+            self.timer_relay_state.stop()
+    #EXCEL
+    def excelFile(self,file_name):
+        """
+        - save relay name parameters first column
+        """
+        try:
+            self.fileName = file_name
+            if self.index_refreshing >= 1:
+                if self.repeatSaveData == 0:
+                    self.indexButtonSave += 1
+                self.indexSaveData = 0
+                self.wb = openpyxl.Workbook()     
+                self.sheet = self.wb.active
+                sheetNames = []
+                columnName = self.sheet.cell(row = 1, column = 1) 
+                columnName.value = 'date and time'
+                sheetNames.extend(list(self.device.check_relay().keys()))
+                for index, name in enumerate(sheetNames):
+                    columnName = self.sheet.cell(row = 1, column = index+2) 
+                    columnName.value = name
+                if  self.indexButtonSave == 1:
+                    self.ExcelFile.setStyleSheet(ButtonStyleOn)
+                    self.startStopSaving.setEnabled(True)
+                    self.startStopSaving.setIcon(self.iconSaveData)
+                    self.refreshSaveData.start()
+                    sleep(2)
+                else:
+                    self.ExcelFile.setStyleSheet(ButtonStyleWhite)
+                    self.refreshSaveData.stop()
+                    self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
+                    self.startStopSaving.setIcon(self.iconSaveData)
+            else:
+                self.label_errorSaveFile.setVisible(True)
+                self.label_saveFile.setVisible(False)
+                self.label_errorSaveFile.setText("!!! DEVICE IS NOT CONNECTED !!!")
+            
+            if self.indexButtonSave >=2:
+                self.indexButtonSave =0
+        
+        except PermissionError:
+            self.label_errorSaveFile.setVisible(True)
+            self.label_saveFile.setVisible(False)
+            self.label_errorSaveFile.setText(f"!!! Excel file {self.fileName} is open. Close and try again !!!")
+          
+    def savingData(self):
+        """
+        - save data to excel file
+        - if refreshing is 1s create new file every 24ur
+        """
+        if(self.indexSaveData % 2) == 0:
+                self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
+                self.startStopSaving.setIcon(self.iconSaveData)
+                #self.startStopSaving.setStyleSheet(ButtonStyleOn2)
+        else:
+            self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn1.png')))
+            self.startStopSaving.setIcon(self.iconSaveData)
+            #self.startStopSaving.setStyleSheet(ButtonStyleOff2)
+        self.time=QDateTime.currentDateTime()
+        if self.indexSaveData == 86400:  ### saving data to file 24h if refreshing is 1s
+            self.refreshSaveData.stop()
+            sleep(1)
+            self.repeatSaveData += 1
+            self.saveDataThread.start(self.saveToCsv)
+            self.savingBar.setVisible(True)
+            self.backupSave.setVisible(True)
+            self.saveBarThread.start()
+            self.timeSave =self.indexSaveData * 0.001
+            if (self.timeSave) < 1:
+                self.worker.setValue(2)
+            else:
+                self.worker.setValue(self.timeSave)
+            sleep(5)
+            self.refreshSaveData.start()
+          
+        if self.indexSaveData > 86480:
+            self.saveBarThread.terminate()
+            self.indexSaveData = 0
+            self.excelFile(self.fileName)
+        allParameters = []
+        self.label_saveFile.setVisible(True)
+        if self.refreshSaving != self.excelRefresh.value():
+            self.refreshSaveData.setInterval(int(self.excelRefresh.value()*1000))
+            #self.refreshSaveData.setInterval(int(self.excelRefresh.value()*1)) # Test
+            self.refreshSaving = self.excelRefresh.value()
+
+        if list(self.device.check_relay().values()) != []: # do not save if list is empty
+            allParameters.extend([1 if s == 'ON' else 0 for s in list(self.device.check_relay().values())])
+        
+            RowName = self.sheet.cell(row = self.indexSaveData+2, column = 1) 
+            RowName.value = self.time.toString('dd-MM-yyyy hh:mm:ss')
+            for index, name in enumerate(allParameters):
+                RowName = self.sheet.cell(row = self.indexSaveData+2, column = index+2)
+                RowName.value=name
+
+            self.indexSaveData += 1
+        #print(self.indexSaveData)
+    
+    def saveToCsv(self):
+        """
+        - sava to .csv file
+        """
+        try: 
+            self.startStopSaving.setEnabled(False)
+            if self.repeatSaveData == 0 and self.indexBackup == 0: 
+                self.wb.save(f"{DATA_SAVE}/{self.fileName}.csv")
+            elif self.indexBackup == 1:
+                self.wb.save(f"{DATA_SAVE}/{self.fileName}_backup.csv")
+                self.indexBackup = 0
+            else:
+                self.wb.save(f"{DATA_SAVE}/{self.fileName}_{self.repeatSaveData}.csv")
+            sleep(self.timeSave/10)
+            self.startStopSaving.setEnabled(True)
+            self.savingBar.setVisible(False)
+            self.backupSave.setVisible(False)
+           
+        except PermissionError:
+            self.indexButtonSave = 0
+            self.startStopSaving.setEnabled(True)
+            self.label_errorSaveFile.setVisible(True)
+            self.label_saveFile.setVisible(False)
+            self.savingBar.setVisible(False)
+            self.backupSave.setVisible(False)
+            self.label_errorSaveFile.setText(f"!!! Excel file {self.fileName} is open. Close and try again !!!")
+        
+        except AttributeError:
+            self.indexButtonSave = 0
+            self.startStopSaving.setEnabled(True)
+            self.label_errorSaveFile.setVisible(True)
+            self.label_saveFile.setVisible(False)
+            self.savingBar.setVisible(False)
+            self.backupSave.setVisible(False)
+            self.label_errorSaveFile.setText("!!! File not saved. Write file name and press enter !!!")
+            print(traceback.print_exc())
+    
+    def startStopSave(self):
+        """
+        - start or stop saving parameters to excel
+        """
+        #print("file name",self.fileName)
+        if self.index_refreshing >= 1:
+            self.label_errorSaveFile.setVisible(False)
+            self.indexButtonSave +=1
+            if  self.indexButtonSave == 1:
+                self.savingBar.setVisible(False)
+                self.ExcelFile.setStyleSheet(ButtonStyleOn)
+                self.refreshSaveData.start()
+                self.saveBarThread.terminate()
+            else:
+                self.repeatSaveData = 0
+                self.ExcelFile.setStyleSheet(ButtonStyleWhite)
+                self.refreshSaveData.stop()
+                sleep(1)
+                self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
+                self.startStopSaving.setIcon(self.iconSaveData)
+                self.saveDataThread.start(self.saveToCsv)
+                self.timeSave =self.indexSaveData * 0.001     # calculation saving time
+                if self.indexSaveData > 3000:
+                    self.savingBar.setVisible(True)
+                    self.backupSave.setVisible(True)
+                    self.saveBarThread.start()
+                    if (self.timeSave) < 1:
+                        self.worker.setValue(2)
+                    else:
+                        self.worker.setValue(self.timeSave)
+               
+        if self.indexButtonSave >=2:
+            self.indexButtonSave =0
+    
+    def SaveBarShow(self,value):
+        """
+        - calculate have long saving bar showed
+        """
+        if self.timeSave < 1:
+            self.savingBar.setValue(100)  
+        else:
+            self.savingBar.setValue(int(value*(100/self.timeSave)))
+            if int(value*(100/self.timeSave)) > 100:
+                 self.savingBar.setValue(100)
+
+    def closeEvent(self, event):
+        """
+        - close BIO24
+        """
+        mainWindow.closeScreenBio24()
+        self.disconnectAll()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ### CREATE AN OBJECT NAMES ###
-    mainWindow = MainWindow()
-    mainWindow.show()
+    #mainWindow = MainWindow()
+    #mainWindow.show()
     # autoTest = AutoRunScript()
     # autoTest.show()
     HusaModelWindow = HusaSetModule()
@@ -3449,6 +3820,7 @@ if __name__ == "__main__":
     DacTableCreate = CreateDacTable()
     RunAutoTest = CreateAutoTest()
     deviceG800 = DeviceG800()
-    #deviceG800.show()
+    deviceBio24 = DeviceBio24()
+    deviceG800.show()
     ##############################
     sys.exit(app.exec_())

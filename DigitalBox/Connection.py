@@ -2,7 +2,7 @@ import ctypes
 import glob
 import os
 from enum import Enum, auto
-from time import sleep
+from time import sleep,time
 
 import json5
 from stream.byte import SerialStream
@@ -11,7 +11,6 @@ from stream.specializations.hisense import (
         DeviceFamily,
         HisenseStrem,
 )
-
 path_to_json = glob.glob("./config_file/*.json")
 path_to_json.sort(key=os.path.getmtime)
 #print(path_to_json[-1])
@@ -24,7 +23,6 @@ DEVICE_NUMBER = 1
 FRAME_TYPE = 105
 FRAME_SUBTYPE = 0
 FRAME_HEADER = bytearray([FRAME_TYPE, FRAME_SUBTYPE,FRAME_SUBTYPE])
-
 class Info(ctypes.BigEndianStructure):
         _pack_ = True
         _fields_ = [
@@ -140,8 +138,10 @@ class G800:
         stopbits=serial.STOPBITS_ONE,
         bytesize=serial.EIGHTBITS,
         timeout= 0.2)
+    
     def connect(self):
         self.h1.open()
+    
     def disconnect(self):
         self.h1.close()
 
@@ -351,6 +351,7 @@ class G800:
         for _ in range(repeat):
             self.esp.write(f"RAW TOUCH {press}{index}\r".encode())
             sleep(0.1)
+    
     def change_language(self,index):
         """_summary_
 
@@ -359,3 +360,50 @@ class G800:
         """
         index = "{:02d}".format(index)
         self.esp.write(f"RAW LANG {index}\r".encode())
+    
+class BIO24:
+    def __init__(self,comport:str,baudrate:str=115200) -> None:
+        self.comport = comport
+        self.baudrate = baudrate
+        self.cont = 0
+        self.FTDI = serial.Serial(
+        port=self.comport,  # Adjust the port name as necessary
+        baudrate=self.baudrate,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        bytesize=serial.EIGHTBITS,
+        timeout= 0.2)
+    
+    def connect(self):
+        if self.FTDI.isOpen():
+            self.FTDI.close()
+        self.FTDI.open()
+    
+    def disconnect(self):
+        self.FTDI.close()
+
+    def check_relay(self)-> dict:
+        """
+        -return dictionary parameters
+        """
+        relayState = {}
+        try:
+            self.cont +=1
+            self.FTDI.write(f"relay\r".encode())
+            sleep(0.1)
+            statusRelay = self.FTDI.read_all().decode('utf-8').split('\r')[2:30]
+            #statusRelay=relay_status_test.split('\r')[2:30]
+            for status in statusRelay:
+                    # Split the status string into components
+                components = status.split()
+                
+                # The relay name 
+                relay_name = components[0]
+                
+                # The relay state 
+                state = components[-1]
+                relayState[relay_name] = state
+        except Exception:
+            print('error connection',self.cont)
+            pass
+        return relayState

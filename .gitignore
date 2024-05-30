@@ -8,5 +8,7 @@ __pycache__/
 *.vscode
 *.spec
 data/saveData/*
+build/*
+dist/*
 ALL_ERROR.txt
 check_error.txt
