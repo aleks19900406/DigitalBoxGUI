@@ -615,9 +615,11 @@ class MainWindow(QMainWindow):
         allParameters.extend(dacSet)
         allParameters.extend(self.readPwmOld)
         RowName = self.sheet.cell(row = self.indexSaveData+2, column = 1) 
-        RowName.value = self.time.toString('dd-MM-yyyy hh:mm:ss')
+        RowName.value = self.time.toString('dd-MM-yyyy')
+        RowName = self.sheet.cell(row = self.indexSaveData+2, column = 2) 
+        RowName.value = self.time.toString('hh:mm:ss')
         for index, name in enumerate(allParameters):
-            RowName = self.sheet.cell(row = self.indexSaveData+2, column = index+2)
+            RowName = self.sheet.cell(row = self.indexSaveData+2, column = index+3)
             RowName.value=name
 
         self.indexSaveData += 1
@@ -735,9 +737,11 @@ class MainWindow(QMainWindow):
                 sheetNames.extend(freqOldBox)
                 sheetNames.extend(dutyOldBox)
                 columnName = self.sheet.cell(row = 1, column = 1) 
-                columnName.value = 'date and time'
+                columnName.value = 'date'
+                columnName = self.sheet.cell(row = 1, column = 2) 
+                columnName.value = 'time'
                 for index, name in enumerate(sheetNames):
-                    columnName = self.sheet.cell(row = 1, column = index+2) 
+                    columnName = self.sheet.cell(row = 1, column = index+3) 
                     columnName.value = name
                 if  self.indexButtonSave == 1:
                     self.ExcelFile.setStyleSheet(ButtonStyleOn)
@@ -3234,7 +3238,7 @@ class DeviceG800(QMainWindow):
         DacTable = Path('QT_designer/H800.ui')
         loadUi(str(DacTable), self)
         self.setWindowTitle("H800")
-        self.setFixedSize(640, 430)
+        self.setFixedSize(700, 440)
         self.device_connect.setText('DEVICE CONNECT:')
         self.device_connect.setStyleSheet("color: gray")
         self.setLanguage.activated[str].connect(self.setlanguage)
@@ -3297,6 +3301,7 @@ class DeviceG800(QMainWindow):
         self.setLanguage.addItems(listLanguages())
     def resetButton(self):
         self.saveButtonPush.clear()
+        self.textButton.clear()
     def doCheck(self):
         if self.checkBox_auto_lang.isChecked():
             # Checkbox is checked
@@ -3324,20 +3329,18 @@ class DeviceG800(QMainWindow):
         self.lang_index += 1
     
     def timer_button(self):
-        self.buttonAutoThread.start(self.autoButtonRunning)
+        try:
+            self.device.button_ESP(index=self.saveButtonPush[self.counter])
+            self.AutoButton.setInterval(int(self.change_button_push_time.value()*1000))
+            self.counter += 1
+        except IndexError:
+            self.counter = 0
         
-        
-    def autoButtonRunning(self):
-        print(self.saveButtonPush)
-        for buttonPush in self.saveButtonPush:
-            self.device.button_ESP(index=buttonPush)
-    
-    
     def button_clicked(self):
         self.counter += 1
         sender = int(self.sender().text().replace('T',''))
         self.saveButtonPush.append(sender)
-        print('saving',self.saveButtonPush)
+        self.textButton.setText(f'{self.saveButtonPush}')
         self.device.button_ESP(index=sender)
     
     def enter_production(self):
@@ -3430,6 +3433,8 @@ class DeviceG800(QMainWindow):
     def disconnectAll(self):
         self.AutoLanguage.stop()
         self.setLanguage.clear()
+        self.saveButtonPush.clear()
+        self.AutoButton.stop()
         self.setLanguage.addItems(listLanguages())
         sleep(1)
         self.device_connect.setText('DEVICE CONNECT:')
@@ -3635,10 +3640,12 @@ class DeviceBio24(QMainWindow):
                 self.sheet = self.wb.active
                 sheetNames = []
                 columnName = self.sheet.cell(row = 1, column = 1) 
-                columnName.value = 'date and time'
+                columnName.value = 'date'
+                columnName = self.sheet.cell(row = 1, column = 2) 
+                columnName.value = 'time'
                 sheetNames.extend(list(self.device.check_relay().keys()))
                 for index, name in enumerate(sheetNames):
-                    columnName = self.sheet.cell(row = 1, column = index+2) 
+                    columnName = self.sheet.cell(row = 1, column = index+3) 
                     columnName.value = name
                 if  self.indexButtonSave == 1:
                     self.ExcelFile.setStyleSheet(ButtonStyleOn)
@@ -3709,9 +3716,11 @@ class DeviceBio24(QMainWindow):
             allParameters.extend([1 if s == 'ON' else 0 for s in list(self.device.check_relay().values())])
         
             RowName = self.sheet.cell(row = self.indexSaveData+2, column = 1) 
-            RowName.value = self.time.toString('dd-MM-yyyy hh:mm:ss')
+            RowName.value = self.time.toString('dd-MM-yyyy')
+            RowName = self.sheet.cell(row = self.indexSaveData+2, column = 2) 
+            RowName.value = self.time.toString('hh:mm:ss')
             for index, name in enumerate(allParameters):
-                RowName = self.sheet.cell(row = self.indexSaveData+2, column = index+2)
+                RowName = self.sheet.cell(row = self.indexSaveData+2, column = index+3)
                 RowName.value=name
 
             self.indexSaveData += 1
@@ -3809,8 +3818,8 @@ class DeviceBio24(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ### CREATE AN OBJECT NAMES ###
-    #mainWindow = MainWindow()
-    #mainWindow.show()
+    mainWindow = MainWindow()
+    mainWindow.show()
     # autoTest = AutoRunScript()
     # autoTest.show()
     HusaModelWindow = HusaSetModule()
@@ -3821,6 +3830,6 @@ if __name__ == "__main__":
     RunAutoTest = CreateAutoTest()
     deviceG800 = DeviceG800()
     deviceBio24 = DeviceBio24()
-    deviceG800.show()
+    #deviceG800.show()
     ##############################
     sys.exit(app.exec_())
