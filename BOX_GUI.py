@@ -268,10 +268,12 @@ def listConnection():
         elif'CP210x' in str(USB_PORT) :
             LIST_CONNECT.append(f'{str(USB_PORT)[0:5]} - NodeMCU ESP32')
     #LIST_CONNECT.append("")
-    for ip_address in range(15,100,10):
-        LIST_CONNECT.append(f'ESP32 - 192.168.1.{ip_address}')
+    for ip_address in range(10,100,10):
+        LIST_CONNECT.append(f'RPI - 192.168.88.{ip_address}')
     for ip_address in range(10,100,10):
         LIST_CONNECT.append(f'RPI - 192.168.1.{ip_address}')
+    for ip_address in range(15,100,10):
+        LIST_CONNECT.append(f'ESP32 - 192.168.88.{ip_address}')
     
     return LIST_CONNECT
 
