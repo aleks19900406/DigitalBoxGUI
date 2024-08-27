@@ -128,9 +128,6 @@ class G800:
     def __init__(self,comport:str,baudrate:str=230400) -> None:
         self.comport = comport
         self.baudrate = baudrate
-        SERIAL1_PARAMS = {"device":self.comport}
-        self.s1 = SerialStream(SERIAL1_PARAMS,self.baudrate)
-        self.h1 = HisenseStrem(self.s1, DeviceFamily.OVEN,ChecksumType.CHECKSUM16)
         self.esp = serial.Serial(
         port=self.comport,  # Adjust the port name as necessary
         baudrate=self.baudrate,
@@ -138,6 +135,9 @@ class G800:
         stopbits=serial.STOPBITS_ONE,
         bytesize=serial.EIGHTBITS,
         timeout= 0.2)
+        SERIAL1_PARAMS = {"device":self.comport}
+        self.s1 = SerialStream(SERIAL1_PARAMS,self.baudrate)
+        self.h1 = HisenseStrem(self.s1, DeviceFamily.OVEN,ChecksumType.CHECKSUM16)
     
     def connect(self):
         self.h1.open()
