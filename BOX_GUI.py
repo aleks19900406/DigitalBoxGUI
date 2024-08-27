@@ -3393,6 +3393,7 @@ class DeviceG800(QMainWindow):
         """
         try:
             if CONNECTBOX[0:3] =='COM':
+                print('ok',CONNECTBOX[0:5].replace(' ',''))
                 self.device = G800(CONNECTBOX[0:5].replace(' ',''),baudrate=1000000)
                 self.device.connectESP()
                 self.connected = 1
@@ -3560,11 +3561,11 @@ class DeviceBio24(QMainWindow):
                     eval(f'self.RELAY_{index}.setStyleSheet(InputStyleOn)')
                     change_input[index] = True
 
-                elif state == 'OFF':
+                elif state == '/':
                     eval(f'self.RELAY_{index}.setStyleSheet(InputStyleOff)')
                     change_input[index] = False       
             except Exception:
-                print('erro box')
+                print('error box')
                 continue
     
     def deviceBox(self, CONNECTBOX):
