@@ -22,7 +22,11 @@ from PyQt5.QtWidgets import (
     QTreeWidget,
     QTreeWidgetItem,
     QTreeWidgetItemIterator,
+    QScrollArea,
+    QWidget,
+    QVBoxLayout,
 )
+from PyQt5 import QtWidgets
 from PyQt5.uic import loadUi
 
 from DigitalBox.Connection import G800,BIO24, data
@@ -44,7 +48,7 @@ ALL_LANGUAGES =['EN-English','DE-German','NL-Nederlands','PL-Polish ','FR-French
                 'PT-Portugese','RO-Romanian','BL-Bulgarian','ET-Estonian','LT-Lithuanian','LV-Latvian']
 VERZIJA_ESP = "3.19"
 VERZIJA_RPI = "3.10"
-DIGITAL_BOX_VERSION = 'V1.5'
+DIGITAL_BOX_VERSION = 'V1.6'
 MAIN_TIME_REFRESHING = 1000
 SPACE = '\n'
 DigitalInput = 32
@@ -320,8 +324,8 @@ class MainWindow(QMainWindow):
         self.repeatSaveData = 0
         self.indexBackup = 0
         self.setWindowTitle(f'DIGITAL BOX MAIN {DIGITAL_BOX_VERSION}')
-        #self.setFixedSize(1920, 1080)
         self.setGeometry(150, 40, 1530, 1050)
+       
         #self.setSizeIncrement(1920, 1080)
         self.setStyleSheet(MainScreenStyle)
         self.on_off.clicked.connect(self.button_OnOff)
@@ -1553,6 +1557,7 @@ class MainWindow(QMainWindow):
         set all output parameters and on/off button when state change
         """
         begin_parameter = [self.index_on_off,self.index_out[0],self.index_out[1],self.index_out[2],self.index_out[3],self.index_out[4],self.index_out[5],self.index_out[6],self.index_out[7],self.index_out[8],self.index_out[9],self.index_out[10],self.index_out[11],self.index_out[12],self.index_out[13],self.index_out[14],self.index_out[15]]
+        begin_parameter_old = [self.index_on_off,self.index_out[0],self.index_out[1],self.index_out[2],self.index_out[3],self.index_out[4],self.index_out[5],self.index_out[6],self.index_out[7]]
         if begin_parameter != change_parameters or self.connectParameters == 1:
             #print(begin_parameter,change_parameters)
             if (self.index_on_off % 2) == 0:
@@ -1563,16 +1568,34 @@ class MainWindow(QMainWindow):
                 #self.on_off.setIcon(self.iconOn)
                 self.box.main = 1
                 change_parameters[0]= 1
-            my_deque = deque(begin_parameter[1:])
-            # Rotate the deque by 16 positions to the right
-            my_deque.rotate(8)
-            parameter_true = tuple([i for i, val in enumerate( my_deque) if  val])
-            if parameter_true:
-                activate_output(self,parameter_true,True)
-            
-            parameter_false = tuple([i for i, val in enumerate( my_deque) if not val])
-            if parameter_false:
-                activate_output(self,parameter_false,False) 
+            try:
+                my_deque = deque(begin_parameter[1:])
+                # Rotate the deque by 16 positions to the right
+                my_deque.rotate(8)
+                parameter_true = tuple([i for i, val in enumerate( my_deque) if  val])
+                if parameter_true:
+                    activate_output(self,parameter_true,True)
+                
+                parameter_false = tuple([i for i, val in enumerate( my_deque) if not val])
+                if parameter_false:
+                    activate_output(self,parameter_false,False)
+                for index in range(8,16):
+                    eval(f'self.OUT{index}.setEnabled(True)')
+            except:
+                print('RPI digital input is not implemented works only for 8 input')
+                my_deque = deque(begin_parameter_old[1:])
+                # Rotate the deque by 16 positions to the right
+                my_deque.rotate(8)
+                parameter_true = tuple([i for i, val in enumerate( my_deque) if  val])
+                if parameter_true:
+                    activate_output(self,parameter_true,True)
+                
+                parameter_false = tuple([i for i, val in enumerate( my_deque) if not val])
+                if parameter_false:
+                    activate_output(self,parameter_false,False)
+                self.OUT8.setEnabled(False)
+                for index in range(8,16):
+                    eval(f'self.OUT{index}.setEnabled(False)')
    
             if (self.index_out[0] % 2) == 0:
                 change_parameters[1]= 0
