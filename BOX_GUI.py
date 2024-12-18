@@ -33,8 +33,24 @@ from DigitalBox.Connection import G800,BIO24, data
 from DigitalBox.dasConnect import SERIALCONNECT, WifiEsp32Connect
 from DigitalBox.lib import *
 from package.tester._clients.das import DAS  # Import DAS eee
+import subprocess
+import shutil
+#################### copy all file to GUI Application########################
+source_folder = ['copyFile','QT_designer','config_file','data']
+for copyFile in source_folder:
+    try:    
+        destination_folder = fr"..\GUI_Application\{copyFile}"  # Adjust the source folder path
+        # Copy the entire folder to the destination
+        if os.path.exists(destination_folder):
+            shutil.rmtree(destination_folder)
+        shutil.copytree(copyFile, destination_folder)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        # Handle the exception here, or just continue
+        break  # 'pass' will continue execution without stopping the program
 
 ################## PATH TO DATA FILE ####################################
+QT_DESIGNER = os.path.join("QT_designer")
 BOX_MARKS_PATH = os.path.join("data","boxMarks")
 BOX_DIGITAL_POT_PATH = os.path.join("data","digitalPotTable")
 BOX_DIGITAL_DAC_PATH = os.path.join("data","dacTable")
@@ -48,7 +64,7 @@ ALL_LANGUAGES =['EN-English','DE-German','NL-Nederlands','PL-Polish ','FR-French
                 'PT-Portugese','RO-Romanian','BL-Bulgarian','ET-Estonian','LT-Lithuanian','LV-Latvian']
 VERZIJA_ESP = "3.19"
 VERZIJA_RPI = "3.10"
-DIGITAL_BOX_VERSION = 'V1.6'
+DIGITAL_BOX_VERSION = 'V1.7'
 MAIN_TIME_REFRESHING = 1000
 SPACE = '\n'
 DigitalInput = 32
@@ -305,7 +321,7 @@ def listLanguages():
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        Window1 =Path('QT_designer/Main_screen.ui')
+        Window1 =Path(r'QT_designer/Main_screen.ui')
         loadUi(str(Window1),self)
         f = open("check_error.txt", "w")
         f.write("")
@@ -323,6 +339,7 @@ class MainWindow(QMainWindow):
         self.indexButtonSave = 0
         self.repeatSaveData = 0
         self.indexBackup = 0
+        self.indexUpdate = 0
         self.setWindowTitle(f'DIGITAL BOX MAIN {DIGITAL_BOX_VERSION}')
         self.setGeometry(150, 40, 1530, 1050)
        
@@ -381,6 +398,8 @@ class MainWindow(QMainWindow):
         self.barOpenAutoTest.setVisible(False)
         self.SetEnvirement.setVisible(False)
         self.setEnvironmentText.setVisible(False)
+        self.update_gui.clicked.connect(self.updateGui)
+        self.update_gui.setStyleSheet(ButtonStyleOff2)
         ########################### BOX CONNECTED #################################
         self.BoxConnect.activated[str].connect(self.connectBox)
         self.BoxConnect.setEditable(True)
@@ -432,7 +451,7 @@ class MainWindow(QMainWindow):
         self.savingBar.setVisible(False)
         ############################## BUTTON ICON ###############################
         self.on_off.setStyleSheet(ButtonStyleOff2)
-      
+        
         self.iconSwitchOff = QtGui.QIcon()
         self.iconSwitchOff.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/switchOff.png')))
     
@@ -441,17 +460,21 @@ class MainWindow(QMainWindow):
         
         self.iconOff = QtGui.QIcon()
         self.iconOff.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/offButton.png')))
-        
+        self.on_off.setIcon(self.iconOff)
         self.iconOn = QtGui.QIcon()
         self.iconOn.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/OnButton.png')))
         
-        self.on_off.setIcon(self.iconOff)
         self.iconRefresh = QtGui.QIcon()
         self.iconRefresh.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/ButtonRefresh.png')))
         self.RefreshingConnection.setIcon(self.iconRefresh)
+        
         self.iconSaveData = QtGui.QIcon()
         self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOn.png')))
         self.startStopSaving.setIcon(self.iconSaveData)
+        
+        self.iconUpdate = QtGui.QIcon()
+        self.iconUpdate.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/update.png')))
+        self.update_gui.setIcon(self.iconUpdate)
     
     def resetExcelParameters(self):
         """
@@ -778,40 +801,41 @@ class MainWindow(QMainWindow):
         show the message when you close the application
         """
         self.DIGITAL_BOX_MAIN.stop()
-        close = QMessageBox()
-        close.setText("Are you sure you want to close digital box ?")
-        close.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
-        close = close.exec()
-        if close == QMessageBox.Yes:
-            #close all screen if main app close
-            try:
-                if self.indexButtonSave == 1: #backup
+        if not self.indexUpdate:
+            close = QMessageBox()
+            close.setText("Are you sure you want to close digital box ?")
+            close.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+            close = close.exec()
+            if  close == QMessageBox.Yes:
+                #close all screen if main app close
+                try:
+                    if self.indexButtonSave == 1: #backup
+                        self.wb.save(f"{DATA_SAVE}/{self.fileName}_backup.csv")
+                        
+                except PermissionError:
                     self.wb.save(f"{DATA_SAVE}/{self.fileName}_backup.csv")
-                    
-            except PermissionError:
-                self.wb.save(f"{DATA_SAVE}/{self.fileName}_backup.csv")
-            
-            with open("check_error.txt") as f:
-                with open("ALL_ERROR.txt", "a") as f1:
-                    for line in f:
-                        f1.write(line)
-            event.accept()
-            mainWindow.close()
-            HusaModelWindow.close()
-            deviceG800.close()
-            PyroSetSystem.close()
-            SetDacValue.close()
-            PotTableSet.close()
-            DacTableCreate.close()
-            RunAutoTest.close()
-            deviceBio24.close()
-            
-             
-        else:
-            event.ignore()
-            if self.index_refreshing == 1:
-                self.DIGITAL_BOX_MAIN.start()
-    
+                
+                with open("check_error.txt") as f:
+                    with open("ALL_ERROR.txt", "a") as f1:
+                        for line in f:
+                            f1.write(line)
+                event.accept()
+                mainWindow.close()
+                HusaModelWindow.close()
+                deviceG800.close()
+                PyroSetSystem.close()
+                SetDacValue.close()
+                PotTableSet.close()
+                DacTableCreate.close()
+                RunAutoTest.close()
+                deviceBio24.close()
+                
+                
+            else:
+                event.ignore()
+                if self.index_refreshing == 1:
+                    self.DIGITAL_BOX_MAIN.start()
+
     def timerCreatePotDacTable(self):
         """
         run in timer set Dac and Pot table
@@ -1909,6 +1933,27 @@ class MainWindow(QMainWindow):
         self.index_extras[0] +=1
         if self.index_extras[0] >=2:
             self.index_extras[0] =0
+
+    def updateGui(self):
+        update = QMessageBox()
+        update.setText("Confirm GUI update ?")
+        update.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+        response = update.exec()
+        if response == QMessageBox.Yes:
+            #close all screen if main app close
+            self.indexUpdate = 1
+            mainWindow.close()
+            HusaModelWindow.close()
+            deviceG800.close()
+            PyroSetSystem.close()
+            SetDacValue.close()
+            PotTableSet.close()
+            DacTableCreate.close()
+            RunAutoTest.close()
+            deviceBio24.close()
+            command = 'update.exe'
+            # Run the script
+            subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
     def buttonG800(self):
         """

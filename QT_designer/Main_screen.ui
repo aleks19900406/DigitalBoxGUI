@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1526</width>
+    <width>1518</width>
     <height>1023</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonIconOnly</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QDoubleSpinBox" name="SetVoltage2">
@@ -252,7 +255,7 @@ p, li { white-space: pre-wrap; }
    <widget class="QLabel" name="date_and_time">
     <property name="geometry">
      <rect>
-      <x>1200</x>
+      <x>1140</x>
       <y>10</y>
       <width>301</width>
       <height>21</height>
@@ -955,7 +958,7 @@ p, li { white-space: pre-wrap; }
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>../../../../../.designer/data/images/other/hisense.png</pixmap>
+     <pixmap>../../../../../../../.designer/data/images/other/hisense.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -2049,7 +2052,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1390</x>
-      <y>40</y>
+      <y>50</y>
       <width>70</width>
       <height>70</height>
      </rect>
@@ -3107,7 +3110,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>1390</x>
-      <y>120</y>
+      <y>130</y>
       <width>70</width>
       <height>70</height>
      </rect>
@@ -3780,6 +3783,36 @@ selection-color: rgb(255, 170, 0);</string>
      <bool>false</bool>
     </property>
    </widget>
+   <widget class="QPushButton" name="update_gui">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>80</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>UPDATE GUI</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+    <property name="default">
+     <bool>false</bool>
+    </property>
+   </widget>
    <zorder>label_digital_pot</zorder>
    <zorder>labelPwm1_0</zorder>
    <zorder>label_connect_2</zorder>
@@ -3963,14 +3996,15 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>OUT11</zorder>
    <zorder>OUT10</zorder>
    <zorder>ButtonBIO24</zorder>
+   <zorder>update_gui</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1526</width>
-     <height>26</height>
+     <width>1518</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
