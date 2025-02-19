@@ -4,7 +4,7 @@ import select
 import socket
 from functools import wraps
 from typing import Callable, Dict, List, Optional, TypeVar, Union
-
+from time import sleep
 FT = TypeVar("FT")
 
 
@@ -49,13 +49,20 @@ class RequestResponseClient:
 
     def empty(self) -> None:
         """Empties the input queue"""
+        connectionReset = 0
         inputs = [self._client]
-        while True:
+        for _ in range(10):
             i, _, _ = select.select(inputs, [], [], 0.0)
             if not i:
+                connectionReset = 1
                 break
             for s in i:
                 s.recv(1)
+        if connectionReset == 0:
+            print('reconnect')
+            self.disconnect()
+            sleep(1)
+            self.connect()
 
     def connect(self) -> None:
         """Connects to the ResponseRequestServer
