@@ -94,7 +94,7 @@ class RequestResponseClient:
         """
         pkg = b" "
         try:
-            while pkg[-1] is not 0:
+            while pkg[-1] != 0:
                 pkg = b"".join([pkg, self._client.recv(1)])
                 if pkg == b" ":
                     break

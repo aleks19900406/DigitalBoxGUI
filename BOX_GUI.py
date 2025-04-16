@@ -64,7 +64,7 @@ ALL_LANGUAGES =['EN-English','DE-German','NL-Nederlands','PL-Polish ','FR-French
                 'PT-Portugese','RO-Romanian','BL-Bulgarian','ET-Estonian','LT-Lithuanian','LV-Latvian']
 VERZIJA_ESP = "3.19"
 VERZIJA_RPI = "3.10"
-DIGITAL_BOX_VERSION = 'V1.7'
+DIGITAL_BOX_VERSION = 'V1.8'
 MAIN_TIME_REFRESHING = 1000
 SPACE = '\n'
 DigitalInput = 32
@@ -183,7 +183,7 @@ def dataFile():
 
 def listBoxMarks():
     """
-    Convert all boxMaks file name to list except readMe.txt
+    Convert all boxMarks file name to list except readMe.txt
     """
     boxMarkList =[]
     boxMarkList.clear()
@@ -329,7 +329,20 @@ class MainWindow(QMainWindow):
         self.refreshSaving = 1000
         self.index_on_off = 0
         self.index_out = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        self.index_auto =[0,0,0,0]
         self.index_extras = [0,0,0,0,0,0,0,0,0,0]
+        #####################auto button##################
+        count = 4
+        self.signal_on = [0] * count
+        self.signal_off = [0] * count
+        self.periode = [0] * count
+        self.current_output = [None] * count
+        self.output_start = [None] * count
+        self.param_auto1 = 0
+        self.param_auto2 = 0
+        self.param_auto3 = 0
+        self.param_auto4 = 0
+        ##################################################
         self.connectParameters = 0
         self.box_is_connected = 0
         self.index_refreshing = 0
@@ -342,7 +355,6 @@ class MainWindow(QMainWindow):
         self.indexUpdate = 0
         self.setWindowTitle(f'DIGITAL BOX MAIN {DIGITAL_BOX_VERSION}')
         self.setGeometry(150, 40, 1530, 1050)
-       
         #self.setSizeIncrement(1920, 1080)
         self.setStyleSheet(MainScreenStyle)
         self.on_off.clicked.connect(self.button_OnOff)
@@ -384,6 +396,11 @@ class MainWindow(QMainWindow):
         self.OUT13.clicked.connect(self.output13)
         self.OUT14.clicked.connect(self.output14)
         self.OUT15.clicked.connect(self.output15)
+        #######################AUTO BUTTON #######################################
+        self.AUTO1.clicked.connect(self.buttonAuto1)
+        self.AUTO2.clicked.connect(self.buttonAuto2)
+        self.AUTO3.clicked.connect(self.buttonAuto3)
+        self.AUTO4.clicked.connect(self.buttonAuto4)
         ###################### BUTTON OPEN ADDITIONAL SCREEN ######################
         self.ButtonHusaModel.clicked.connect(self.buttonHusaModel)
         self.ButtonG800.clicked.connect(self.buttonG800)
@@ -1071,6 +1088,26 @@ class MainWindow(QMainWindow):
                         digital_pot_text = eval('self.labelSetPwm3_1')
                         digital_pot_text.setText(self.read_all_lines[23].replace('\n',''))
                         digital_pot_text.setFont(QFont('Arial', 10))
+                if name == f'AUTO1{SPACE}':
+                    self.param_auto1 = self.read_all_lines[25].replace('\n','').split(',')
+                    digital_pot_text = eval('self.AUTO1')
+                    digital_pot_text.setText(self.param_auto1[0])
+                    digital_pot_text.setFont(QFont('Arial', 10))
+                if name == f'AUTO2{SPACE}':
+                    self.param_auto2 = self.read_all_lines[27].replace('\n','').split(',')
+                    digital_pot_text = eval('self.AUTO2')
+                    digital_pot_text.setText(self.param_auto2[0])
+                    digital_pot_text.setFont(QFont('Arial', 10))
+                if name == f'AUTO3{SPACE}':
+                    self.param_auto3 = self.read_all_lines[29].replace('\n','').split(',')
+                    digital_pot_text = eval('self.AUTO3')
+                    digital_pot_text.setText(self.param_auto3[0])
+                    digital_pot_text.setFont(QFont('Arial', 10))
+                if name == f'AUTO4{SPACE}':
+                    self.param_auto4 = self.read_all_lines[31].replace('\n','').split(',')
+                    digital_pot_text = eval('self.AUTO4')
+                    digital_pot_text.setText(self.param_auto4[0])
+                    digital_pot_text.setFont(QFont('Arial', 10))
         except IndexError:
             
             x = datetime.datetime.now()
@@ -1259,7 +1296,7 @@ class MainWindow(QMainWindow):
                     f.write(traceback.format_exc())
                     f.write(f'{errorNumber*2}\n')
                 f.close()  
-                  
+    
     def BoxRefreshing(self):
         """
         - refresh box connection,digital pot table and select marks
@@ -1275,10 +1312,10 @@ class MainWindow(QMainWindow):
             self.BoxConnect.clear()
             self.ExcelFile.clear()
             self.BoxMarks.clear()
-            self.SelectPotTable.clear()
+            #self.SelectPotTable.clear()
             self.BoxConnect.addItems(listConnection())
             self.BoxMarks.addItems(listBoxMarks())
-            self.SelectPotTable.addItems(listDigitalPotTable())
+            #self.SelectPotTable.addItems(listDigitalPotTable())
             self.ExcelFile.addItems(dataFile())
             self.BOX_VERSION.setVisible(False)
         else:
@@ -1294,7 +1331,7 @@ class MainWindow(QMainWindow):
             self.BoxConnect.clear()
             self.BoxMarks.clear()
             self.ExcelFile.clear()
-            self.SelectPotTable.clear()
+            #self.SelectPotTable.clear()
             self.label_connect.setText('BOX CONNECT')
             self.label_marks.setText('SELECT MARKS')
             self.BoxConnect.addItems(listConnection())
@@ -1302,12 +1339,13 @@ class MainWindow(QMainWindow):
             self.BoxMarks.setStyleSheet(ButtonStyleWhite)
             self.ExcelFile.setStyleSheet(ButtonStyleWhite)
             self.ExcelFile.addItems(dataFile())
-            self.SelectPotTable.addItems(listDigitalPotTable())
-            for index,TablePot in enumerate(listDigitalPotTable()):
-                eval(f'self.labelDigitalPot{index}.setStyleSheet(MainScreenStyle)')
-                eval(f'self.digital_pot{index}.setStyleSheet(MainScreenStyle)')
-            self.AllTable = listDigitalPotTable()
+            #self.SelectPotTable.addItems(listDigitalPotTable())
+            #for index,TablePot in enumerate(listDigitalPotTable()):
+                #eval(f'self.labelDigitalPot{index}.setStyleSheet(MainScreenStyle)')
+                #eval(f'self.digital_pot{index}.setStyleSheet(MainScreenStyle)')
+            #self.AllTable = listDigitalPotTable()
             #self.on_off.setIcon(self.iconOff)
+            """ 
             for index in range(8):
                 eval(f'self.OUT{index}.setStyleSheet(ButtonStyleOff2)')
                 eval(f'self.OUT{index}.setIcon(self.iconSwitchOff)')
@@ -1317,7 +1355,10 @@ class MainWindow(QMainWindow):
                 eval(f'self.digital_pot{index}.value()')
                 #eval(f'self.digital_pot{index}.setEnabled(False)')
                 eval(f'self.lcdNumber_digital_pot{index}.display(0)')
-            
+            """
+            for index in range(4):
+                self.index_auto[index] = 0
+                eval(f'self.AUTO{index+1}.setStyleSheet(ButtonStyleOff2)')
             sleep(1)
             self.box.disconnect()
             #print('disconnected')
@@ -1495,6 +1536,43 @@ class MainWindow(QMainWindow):
             self.OUT15.setStyleSheet(ButtonStyleOn2)
             self.OUT15.setIcon(self.iconSwitchOn)
  
+ ########################auto button ###########################################################
+    def buttonAuto1(self):
+        self.index_auto[0] +=1
+        if self.index_auto[0] >=2:
+            self.index_auto[0] = 0
+            self.AUTO1.setStyleSheet(ButtonStyleOff2)
+            #self.AUTO1.setIcon(self.iconSwitchOff)
+        else:
+            self.AUTO1.setStyleSheet(ButtonStyleOn2)
+            #self.AUTO1.setIcon(self.iconSwitchOn)
+    def buttonAuto2(self):
+        self.index_auto[1] +=1
+        if self.index_auto[1] >=2:
+            self.index_auto[1] = 0
+            self.AUTO2.setStyleSheet(ButtonStyleOff2)
+            #self.AUTO2.setIcon(self.iconSwitchOff)
+        else:
+            self.AUTO2.setStyleSheet(ButtonStyleOn2)
+            #self.AUTO2.setIcon(self.iconSwitchOn)
+    def buttonAuto3(self):
+        self.index_auto[2] +=1
+        if self.index_auto[2] >=2:
+            self.index_auto[2] = 0
+            self.AUTO3.setStyleSheet(ButtonStyleOff2)
+            #self.AUTO3.setIcon(self.iconSwitchOff)
+        else:
+            self.AUTO3.setStyleSheet(ButtonStyleOn2)
+            #self.AUTO3.setIcon(self.iconSwitchOn)
+    def buttonAuto4(self):
+        self.index_auto[3] +=1
+        if self.index_auto[3] >=2:
+            self.index_auto[3] = 0
+            self.AUTO4.setStyleSheet(ButtonStyleOff2)
+            #self.AUTO4.setIcon(self.iconSwitchOff)
+        else:
+            self.AUTO4.setStyleSheet(ButtonStyleOn2)
+            #self.AUTO4.setIcon(self.iconSwitchOn)
  ##################################### SLIDERS #################################################   
     def SetDigitalPot0(self):
         """
@@ -1576,12 +1654,56 @@ class MainWindow(QMainWindow):
         input = self.box.digital_in[:]
         return input
     
+    def auto_button_parameters_default(self,index):
+        self.signal_on[index] = 0
+        self.signal_off[index] = 0
+        self.periode[index] = 0
+        self.current_output[index] = None
+        self.output_start[index] = None
+    
     def check_output(self):
         """
         set all output parameters and on/off button when state change
         """
         begin_parameter = [self.index_on_off,self.index_out[0],self.index_out[1],self.index_out[2],self.index_out[3],self.index_out[4],self.index_out[5],self.index_out[6],self.index_out[7],self.index_out[8],self.index_out[9],self.index_out[10],self.index_out[11],self.index_out[12],self.index_out[13],self.index_out[14],self.index_out[15]]
         begin_parameter_old = [self.index_on_off,self.index_out[0],self.index_out[1],self.index_out[2],self.index_out[3],self.index_out[4],self.index_out[5],self.index_out[6],self.index_out[7]]
+        ############### AUTO BUTTON #############################
+        if (self.index_auto[0] % 2) == 0:
+            self.AUTO1.setStyleSheet(ButtonStyleOff2)
+            #self.AUTO1.setIcon(self.iconSwitchOff)
+            self.auto_button_parameters_default(0)
+        else:
+            self.auto_button_function(0,int(self.param_auto1[1]),int(self.param_auto1[2]),self.param_auto1[3])
+            self.AUTO1.setStyleSheet(ButtonStyleOn2)
+            #self.AUTO1.setIcon(self.iconSwitchOn)
+        
+        if (self.index_auto[1] % 2) == 0:
+            self.AUTO2.setStyleSheet(ButtonStyleOff2)
+            #self.AUTO2.setIcon(self.iconSwitchOff)
+            self.auto_button_parameters_default(1)
+        else:
+            self.auto_button_function(1,int(self.param_auto2[1]),int(self.param_auto2[2]),self.param_auto2[3])
+            self.AUTO2.setStyleSheet(ButtonStyleOn2)
+            #self.AUTO2.setIcon(self.iconSwitchOn)
+        
+        if (self.index_auto[2] % 2) == 0:
+            self.AUTO3.setStyleSheet(ButtonStyleOff2)
+            #self.AUTO3.setIcon(self.iconSwitchOff)
+            self.auto_button_parameters_default(2) 
+        else:
+            self.auto_button_function(2,int(self.param_auto3[1]),int(self.param_auto3[2]),self.param_auto3[3])
+            self.AUTO3.setStyleSheet(ButtonStyleOn2)
+            #self.AUTO3.setIcon(self.iconSwitchOn)
+        
+        if (self.index_auto[3] % 2) == 0:
+            self.AUTO4.setStyleSheet(ButtonStyleOff2)
+            #self.AUTO4.setIcon(self.iconSwitchOff)
+            self.auto_button_parameters_default(3)
+        else:
+            self.auto_button_function(3,int(self.param_auto4[1]),int(self.param_auto4[2]),self.param_auto4[3])
+            self.AUTO4.setStyleSheet(ButtonStyleOn2)
+            #self.AUTO4.setIcon(self.iconSwitchOn)
+        ###################################################
         if begin_parameter != change_parameters or self.connectParameters == 1:
             #print(begin_parameter,change_parameters)
             if (self.index_on_off % 2) == 0:
@@ -1762,7 +1884,64 @@ class MainWindow(QMainWindow):
                 self.OUT15.setStyleSheet(ButtonStyleOn2)
                 self.OUT15.setIcon(self.iconSwitchOn)
             self.connectParameters = 0
-   
+    
+    
+    def process_signal(self,index, val, state):
+        
+        if state =='POSITIVE':
+            state = True
+        elif state == 'NEGATIVE':
+            state = False
+        # Initialize output start on first True value
+        if val:
+            self.output_start[index] = 'begin'
+
+        if self.output_start[index] is None:
+            # Before start: just invert the state
+            return not state
+
+        # Set signals based on val (same for both state True/False)
+        self.signal_on[index] = int(val is True)
+        self.signal_off[index] = int(val is False)
+
+        # Period transitions
+        if self.periode[index] == 2 and self.signal_off[index]:
+            self.periode[index] = 3
+            self.signal_on[index] = 0
+            self.signal_off[index] = 0
+
+        elif self.periode[index] == 3 and self.signal_on[index]:
+            self.periode[index] = 0
+            self.signal_off[index] = 0
+
+        elif self.signal_on[index] == 0 and self.signal_off[index] == 1 and self.periode[index] == 0:
+            self.periode[index] = 1
+            self.signal_on[index] = 0
+            self.signal_off[index] = 0
+
+        elif self.signal_on[index] == 1 and self.signal_off[index] == 0 and self.periode[index] == 0:
+            self.current_output[index] = state
+            self.signal_on[index] = 0
+            self.signal_off[index] = 0
+
+        elif self.signal_on[index] == 1 and self.periode[index] == 1:
+            self.current_output[index] = not state
+            self.periode[index] = 2
+            self.signal_on[index] = 0
+            self.signal_off[index] = 0
+
+        # Fallback output
+        return self.current_output[index] if self.current_output[index] is not None else val
+    
+    def auto_button_function(self,index,input_number,output_relay,state):
+        state_output = self.process_signal(index,self.read_input[input_number],state)
+        #print('stanje',index,self.read_input[input_number],state)
+        #print('state',state_output)
+        if state_output == True:
+            self.index_out[output_relay] = 1
+        else:
+            self.index_out[output_relay] = 0
+        
     def check_digital_pot(self):
         """
         set digital pot value when value change
