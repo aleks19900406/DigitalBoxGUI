@@ -11,13 +11,14 @@ from stream.specializations.hisense import (
         DeviceFamily,
         HisenseStrem,
 )
-path_to_json = glob.glob("./config_file/*.json")
+path_to_json = glob.glob("./config_file/G800_configs.json")
 path_to_json.sort(key=os.path.getmtime)
-#print(path_to_json[-1])
-with open(path_to_json[-1]) as file:
-    # Load the JSON data from the file into a Python object
-    data = json5.load(file)
-
+#print(path_to_json)
+if path_to_json:
+    with open(path_to_json[-1]) as file:
+        data = json5.load(file)
+else:
+    raise FileNotFoundError("No JSON files found in the specified directory.")
 import serial
 DEVICE_NUMBER = 1
 FRAME_TYPE = 105
@@ -85,7 +86,6 @@ class GetModel(ctypes.BigEndianStructure):
             ("ESPVer", ctypes.c_uint16),
             ("Esp1", ctypes.c_uint16),
             ("Esp2", ctypes.c_uint8),
-       
         ]
 
 class RegCommandParam(ctypes.BigEndianStructure):
@@ -407,3 +407,12 @@ class BIO24:
             print('error connection',self.cont)
             pass
         return relayState
+
+    def change_language_craft(self,index):
+        """_summary_
+
+        Args:
+            index (_type_): _description_
+        """
+        index = "{:02d}".format(index)
+        self.FTDI.write(f"set_language {index}\n".encode())

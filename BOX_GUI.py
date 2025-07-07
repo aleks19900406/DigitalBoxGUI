@@ -39,7 +39,7 @@ import shutil
 source_folder = ['copyFile','QT_designer','config_file','data']
 for copyFile in source_folder:
     try:    
-        destination_folder = fr"..\GUI_Application\{copyFile}"  # Adjust the source folder path
+        destination_folder = fr"..\gui_application\{copyFile}"  # Adjust the source folder path
         # Copy the entire folder to the destination
         if os.path.exists(destination_folder):
             shutil.rmtree(destination_folder)
@@ -62,9 +62,36 @@ AUTO_TEST_PATH = os.path.join("data","autoTest")
 ALL_LANGUAGES =['EN-English','DE-German','NL-Nederlands','PL-Polish ','FR-French','IT-Italiano','ES-Spanish','SL-Slovenian','DA-Danish','NO-Norwegian','FI-Finnish',
                 'SV-Swedish','RU-Russian','KK-Kazakhstan','UK-Ukraine','CS-Czech','SK-Slovak','HR-Croatian','SR-Serbian','EL-Greek','HU-Hungarian','SCN-Chinese',
                 'PT-Portugese','RO-Romanian','BL-Bulgarian','ET-Estonian','LT-Lithuanian','LV-Latvian']
+
+ALL_LANG_CRAFT = [
+    "Czech-cs",
+    "Danish-da",
+    "German-de",
+    "Estonian-et",
+    "English-en",
+    "Spanish-es",
+    "French-fr",
+    "Croatian-hr",
+    "Italian-it",
+    "Latvian-lv",
+    "Lithuanian-lt",
+    "Dutch-nl",
+    "Norwegian-no",
+    "Polish-pl",
+    "Portuguese-pt",
+    "Russian-ru",
+    "Slovak-sk",
+    "Slovenian-sl",
+    "Serbian-sr",
+    "Finnish-fi",
+    "Swedish-sv",
+    "Ukrainian-uk",
+    "Chinese (Simplified)-zh-CN",
+    "Chinese (Traditional)-zh-TW"
+]
 VERZIJA_ESP = "3.19"
 VERZIJA_RPI = "3.10"
-DIGITAL_BOX_VERSION = 'V1.8'
+DIGITAL_BOX_VERSION = 'V2.0'
 MAIN_TIME_REFRESHING = 1000
 SPACE = '\n'
 DigitalInput = 32
@@ -318,6 +345,15 @@ def listLanguages():
         LIST_LANG.append(f'{str(lang)}')
     return LIST_LANG
 
+def listLanguageCraft():
+    """
+    return all H800 languages
+    """
+    LIST_LANG =[]
+    LIST_LANG.clear()
+    for lang in ALL_LANG_CRAFT:
+        LIST_LANG.append(f'{str(lang)}')
+    return LIST_LANG
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -3548,9 +3584,11 @@ class DeviceG800(QMainWindow):
     def resetLang(self):
         self.setLanguage.clear()
         self.setLanguage.addItems(listLanguages())
+    
     def resetButton(self):
         self.saveButtonPush.clear()
         self.textButton.clear()
+    
     def doCheck(self):
         if self.checkBox_auto_lang.isChecked():
             # Checkbox is checked
@@ -3558,6 +3596,7 @@ class DeviceG800(QMainWindow):
             self.AutoLanguage.start()
         else:
             self.AutoLanguage.stop()
+    
     def doAutoButton(self):
         if self.checkBox_button_click.isChecked():
             # Checkbox is checked
@@ -3567,7 +3606,7 @@ class DeviceG800(QMainWindow):
     
     def change_lang(self):
         self.setLanguage.clear()
-        if self.lang_index == self.lang_max_index:
+        if self.lang_index == self.lang_max_index + 1:
             self.lang_index = 0
         if self.time_lang_change != self.change_language_time.value():
             self.time_lang_change = self.change_language_time.value()
@@ -3752,7 +3791,7 @@ class DeviceBio24(QMainWindow):
         DacTable = Path('QT_designer/Bio24.ui')
         loadUi(str(DacTable), self)
         self.setWindowTitle("BIO24")
-        self.setFixedSize(605, 470)
+        self.setFixedSize(668, 624)
         self.device_connect.setText('DEVICE CONNECT:')
         self.device_connect.setStyleSheet("color: gray")
         # Create a QTextCursor object
@@ -3763,6 +3802,30 @@ class DeviceBio24(QMainWindow):
         self.DeviceConnect.setEditable(True)
         self.DeviceConnect.setStyleSheet(ButtonStyleWhite)
         self.DeviceConnect.addItems(listDeviceConnection())
+        ############ change languages ########################
+        self.time_lang_change = 1000
+        self.lang_index = 0
+        self.lang_max_index = 0
+        self.setLanguage.activated[str].connect(self.setlanguage)
+        self.setLanguage.setStyleSheet(ButtonStyleWhite)
+        self.setLanguage.setEnabled(False)
+        self.setLanguage.addItems(listLanguageCraft())
+        self.reset_lang.pressed.connect(self.resetLang)
+        self.reset_lang.setStyleSheet(ButtonStyleOff2)
+        self.device_connect_lang.setText('DEVICE CONNECT:')
+        self.device_connect_lang.setStyleSheet("color: gray")
+        self.DeviceConnectLang.activated[str].connect(self.deviceBoxLang)
+        self.DeviceConnectLang.setEditable(True)
+        self.DeviceConnectLang.setStyleSheet(ButtonStyleWhite)
+        self.DeviceConnectLang.addItems(listDeviceConnection())
+        self.deviceDisconnect_lang.clicked.connect(self.disconnectAll_lang)
+        self.deviceDisconnect_lang.setStyleSheet(ButtonStyleOff2)
+        self.AutoLanguage = QTimer()
+        self.AutoLanguage.timeout.connect(self.change_lang)  # 
+        self.AutoLanguage.setInterval(MAIN_TIME_REFRESHING)
+        self.buttonAutoThread = QThreadPool()
+        self.checkBox_auto_lang.stateChanged.connect(self.doCheck)
+        ###########################################
         self.deviceDisconnect.clicked.connect(self.disconnectAll)
         self.deviceDisconnect.setStyleSheet(ButtonStyleOff2)
         # EXCEL FILE
@@ -3798,6 +3861,7 @@ class DeviceBio24(QMainWindow):
         self.worker.stepIncreased.connect(self.SaveBarShow)
         self.worker.moveToThread(self.saveBarThread)
         self.saveBarThread.started.connect(self.worker.task)
+    
     def check_relay_state(self):
         """
         color relay state ON/OFF
@@ -3857,7 +3921,98 @@ class DeviceBio24(QMainWindow):
                 f.write(traceback.format_exc())
                 f.write(f'{errorNumber*2}\n')
             f.close()
+    
+    def deviceBoxLang(self, CONNECTBOX):
+        """
+        - connect device G800
+        - show warning message if device is disconnected
+        """
+        try:
+            if CONNECTBOX[0:3] =='COM':
+                self.device = BIO24(CONNECTBOX[0:5].replace(' ',''),baudrate=921600)
+                self.device.connect()
+                self.connected = 1
+                sleep(1)
+                self.device_connect_lang.setText('CONNECT:')
+                self.device_connect_lang.setStyleSheet("color: green")
+                self.DeviceConnectLang.setStyleSheet(ButtonStyleOn)
+                self.DeviceConnectLang.setEnabled(False)
+                self.setLanguage.setEnabled(True)
+            else:
+                sleep(2)
+                self.device_connect_lang.setText('DEVICE DISCONNECTED:')
+                self.device_connect_lang.setStyleSheet("color: red")
+                self.connected = 0
+                self.device.disconnect()
+        except:
+            self.device.disconnect()
+            self.device_connect_lang.setText('DEVICE DISCONNECTED:')
+            self.device_connect_lang.setStyleSheet("color: red")
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
+                f.write('Device is not conncected \n')
+                f.write('Solution:\n')
+                f.write('-- Connenct to the correct comport !!!\n')
+                f.write(f'{errorNumber*2}\n')
+                f.write(traceback.format_exc())
+                f.write(f'{errorNumber*2}\n')
+            f.close()
+    
+    def resetLang(self):
+        self.setLanguage.clear()
+        self.setLanguage.addItems(listLanguageCraft())
+    
+    def setlanguage(self,lang):
+        self.device.change_language_craft(self.setLanguage.currentIndex())
+        self.setLanguage.setStyleSheet(ButtonStyleOn)
+    
+    def doCheck(self):
+        if self.checkBox_auto_lang.isChecked():
+            # Checkbox is checked
+            self.lang_max_index = max([index for index,i in enumerate(ALL_LANG_CRAFT)])
+            self.AutoLanguage.start()
+        else:
+            self.AutoLanguage.stop()
+    
+    def reset(self):
+        self.device.disconnect()
+        self.device.connect()
         
+    def change_lang(self):
+        self.setLanguage.clear()
+        if self.lang_index == self.lang_max_index+1:
+            self.lang_index = 0
+        if self.time_lang_change != self.change_language_time.value():
+            self.time_lang_change = self.change_language_time.value()
+            self.AutoLanguage.setInterval(int(self.change_language_time.value()*1000))
+        self.device.change_language_craft(self.lang_index)
+        lang_name =''.join([i for index,i in enumerate(ALL_LANG_CRAFT) if index == self.lang_index])
+        self.setLanguage.addItem(lang_name)
+        self.lang_index += 1
+    
+    def setlanguage(self,lang):
+        self.device.change_language_craft(self.setLanguage.currentIndex())
+        self.setLanguage.setStyleSheet(ButtonStyleOn)
+        
+    def disconnectAll_lang(self):
+        self.AutoLanguage.stop()
+        self.setLanguage.clear()
+        self.setLanguage.addItems(listLanguageCraft())
+        sleep(1)
+        self.device_connect_lang.setText('DEVICE CONNECT:')
+        self.device_connect_lang.setStyleSheet("color: gray")
+        self.DeviceConnectLang.setEnabled(True)
+        self.setLanguage.setEnabled(False)
+        self.DeviceConnectLang.setStyleSheet(ButtonStyleOff2)
+        self.setLanguage.setStyleSheet(ButtonStyleOff2)
+        self.DeviceConnectLang.clear()
+        self.DeviceConnectLang.addItems(listDeviceConnection())
+        if self.connected == 1:
+            self.connected = 0
+            self.device.disconnect()
+       
     def disconnectAll(self):
         """
         -disconnect device with button
