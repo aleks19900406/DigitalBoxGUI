@@ -68,7 +68,7 @@ class GitPullApp(QWidget):
     def enable_button(self):
         # This function is called when the close button is clicked
         self.pull_button.setEnabled(True)
-       
+
     def restart_box(self):
         self.close()
         self.restart_program('BOX_GUI.exe')
