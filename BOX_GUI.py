@@ -26,15 +26,21 @@ from PyQt5.QtWidgets import (
     QWidget,
     QVBoxLayout,
 )
-from PyQt5 import QtWidgets
 from PyQt5.uic import loadUi
-
+import socket
 from DigitalBox.Connection import G800,BIO24, data
-from DigitalBox.dasConnect import SERIALCONNECT, WifiEsp32Connect
+from DigitalBox.ElementsConnect import DeviceConnection
+from DigitalBox.dasConnect import SerialConnect, WifiEsp32Connect
 from DigitalBox.lib import *
 from package.tester._clients.das import DAS  # Import DAS eee
 import subprocess
 import shutil
+from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal
+from PyQt5.QtWidgets import (
+    QApplication, QWidget, QLabel, QComboBox, QPushButton,
+    QVBoxLayout, QMessageBox, QHBoxLayout
+)
+from concurrent.futures import ThreadPoolExecutor, as_completed
 #################### copy all file to GUI Application########################
 source_folder = ['copyFile','QT_designer','config_file','data']
 for copyFile in source_folder:
@@ -89,6 +95,30 @@ ALL_LANG_CRAFT = [
     "Chinese (Simplified)-zh-CN",
     "Chinese (Traditional)-zh-TW"
 ]
+VARIANTS = {
+    "UNKONOWN": 0,
+    "P_MF_SS_MW_PY_ATAG_60": 1,
+    "P_MF_SS_MW_PY_ASKO_60": 2,
+    "P_MF_SS_MW_PY_ALL_60": 3,
+    "P_MF_SS_ATAG_60": 4,
+    "P_MF_SS_ASKO_60": 5,
+    "P_MF_SS_ALL_60": 6,
+    "P_MF_MW_PY_ALL_X_60": 7,
+    "P_MF_MW_PY_ALL_S_60": 8,
+    "P_MF_PY_X_60": 9,
+    "P_MF_PY_ASKO_60": 10,
+    "P_MF_PY_ALL_X_60": 11,
+    "P_MF_PY_ALL_S_60": 12,
+    "P_MF_SS_MW_PY_X_ASKO_45": 13,
+    "P_MF_SS_MW_PY_S_ASKO_45": 14,
+    "P_MF_SS_ATAG_45": 15,
+    "P_MF_SS_ASKO_45": 16,
+    "P_MF_SS_ALL_45": 17,
+    "P_MF_MW_PY_ASKO_45": 18,
+    "P_MF_MW_PY_ALL_45": 19,
+    "P_SS_ASKO_X_45": 20,
+    "P_SS_ASKO_S_45": 21
+}
 VERZIJA_ESP = "3.19"
 VERZIJA_RPI = "3.10"
 DIGITAL_BOX_VERSION = 'V2.0'
@@ -135,6 +165,71 @@ InputStyleOn  = ("background-color:  rgb(159,255,159);"
 InputStyleOff =  ("background-color: rgb(210,210,210);"
                                 "border-radius: 5px;""font: 10px;")
 ##########################################################################
+# ----- Worker that scans the network -----
+class NetworkScanner(QObject):
+    found = pyqtSignal(str)         # emit each alive ip
+    finished = pyqtSignal()         # emit when done
+    progress = pyqtSignal(int, int) # (found_count, total_scanned)
+
+    def __init__(self, subnet_prefix=None, timeout_ms=200, max_workers=60):
+        super().__init__()
+        self._running = True
+        self.timeout_ms = timeout_ms
+        self.max_workers = max_workers
+        self.subnet_prefix = subnet_prefix or self._guess_subnet_prefix()
+
+    def stop(self):
+        self._running = False
+
+    def _guess_subnet_prefix(self):
+        # Try get local IP then take first 3 octets
+        try:
+            hostname = socket.gethostname()
+            local_ip = socket.gethostbyname(hostname)
+            parts = local_ip.split(".")
+            if len(parts) == 4:
+                return ".".join(parts[:3])
+        except Exception:
+            pass
+        # fallback
+        return "192.168.1"
+
+    def _ping(self, ip):
+        """Fast alive check via TCP port 22."""
+        if not self._running:
+            return False
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(0.5)  # 500ms timeout
+            sock.connect((ip, 22))  # SSH port
+            sock.close()
+            return True
+        except:
+            return False
+        
+    def run(self):
+        """Main scan loop: ping .1..254 on the guessed subnet in parallel"""
+        prefix = self.subnet_prefix
+        ips = [f"{prefix}.{i}" for i in range(1, 255)]
+        found_count = 0
+        scanned = 0
+        # use ThreadPoolExecutor for parallel pings
+        with ThreadPoolExecutor(max_workers=self.max_workers) as ex:
+            futures = {ex.submit(self._ping, ip): ip for ip in ips}
+            for fut in as_completed(futures):
+                if not self._running:
+                    break
+                scanned += 1
+                ip = futures[fut]
+                try:
+                    alive = fut.result()
+                except Exception:
+                    alive = False
+                if alive:
+                    found_count += 1
+                    self.found.emit(ip)
+                self.progress.emit(found_count, scanned)
+        self.finished.emit()
 class Info(ctypes.BigEndianStructure):
         _pack_ = True
         _fields_ = [
@@ -315,12 +410,12 @@ def listConnection():
         elif'CP210x' in str(USB_PORT) :
             LIST_CONNECT.append(f'{str(USB_PORT)[0:5]} - NodeMCU ESP32')
     #LIST_CONNECT.append("")
-    for ip_address in range(10,100,10):
-        LIST_CONNECT.append(f'RPI - 192.168.88.{ip_address}')
-    for ip_address in range(10,100,10):
-        LIST_CONNECT.append(f'RPI - 192.168.1.{ip_address}')
-    for ip_address in range(15,100,10):
-        LIST_CONNECT.append(f'ESP32 - 192.168.88.{ip_address}')
+    #for ip_address in range(10,100,10):
+     #   LIST_CONNECT.append(f'RPI - 192.168.88.{ip_address}')
+    #for ip_address in range(10,100,10):
+    #    LIST_CONNECT.append(f'RPI - 192.168.1.{ip_address}')
+    #for ip_address in range(15,100,10):
+     #   LIST_CONNECT.append(f'ESP32 - 192.168.88.{ip_address}')
     
     return LIST_CONNECT
 
@@ -354,6 +449,16 @@ def listLanguageCraft():
     for lang in ALL_LANG_CRAFT:
         LIST_LANG.append(f'{str(lang)}')
     return LIST_LANG
+def listVariantElements():
+    """
+    return all variant elements
+    """
+    LIST_VARIANT =[]
+    LIST_VARIANT.clear()
+    VARIANTS.items()
+    for index,lang in enumerate(list(VARIANTS.keys())):
+        LIST_VARIANT.append(f'{index}-->{str(lang)}')
+    return LIST_VARIANT
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -463,7 +568,6 @@ class MainWindow(QMainWindow):
         self.SelectPotTable.activated[str].connect(self.digitalPotTable)
         self.SelectPotTable.setEditable(True)
         self.SelectPotTable.setStyleSheet(ButtonStyleWhite)
-        self.BoxConnect.addItems(listConnection())
         self.BoxMarks.addItems(listBoxMarks())
         self.SelectPotTable.addItems(listDigitalPotTable())
         self.AllTable = listDigitalPotTable()
@@ -528,6 +632,59 @@ class MainWindow(QMainWindow):
         self.iconUpdate = QtGui.QIcon()
         self.iconUpdate.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/update.png')))
         self.update_gui.setIcon(self.iconUpdate)
+        self.scan_thread = None
+        self.scanner = None
+        self.worker = Worker()
+        self.worker.stepIncreased.connect(self.SaveBarShow)
+        self.worker.moveToThread(self.saveBarThread)
+        self.saveBarThread.started.connect(self.worker.task)
+        self.ip_scanning.setVisible(True)
+        self.start_scan()
+        self.BoxConnect.addItems(listConnection())
+    
+    def start_scan(self):
+        self.RefreshingConnection.setEnabled(False)
+        self.BoxConnect.clear()
+        if self.index_refreshing == 1:
+            self.index_refreshing = 0
+            self.box.disconnect()
+        
+        # clear combo but keep editable text if typed
+        typed = self.BoxConnect.currentText()
+        self.BoxConnect.clear()
+        if typed:
+            self.BoxConnect.setEditText(typed)
+        self.ip_scanning.setText("Scanning network...")
+        # create worker and thread
+        self.scanner = NetworkScanner()
+        self.scan_thread = QThread()
+        self.scanner.moveToThread(self.scan_thread)
+        self.scan_thread.started.connect(self.scanner.run)
+        self.scanner.found.connect(self.add_ip)
+        self.scanner.progress.connect(self.update_progress)
+        self.scanner.finished.connect(self.scan_finished)
+        self.scan_thread.start()
+    def stop_scan(self):
+        if self.scanner:
+            self.scanner.stop()
+
+    def add_ip(self, ip):
+        # only add once
+        if ip not in [self.BoxConnect.itemText(i) for i in range(self.BoxConnect.count())]:
+            self.BoxConnect.addItem(f'RPI - {ip}')
+
+    def update_progress(self, found, scanned):
+        self.ip_scanning.setText(f"Found: {found} — Scanned: {scanned}")
+
+    def scan_finished(self):
+        self.RefreshingConnection.setEnabled(True)
+        self.ip_scanning.setText("Scan finished")
+        # cleanup thread
+        if self.scan_thread:
+            self.scan_thread.quit()
+            self.scan_thread.wait()
+            self.scan_thread = None
+            self.scanner = None   
     
     def resetExcelParameters(self):
         """
@@ -1165,9 +1322,9 @@ class MainWindow(QMainWindow):
     
     def animationConnect(self):
         self.connectBar.setVisible(True)
-        for value in range(0,110,10):
+        for value in range(0,110,5):
             self.connectBar.setValue(value)
-            sleep(0.2)
+            sleep(0.05)
         self.connectBar.setVisible(False)
         self.connectBar.setValue(0)
     
@@ -1183,60 +1340,39 @@ class MainWindow(QMainWindow):
         self.resetExcelParameters()
         self.connectAnimation.start(self.animationConnect)
         try:
-            print('connect')
             if self.index_refreshing >= 1:
                 sleep(2)
                 self.box.disconnect()
             
             if CONNECTBOX[0:3] =='COM':
-                self.box = SERIALCONNECT(CONNECTBOX[0:5].replace(' ',''))
+                self.box = SerialConnect(CONNECTBOX[0:5].replace(' ',''))
                 VERSION = self.box.connect()
+                self.ip_scanning.setVisible(False)
                 self.label_errorSaveFile.setVisible(False)
                 self.label_saveFile.setVisible(True)
-                if VERSION >= VERZIJA_RPI:
-                    self.index_refreshing +=1
-                    self.DIGITAL_BOX_MAIN.start()
-                    self.dateTimeTimer.start()
-                    self.BOX_VERSION.setVisible(False)
-                    self.warningMessagePot.setVisible(False)
-                    self.warningMessageDac.setVisible(False)
-                    self.BoxConnect.setStyleSheet(ButtonStyleOn)
-                else:
-                    sleep(2)
-                    self.box.disconnect()
-                    self.index_refreshing = 0
-                    self.BoxConnect.setStyleSheet(ButtonStyleWhite)
-                    self.BOX_VERSION.setVisible(True)
-                    self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= {VERZIJA_RPI}. Update box to the latest version if you want to use this application") 
-            
             elif CONNECTBOX[0:3] =='ESP':
                 self.box = WifiEsp32Connect(CONNECTBOX.replace('ESP32 - ',''))
                 VERSION = self.box.connect()
+                self.ip_scanning.setVisible(False)
                 self.label_errorSaveFile.setVisible(False)
                 self.label_saveFile.setVisible(True)
-                if VERSION >= VERZIJA_ESP:
-                    self.index_refreshing +=1
-                    self.DIGITAL_BOX_MAIN.start()
-                    self.dateTimeTimer.start()
-                    self.BOX_VERSION.setVisible(False)
-                    self.warningMessagePot.setVisible(False)
-                    self.warningMessageDac.setVisible(False)
-                    self.BoxConnect.setStyleSheet(ButtonStyleOn)
-                else:
-                    sleep(2)
-                    self.box.disconnect()
-                    self.index_refreshing = 0
-                    self.BoxConnect.setStyleSheet(ButtonStyleWhite)
-                    self.BOX_VERSION.setVisible(True)
-                    self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= {VERZIJA_ESP}. Update box to the latest version if you want to use this application") 
-            
+
             elif CONNECTBOX[0:3] =='RPI':
                 #print('connect to rpi')
                 self.box = DAS(CONNECTBOX.replace('RPI - ',''))  #
                 self.box.connect()
+                self.ip_scanning.setVisible(False)
                 sleep(2)
                 VERSION =  self.box.box_version[0].strip()
-                if VERSION >= VERZIJA_RPI:
+        
+            
+            if self.box_is_connected == 0:
+                self.box_is_connected = 1
+                self.index_on_off = 1
+                self.on_off.setIcon(self.iconOn)
+            if VERSION is not None and VERSION >= VERZIJA_RPI:
+                    print('connect')
+                    #self.connectAnimation.start(self.animationConnect)
                     self.index_refreshing +=1
                     self.DIGITAL_BOX_MAIN.start()
                     self.dateTimeTimer.start()
@@ -1244,17 +1380,15 @@ class MainWindow(QMainWindow):
                     self.warningMessagePot.setVisible(False)
                     self.warningMessageDac.setVisible(False)
                     self.BoxConnect.setStyleSheet(ButtonStyleOn)
-                else:
-                    sleep(2)
-                    self.box.disconnect()
-                    self.index_refreshing = 0
-                    self.BOX_VERSION.setVisible(True)
-                    self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= {VERZIJA_RPI}. Update box to the latest version if you want to use this application") 
-            
-            if self.box_is_connected == 0:
-                self.box_is_connected = 1
-                self.index_on_off = 0
-                self.on_off.setIcon(self.iconOff)
+            else:
+                print('disconnect')
+                VERSION = None
+                sleep(2)
+                self.box.disconnect()
+                self.index_refreshing = 0
+                self.BOX_VERSION.setVisible(True)
+                self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= {VERZIJA_RPI}. Update box to the latest version if you want to use this application") 
+                
             #self.on_off.setIcon(self.iconOn)
             self.ButtonG800.setStyleSheet(ButtonStyleOff2)
             self.ButtonBIO24.setStyleSheet(ButtonStyleOff2)
@@ -1266,7 +1400,8 @@ class MainWindow(QMainWindow):
             self.ButtonAutomation.setStyleSheet(ButtonStyleOff2)
             self.warningMessageAddFunction.setStyleSheet("color: black")
             self.warningMessageAddFunction.setText("ADDITIONAL FUNCTIONS")     
-        except:
+        except Exception:
+            VERSION = None
             x = datetime.datetime.now()
             dateAndTime = x.strftime("%c")
             with open('check_error.txt', 'a') as f:
@@ -1286,9 +1421,11 @@ class MainWindow(QMainWindow):
         self.BOX_VERSION.setVisible(True)
         self.BOX_VERSION.setText(f"ARDUINO MEGA/ESP32 SW = {VERSION}")
         self.connectParameters = 1
-        #self.box_is_connected +=1
-        #if self.box_is_connected >=2:
-        #    self.box_is_connected =0     
+        self.box_is_connected +=1
+        if self.box_is_connected >=2:
+            self.box_is_connected =0     
+    
+    
     
     def digitalPotTable(self,potTable):
         """
@@ -1344,13 +1481,15 @@ class MainWindow(QMainWindow):
         self.resetExcelParameters()
         self.indexButtonSave = 0
         self.repeatSaveData = 0
+        self.ip_scanning.setVisible(True)
+        self.BoxConnect.clear()
+        self.start_scan()
+        self.BoxConnect.addItems(listConnection())
         if  self.index_refreshing == 0:
-            self.BoxConnect.clear()
             self.ExcelFile.clear()
-            self.BoxMarks.clear()
+            #self.BoxMarks.clear()
             #self.SelectPotTable.clear()
-            self.BoxConnect.addItems(listConnection())
-            self.BoxMarks.addItems(listBoxMarks())
+            #self.BoxMarks.addItems(listBoxMarks())
             #self.SelectPotTable.addItems(listDigitalPotTable())
             self.ExcelFile.addItems(dataFile())
             self.BOX_VERSION.setVisible(False)
@@ -1364,8 +1503,7 @@ class MainWindow(QMainWindow):
             self.DIGITAL_BOX_MAIN.stop()
             self.dateTimeTimer.stop()
             self.DIGITAL_BOX_MAIN.setInterval(1000)
-            self.BoxConnect.clear()
-            self.BoxMarks.clear()
+            #self.BoxMarks.clear()
             self.ExcelFile.clear()
             #self.SelectPotTable.clear()
             self.label_connect.setText('BOX CONNECT')
@@ -3786,12 +3924,13 @@ class DeviceBio24(QMainWindow):
         super().__init__()
         ########################## SCREEN PATH CONVERT #############################
         self.connected = 0
+        self.connectedElements = 0
         self.counter = 0
         self.refreshSaving = 1000
         DacTable = Path('QT_designer/Bio24.ui')
         loadUi(str(DacTable), self)
         self.setWindowTitle("BIO24")
-        self.setFixedSize(668, 624)
+        self.setFixedSize(750, 770)
         self.device_connect.setText('DEVICE CONNECT:')
         self.device_connect.setStyleSheet("color: gray")
         # Create a QTextCursor object
@@ -3857,10 +3996,90 @@ class DeviceBio24(QMainWindow):
         self.timer_relay_state.setInterval(300)
         self.saveDataThread = QThreadPool()
         self.saveBarThread = QThread()
+        ######################### Elements ################################        
+        self.scan_thread = None
+        self.scanner = None
         self.worker = Worker()
         self.worker.stepIncreased.connect(self.SaveBarShow)
         self.worker.moveToThread(self.saveBarThread)
         self.saveBarThread.started.connect(self.worker.task)
+        self.DeviceConnecteElements.activated[str].connect(self.connectElements)
+        self.DeviceConnecteElements.setEditable(True)
+        self.DeviceConnecteElements.setStyleSheet(ButtonStyleWhite)
+        self.progress_label_IP.setText('Scenning')
+        self.ip_search.clicked.connect(self.start_scan)
+        self.ip_search.setStyleSheet(ButtonStyleOff2)
+        self.reset_lang_elements.pressed.connect(self.resetLangElements)
+        self.reset_lang_elements.setStyleSheet(ButtonStyleOff2)
+        self.progress_label_IP.setVisible(False)
+        self.setLanguageElemets.activated[str].connect(self.setlanguageElements)
+        self.setLanguageElemets.setStyleSheet(ButtonStyleWhite)
+        self.setLanguageElemets.setEnabled(False)
+        self.setLanguageElemets.addItems(ALL_LANG_CRAFT)
+        self.checkBox_auto_lang_Elements.stateChanged.connect(self.doCheckElements)
+        #################lang timer
+        self.AutoLanguageElements = QTimer()
+        self.AutoLanguageElements.timeout.connect(self.change_lang_elements)  # 
+        self.AutoLanguageElements.setInterval(MAIN_TIME_REFRESHING)
+        ################ set variant ############
+        self.setVariantElements.activated[str].connect(self.setVariant)
+        self.setVariantElements.setStyleSheet(ButtonStyleWhite)
+        self.setVariantElements.setEnabled(False)
+        self.setVariantElements.addItems(listVariantElements())
+        self.start_scan()
+    def start_scan(self):
+        ###########
+        #self.device_connect_lang_2.setText('CONNECT TO DEVICE:')
+        #self.device_connect_lang_2.setStyleSheet("color: green")
+        self.progress_label_IP.setVisible(True)
+        self.AutoLanguage.stop()
+        self.DeviceConnecteElements.setEnabled(True)
+        self.setLanguageElemets.setEnabled(False)
+        self.setVariantElements.setEnabled(False)
+        self.DeviceConnecteElements.setStyleSheet(ButtonStyleOff2)
+        self.setLanguageElemets.setStyleSheet(ButtonStyleOff2)
+        self.DeviceConnecteElements.clear()
+        if self.connectedElements == 1:
+            self.connectedElements = 0
+            self.dev.disconnect()
+        
+        # clear combo but keep editable text if typed
+        typed = self.DeviceConnecteElements.currentText()
+        self.DeviceConnecteElements.clear()
+        self.ip_search.setEnabled(False)
+        if typed:
+            self.DeviceConnecteElements.setEditText(typed)
+        self.progress_label_IP.setText("Scanning network...")
+        # create worker and thread
+        self.scanner = NetworkScanner()
+        self.scan_thread = QThread()
+        self.scanner.moveToThread(self.scan_thread)
+        self.scan_thread.started.connect(self.scanner.run)
+        self.scanner.found.connect(self.add_ip)
+        self.scanner.progress.connect(self.update_progress)
+        self.scanner.finished.connect(self.scan_finished)
+        self.scan_thread.start()
+    def stop_scan(self):
+        if self.scanner:
+            self.scanner.stop()
+
+    def add_ip(self, ip):
+        # only add once
+        if ip not in [self.DeviceConnecteElements.itemText(i) for i in range(self.DeviceConnecteElements.count())]:
+            self.DeviceConnecteElements.addItem(ip)
+
+    def update_progress(self, found, scanned):
+        self.progress_label_IP.setText(f"Found: {found} — Scanned: {scanned}")
+
+    def scan_finished(self):
+        self.progress_label_IP.setText("Scan finished")
+        self.ip_search.setEnabled(True)
+        # cleanup thread
+        if self.scan_thread:
+            self.scan_thread.quit()
+            self.scan_thread.wait()
+            self.scan_thread = None
+            self.scanner = None    
     
     def check_relay_state(self):
         """
@@ -3944,7 +4163,7 @@ class DeviceBio24(QMainWindow):
                 self.device_connect_lang.setStyleSheet("color: red")
                 self.connected = 0
                 self.device.disconnect()
-        except:
+        except Exception:
             self.device.disconnect()
             self.device_connect_lang.setText('DEVICE DISCONNECTED:')
             self.device_connect_lang.setStyleSheet("color: red")
@@ -3960,13 +4179,62 @@ class DeviceBio24(QMainWindow):
                 f.write(f'{errorNumber*2}\n')
             f.close()
     
+    def connectElements(self, CONNECTBOX):
+        """
+        - connect device G800
+        - show warning message if device is disconnected
+        """
+        try:
+            self.dev = DeviceConnection(method="wifi", host=f"{CONNECTBOX}", port=9005)
+            self.dev.connect()
+            self.progress_label_IP.setVisible(False)
+            self.connectedElements = 1
+            sleep(1)
+            self.device_connect_lang_2.setText('CONNECT:')
+            self.device_connect_lang_2.setStyleSheet("color: green")
+            self.DeviceConnecteElements.setStyleSheet(ButtonStyleOn)
+            self.DeviceConnecteElements.setEnabled(False)
+            self.setLanguageElemets.setEnabled(True)
+            self.setVariantElements.setEnabled(True)
+          
+        except:
+            self.dev.disconnect()
+            self.connectedElements = 0
+            self.device_connect_lang_2.setText('DEVICE DISCONNECTED:')
+            self.device_connect_lang_2.setStyleSheet("color: red")
+            x = datetime.datetime.now()
+            dateAndTime = x.strftime("%c")
+            with open('check_error.txt', 'a') as f:
+                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
+                f.write('Device is not conncected \n')
+                f.write('Solution:\n')
+                f.write('-- Connenct to the correct ip address !!!\n')
+                f.write(f'{errorNumber*2}\n')
+                f.write(traceback.format_exc())
+                f.write(f'{errorNumber*2}\n')
+            f.close()
+    
     def resetLang(self):
         self.setLanguage.clear()
         self.setLanguage.addItems(listLanguageCraft())
     
+    def resetLangElements(self):
+        self.setLanguageElemets.clear()
+        self.setLanguageElemets.addItems(listLanguageCraft())
+    
     def setlanguage(self,lang):
         self.device.change_language_craft(self.setLanguage.currentIndex())
         self.setLanguage.setStyleSheet(ButtonStyleOn)
+    
+    def setlanguageElements(self):
+        #print(self.setLanguageElemets.currentIndex())
+        self.dev.setLanguages(self.setLanguageElemets.currentIndex())
+        self.setLanguageElemets.setStyleSheet(ButtonStyleOn)
+    
+    def setVariant(self):
+        #print(self.setVariantElements.currentIndex())
+        self.dev.setModel(self.setVariantElements.currentIndex())
+        self.setVariantElements.setStyleSheet(ButtonStyleOn)
     
     def doCheck(self):
         if self.checkBox_auto_lang.isChecked():
@@ -3975,6 +4243,14 @@ class DeviceBio24(QMainWindow):
             self.AutoLanguage.start()
         else:
             self.AutoLanguage.stop()
+    
+    def doCheckElements(self):
+        if self.checkBox_auto_lang_Elements.isChecked():
+            # Checkbox is checked
+            self.lang_max_index = max([index for index,i in enumerate(ALL_LANG_CRAFT)])
+            self.AutoLanguageElements.start()
+        else:
+            self.AutoLanguageElements.stop()
     
     def reset(self):
         self.device.disconnect()
@@ -3991,7 +4267,17 @@ class DeviceBio24(QMainWindow):
         lang_name =''.join([i for index,i in enumerate(ALL_LANG_CRAFT) if index == self.lang_index])
         self.setLanguage.addItem(lang_name)
         self.lang_index += 1
-    
+    def change_lang_elements(self):
+        self.setLanguageElemets.clear()
+        if self.lang_index == self.lang_max_index+1:
+            self.lang_index = 0
+        if self.time_lang_change != self.change_language_time_Elements.value():
+            self.time_lang_change = self.change_language_time_Elements.value()
+            self.AutoLanguageElements.setInterval(int(self.change_language_time_Elements.value()*1000))
+        self.dev.setLanguages(self.lang_index)
+        lang_name =''.join([i for index,i in enumerate(ALL_LANG_CRAFT) if index == self.lang_index])
+        self.setLanguageElemets.addItem(lang_name)
+        self.lang_index += 1
     def setlanguage(self,lang):
         self.device.change_language_craft(self.setLanguage.currentIndex())
         self.setLanguage.setStyleSheet(ButtonStyleOn)
@@ -4219,6 +4505,14 @@ class DeviceBio24(QMainWindow):
         """
         mainWindow.closeScreenBio24()
         self.disconnectAll()
+        if hasattr(self, "dev") and self.dev is not None:
+            try:
+                self.dev.disconnect()
+            except Exception as e:
+                print("Error disconnecting device:", e)
+
+        # Continue closing the window
+        event.accept()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

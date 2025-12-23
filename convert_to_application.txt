@@ -22,4 +22,4 @@ C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Applica
 - QT_designer
 -config_file
 
-pyinstaller --noconfirm --onefile --windowed--icon "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/data/images/other/elektronic.ico" --add-data "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/package;package/" --add-data "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/DigitalBox;DigitalBox/"  "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/BOX_GUI.py"
+pyinstaller --noconfirm --onefile --windowed --icon "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/data/images/other/elektronic.ico" --add-data "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/package;package/" --add-data "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/DigitalBox;DigitalBox/"  "C:/Users/aleksander.gresak/Documents/Automatic_test_UI/DigitalBoxGUI/GUI_Project/BOX_GUI.py"
