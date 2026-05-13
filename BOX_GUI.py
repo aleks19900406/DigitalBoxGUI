@@ -1387,11 +1387,10 @@ class MainWindow(QMainWindow):
                                 version_value = str(box_version[0]).strip()
                                 if version_value:
                                     read_version.append(version_value)
-
                         except Exception:
                             pass
-
                         sleep(0.2)
+                    print(f"Read versions: {read_version}")
 
                     for item in read_version:
                         if len(item) == 4:
@@ -1410,11 +1409,6 @@ class MainWindow(QMainWindow):
                 self.on_off.setIcon(self.iconOn)
             
             if VERSION is not None and VERSION >= VERZIJA_RPI:
-                    print('connect')
-                    #self.connectAnimation.start(self.animationConnect)
-                    self.index_refreshing +=1
-                    self.DIGITAL_BOX_MAIN.start()
-                    self.dateTimeTimer.start()
                     self.BOX_VERSION.setVisible(False)
                     self.warningMessagePot.setVisible(False)
                     self.warningMessageDac.setVisible(False)
@@ -1424,14 +1418,20 @@ class MainWindow(QMainWindow):
                     self.BOX_VERSION.setVisible(True)
                     self.BOX_VERSION.setText(f"ARDUINO MEGA/ESP32 SW = {VERSION}")
             else:
-                print('disconnect')
-                #VERSION = None
-                sleep(2)
-                self.box.disconnect()
-                self.index_refreshing = 0
+                self.BOX_VERSION.setVisible(False)
+                self.BOX_VERSION.setFont(QFont('Arial', 14))
+                self.BOX_VERSION.setStyleSheet("color: red")
                 self.BOX_VERSION.setVisible(True)
-                self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= {VERZIJA_ESP}. Update digital box or upload the right version of gui application") 
-                
+                self.BOX_VERSION.setText(
+                    f"Digital box version: {VERSION}. Required: >= {VERZIJA_ESP}. "
+                    f"Please update the digital box or use a compatible GUI version."
+                )
+            print('connect')
+            self.BoxConnect.setStyleSheet(ButtonStyleOn)
+            #self.connectAnimation.start(self.animationConnect)
+            self.index_refreshing +=1
+            self.DIGITAL_BOX_MAIN.start()
+            self.dateTimeTimer.start()
             #self.on_off.setIcon(self.iconOn)
             self.ButtonG800.setStyleSheet(ButtonStyleOff2)
             self.ButtonBIO24.setStyleSheet(ButtonStyleOff2)
