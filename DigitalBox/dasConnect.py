@@ -56,7 +56,7 @@ def convert_digital_in(read_digital_in):
     #print(all_digital_in)
     return all_digital_in
 
-class SERIALCONNECT():
+class SerialConnect():
     """
     Connect to digital box:
     example:
@@ -791,7 +791,7 @@ class WifiEsp32Connect():
 """
 box = WifiEsp32Connect("192.168.1.35")
 
-#box = SERIALCONNECT("COM33")
+#box = SerialConnect("COM33")
 box.connect()
 sleep(3)
 for _ in range(10):

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>progress_label</class>
+ <widget class="QWidget" name="progress_label">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>668</width>
-    <height>624</height>
+    <width>744</width>
+    <height>764</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QPushButton" name="deviceDisconnect">
    <property name="geometry">
     <rect>
-     <x>480</x>
-     <y>180</y>
+     <x>510</x>
+     <y>395</y>
      <width>81</width>
      <height>31</height>
     </rect>
@@ -34,8 +34,8 @@
   <widget class="QComboBox" name="DeviceConnect">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>180</y>
+     <x>150</x>
+     <y>395</y>
      <width>351</width>
      <height>31</height>
     </rect>
@@ -55,8 +55,8 @@
   <widget class="QLabel" name="device_connect">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>170</y>
+     <x>30</x>
+     <y>385</y>
      <width>121</width>
      <height>51</height>
     </rect>
@@ -82,11 +82,11 @@
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_7">
+  <widget class="QPushButton" name="RELAY_6">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>300</y>
+     <x>210</x>
+     <y>520</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -98,21 +98,21 @@
   <widget class="QPushButton" name="RELAY_5">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>500</y>
+     <x>20</x>
+     <y>720</y>
      <width>161</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
-    <string>PUMP_DECAL</string>
+    <string>DROWER_IN</string>
    </property>
   </widget>
   <widget class="QPushButton" name="RELAY_1">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>340</y>
+     <x>20</x>
+     <y>560</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -121,30 +121,11 @@
     <string>COOLING_FAN_HS</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_6">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>540</y>
-     <width>161</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="mouseTracking">
-    <bool>true</bool>
-   </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>ADD_RELAY</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="RELAY_0">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>300</y>
+     <x>20</x>
+     <y>520</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -170,8 +151,8 @@
   <widget class="QPushButton" name="RELAY_4">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>460</y>
+     <x>20</x>
+     <y>680</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -186,11 +167,11 @@
     <string>L2_STANBY</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_9">
+  <widget class="QPushButton" name="RELAY_8">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>380</y>
+     <x>210</x>
+     <y>600</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -202,8 +183,8 @@
   <widget class="QPushButton" name="RELAY_3">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>420</y>
+     <x>20</x>
+     <y>640</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -215,8 +196,8 @@
   <widget class="QPushButton" name="RELAY_2">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>380</y>
+     <x>20</x>
+     <y>600</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -231,11 +212,11 @@
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_8">
+  <widget class="QPushButton" name="RELAY_7">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>340</y>
+     <x>210</x>
+     <y>560</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -244,11 +225,11 @@
     <string>STEAM_PUMP_IN</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_12">
+  <widget class="QPushButton" name="RELAY_11">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>500</y>
+     <x>210</x>
+     <y>720</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -257,11 +238,24 @@
     <string>INFRA_HEAT</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_13">
+  <widget class="QPushButton" name="RELAY_20">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>540</y>
+     <x>560</x>
+     <y>596</y>
+     <width>161</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>AQUA_2</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="RELAY_12">
+   <property name="geometry">
+    <rect>
+     <x>390</x>
+     <y>520</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -270,24 +264,11 @@
     <string>FAN_HEAT</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_14">
+  <widget class="QPushButton" name="RELAY_9">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>300</y>
-     <width>161</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>MW_INV</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="RELAY_10">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>420</y>
+     <x>210</x>
+     <y>640</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -299,14 +280,27 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>DRAWER_OUT_DECALC_PUMP</string>
+    <string>DRAWER_OUT</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_15">
+  <widget class="QPushButton" name="RELAY_13">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>340</y>
+     <x>390</x>
+     <y>560</y>
+     <width>161</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>MW_INV</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="RELAY_14">
+   <property name="geometry">
+    <rect>
+     <x>390</x>
+     <y>600</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -318,66 +312,53 @@
   <widget class="QPushButton" name="RELAY_16">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>380</y>
+     <x>390</x>
+     <y>680</y>
      <width>161</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
-    <string>UPPER_HEAT</string>
+    <string>BOTTOM_HEATER</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_18">
+  <widget class="QPushButton" name="RELAY_15">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>460</y>
-     <width>161</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>ADD_HEAT</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="RELAY_17">
-   <property name="geometry">
-    <rect>
-     <x>400</x>
-     <y>420</y>
+     <x>390</x>
+     <y>640</y>
      <width>161</width>
      <height>31</height>
     </rect>
    </property>
    <property name="mouseTracking">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>BOTTOM_HEAT</string>
+    <string>UPPER_HEATER</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_21">
+  <widget class="QPushButton" name="RELAY_19">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>580</y>
+     <x>560</x>
+     <y>556</y>
      <width>161</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
-    <string>L1_SW</string>
+    <string>AQUA</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_20">
+  <widget class="QPushButton" name="RELAY_18">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>540</y>
+     <x>560</x>
+     <y>520</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -392,11 +373,11 @@
     <string>N2_SW2</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_19">
+  <widget class="QPushButton" name="RELAY_17">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>500</y>
+     <x>390</x>
+     <y>720</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -408,8 +389,8 @@
   <widget class="QPushButton" name="startStopSaving">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>220</y>
+     <x>520</x>
+     <y>435</y>
      <width>70</width>
      <height>70</height>
     </rect>
@@ -434,8 +415,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QLabel" name="label_connect_2">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>230</y>
+     <x>470</x>
+     <y>445</y>
      <width>41</width>
      <height>31</height>
     </rect>
@@ -464,8 +445,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QDoubleSpinBox" name="excelRefresh">
    <property name="geometry">
     <rect>
-     <x>370</x>
-     <y>230</y>
+     <x>400</x>
+     <y>445</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -507,8 +488,8 @@ selection-color: rgb(255, 170, 0);</string>
    </property>
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>230</y>
+     <x>150</x>
+     <y>445</y>
      <width>231</width>
      <height>31</height>
     </rect>
@@ -528,8 +509,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QLabel" name="label_errorSaveFile">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>250</y>
+     <x>40</x>
+     <y>465</y>
      <width>471</width>
      <height>51</height>
     </rect>
@@ -549,8 +530,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QLabel" name="label_saveFile">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>220</y>
+     <x>50</x>
+     <y>435</y>
      <width>101</width>
      <height>51</height>
     </rect>
@@ -567,11 +548,11 @@ selection-color: rgb(255, 170, 0);</string>
     <string>SAVE DATA:</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="RELAY_11">
+  <widget class="QPushButton" name="RELAY_10">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>460</y>
+     <x>210</x>
+     <y>680</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -583,8 +564,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QProgressBar" name="savingBar">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>260</y>
+     <x>150</x>
+     <y>475</y>
      <width>281</width>
      <height>31</height>
     </rect>
@@ -599,8 +580,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QLabel" name="backupSave">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>230</y>
+     <x>150</x>
+     <y>445</y>
      <width>261</width>
      <height>31</height>
     </rect>
@@ -617,9 +598,9 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QComboBox" name="setLanguage">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>100</y>
-     <width>211</width>
+     <x>150</x>
+     <y>315</y>
+     <width>201</width>
      <height>31</height>
     </rect>
    </property>
@@ -635,8 +616,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QLabel" name="label_connect_3">
    <property name="geometry">
     <rect>
-     <x>390</x>
-     <y>100</y>
+     <x>420</x>
+     <y>315</y>
      <width>41</width>
      <height>31</height>
     </rect>
@@ -665,8 +646,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QLabel" name="label_connect">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>90</y>
+     <x>30</x>
+     <y>305</y>
      <width>111</width>
      <height>51</height>
     </rect>
@@ -695,8 +676,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QDoubleSpinBox" name="change_language_time">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>100</y>
+     <x>360</x>
+     <y>315</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -735,8 +716,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QLabel" name="device_connect_lang">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>40</y>
+     <x>30</x>
+     <y>255</y>
      <width>121</width>
      <height>51</height>
     </rect>
@@ -765,8 +746,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QCheckBox" name="checkBox_auto_lang">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>110</y>
+     <x>520</x>
+     <y>325</y>
      <width>171</width>
      <height>21</height>
     </rect>
@@ -783,8 +764,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QPushButton" name="deviceDisconnect_lang">
    <property name="geometry">
     <rect>
-     <x>480</x>
-     <y>50</y>
+     <x>510</x>
+     <y>265</y>
      <width>81</width>
      <height>31</height>
     </rect>
@@ -801,8 +782,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QComboBox" name="DeviceConnectLang">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>50</y>
+     <x>150</x>
+     <y>265</y>
      <width>351</width>
      <height>31</height>
     </rect>
@@ -822,8 +803,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QPushButton" name="reset_lang">
    <property name="geometry">
     <rect>
-     <x>420</x>
-     <y>100</y>
+     <x>450</x>
+     <y>315</y>
      <width>61</width>
      <height>31</height>
     </rect>
@@ -858,9 +839,9 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="Line" name="line_8">
    <property name="geometry">
     <rect>
-     <x>-10</x>
-     <y>140</y>
-     <width>681</width>
+     <x>20</x>
+     <y>355</y>
+     <width>781</width>
      <height>21</height>
     </rect>
    </property>
@@ -871,8 +852,8 @@ selection-color: rgb(255, 170, 0);</string>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>5</y>
+     <x>250</x>
+     <y>220</y>
      <width>281</width>
      <height>31</height>
     </rect>
@@ -884,6 +865,356 @@ selection-color: rgb(255, 170, 0);</string>
    </property>
    <property name="text">
     <string>Change languages</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_auto_lang_Elements">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>120</y>
+     <width>171</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>auto change language</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="ip_search">
+   <property name="geometry">
+    <rect>
+     <x>510</x>
+     <y>60</y>
+     <width>81</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Search IP </string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>15</y>
+     <width>281</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Change languages Elements</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="reset_lang_elements">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>110</y>
+     <width>61</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>reset</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>15</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="autoRepeatDelay">
+    <number>300</number>
+   </property>
+   <property name="autoRepeatInterval">
+    <number>100</number>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="DeviceConnecteElements">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>60</y>
+     <width>351</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="frame">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="change_language_time_Elements">
+   <property name="geometry">
+    <rect>
+     <x>390</x>
+     <y>110</y>
+     <width>71</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+     <strikeout>false</strikeout>
+    </font>
+   </property>
+   <property name="buttonSymbols">
+    <enum>QAbstractSpinBox::PlusMinus</enum>
+   </property>
+   <property name="correctionMode">
+    <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+   </property>
+   <property name="decimals">
+    <number>1</number>
+   </property>
+   <property name="minimum">
+    <double>0.100000000000000</double>
+   </property>
+   <property name="maximum">
+    <double>120.000000000000000</double>
+   </property>
+   <property name="singleStep">
+    <double>1.000000000000000</double>
+   </property>
+   <property name="value">
+    <double>1.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="device_connect_lang_2">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>50</y>
+     <width>121</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="text">
+    <string>SELECT ELEMENTS IP:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_connect_4">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>110</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="text">
+    <string>s</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_connect_5">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>100</y>
+     <width>111</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="text">
+    <string>SET LANGUAGE:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="setLanguageElemets">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>110</y>
+     <width>231</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+  </widget>
+  <widget class="Line" name="line_9">
+   <property name="geometry">
+    <rect>
+     <x>-10</x>
+     <y>200</y>
+     <width>791</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_connect_6">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>150</y>
+     <width>111</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="text">
+    <string>SET_VARIANT:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="setVariantElements">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>160</y>
+     <width>331</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+  </widget>
+  <widget class="QLabel" name="progress_label_IP">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>50</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="text">
+    <string>Scenning network</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
   </widget>
  </widget>

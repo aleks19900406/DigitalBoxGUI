@@ -20,7 +20,7 @@ GROUP_SET_VOLTAGE = "set_voltage"
 GROUP_READ_ADC = "read_adc"
 GROUP_BOX_VERSION = "box_version"
 
-DIGITAL_OUT_CNT = 8
+DIGITAL_OUT_CNT = 16
 ANALOG_OUT_CNT = 8
 DIGITAL_POT_CNT = 6
 DIGITAL_IN_CNT = 32
@@ -800,6 +800,7 @@ class DAS(RawClient):
         >>> d.get_digital_in((1,2,3))  # Read a tuple of digital inputs
         [0, 0, 0]
         """
+        print('ddd--->',self._digital_in[index])
         return self._digital_in[index]
     
     

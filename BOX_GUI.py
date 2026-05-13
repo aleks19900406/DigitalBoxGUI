@@ -119,9 +119,9 @@ VARIANTS = {
     "P_SS_ASKO_X_45": 20,
     "P_SS_ASKO_S_45": 21
 }
-VERZIJA_ESP = "3.19"
-VERZIJA_RPI = "3.10"
-DIGITAL_BOX_VERSION = 'V2.0'
+VERZIJA_ESP = "3.20"
+VERZIJA_RPI = "3.20"
+DIGITAL_BOX_VERSION = 'V3.0'
 MAIN_TIME_REFRESHING = 1000
 SPACE = '\n'
 DigitalInput = 32
@@ -449,6 +449,7 @@ def listLanguageCraft():
     for lang in ALL_LANG_CRAFT:
         LIST_LANG.append(f'{str(lang)}')
     return LIST_LANG
+
 def listVariantElements():
     """
     return all variant elements
@@ -1357,19 +1358,57 @@ class MainWindow(QMainWindow):
                 self.label_errorSaveFile.setVisible(False)
                 self.label_saveFile.setVisible(True)
 
-            elif CONNECTBOX[0:3] =='RPI':
-                #print('connect to rpi')
-                self.box = DAS(CONNECTBOX.replace('RPI - ',''))  #
-                self.box.connect()
+            elif CONNECTBOX.startswith("RPI"):
+                VERSION = "0.0"
+                self.box = None
                 self.ip_scanning.setVisible(False)
-                sleep(2)
-                VERSION =  self.box.box_version[0].strip()
-        
+
+                try:
+                    box_name = CONNECTBOX.strip()
+                    if box_name.startswith("RPI - "):
+                        box_name = box_name[len("RPI - "):].strip()
+
+                    self.box = DAS(box_name)
+
+                    try:
+                        self.box.disconnect()
+                    except Exception:
+                        pass
+
+                    self.box.connect()
+
+                    read_version = []
+
+                    for _ in range(10):
+                        try:
+                            box_version = getattr(self.box, "box_version", None)
+
+                            if box_version and len(box_version) > 0:
+                                version_value = str(box_version[0]).strip()
+                                if version_value:
+                                    read_version.append(version_value)
+
+                        except Exception:
+                            pass
+
+                        sleep(0.2)
+
+                    for item in read_version:
+                        if len(item) == 4:
+                            print(item)
+                            VERSION = item
+                            break
+
+                except Exception as e:
+                    print("RPI connection/version read failed: {}".format(e))
+                    VERSION = "fail to read"
+
             
             if self.box_is_connected == 0:
                 self.box_is_connected = 1
                 self.index_on_off = 1
                 self.on_off.setIcon(self.iconOn)
+            
             if VERSION is not None and VERSION >= VERZIJA_RPI:
                     print('connect')
                     #self.connectAnimation.start(self.animationConnect)
@@ -1380,14 +1419,18 @@ class MainWindow(QMainWindow):
                     self.warningMessagePot.setVisible(False)
                     self.warningMessageDac.setVisible(False)
                     self.BoxConnect.setStyleSheet(ButtonStyleOn)
+                    self.BOX_VERSION.setFont(QFont('Arial', 10))
+                    self.BOX_VERSION.setStyleSheet("color: black")
+                    self.BOX_VERSION.setVisible(True)
+                    self.BOX_VERSION.setText(f"ARDUINO MEGA/ESP32 SW = {VERSION}")
             else:
                 print('disconnect')
-                VERSION = None
+                #VERSION = None
                 sleep(2)
                 self.box.disconnect()
                 self.index_refreshing = 0
                 self.BOX_VERSION.setVisible(True)
-                self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= {VERZIJA_RPI}. Update box to the latest version if you want to use this application") 
+                self.BOX_VERSION.setText(f"Current version digital box is {VERSION}.Version must be >= {VERZIJA_ESP}. Update digital box or upload the right version of gui application") 
                 
             #self.on_off.setIcon(self.iconOn)
             self.ButtonG800.setStyleSheet(ButtonStyleOff2)
@@ -1401,7 +1444,7 @@ class MainWindow(QMainWindow):
             self.warningMessageAddFunction.setStyleSheet("color: black")
             self.warningMessageAddFunction.setText("ADDITIONAL FUNCTIONS")     
         except Exception:
-            VERSION = None
+            #VERSION = None
             x = datetime.datetime.now()
             dateAndTime = x.strftime("%c")
             with open('check_error.txt', 'a') as f:
@@ -1416,16 +1459,10 @@ class MainWindow(QMainWindow):
                 f.write(traceback.format_exc())
                 f.write(f'{errorNumber*2}\n')
             f.close()
-        self.BOX_VERSION.setFont(QFont('Arial', 10))
-        self.BOX_VERSION.setStyleSheet("color: black")
-        self.BOX_VERSION.setVisible(True)
-        self.BOX_VERSION.setText(f"ARDUINO MEGA/ESP32 SW = {VERSION}")
         self.connectParameters = 1
         self.box_is_connected +=1
         if self.box_is_connected >=2:
             self.box_is_connected =0     
-    
-    
     
     def digitalPotTable(self,potTable):
         """
@@ -1826,6 +1863,7 @@ class MainWindow(QMainWindow):
         """
         global input
         input = self.box.digital_in[:]
+        #print('input--->',input)
         return input
     
     def auto_button_parameters_default(self,index):
@@ -1847,7 +1885,11 @@ class MainWindow(QMainWindow):
             #self.AUTO1.setIcon(self.iconSwitchOff)
             self.auto_button_parameters_default(0)
         else:
-            self.auto_button_function(0,int(self.param_auto1[1]),int(self.param_auto1[2]),self.param_auto1[3])
+            try:
+                self.auto_button_function(0,int(self.param_auto1[1]),int(self.param_auto1[2]),self.param_auto1[3])
+            except TypeError as e:
+                self.auto_button_function(0,0,0,0)
+                print(f"Error occurred while calling auto_button_function. Problems with reading parameters: {e}")
             self.AUTO1.setStyleSheet(ButtonStyleOn2)
             #self.AUTO1.setIcon(self.iconSwitchOn)
         
@@ -1888,22 +1930,24 @@ class MainWindow(QMainWindow):
                 #self.on_off.setIcon(self.iconOn)
                 self.box.main = 1
                 change_parameters[0]= 1
-            try:
-                my_deque = deque(begin_parameter[1:])
-                # Rotate the deque by 16 positions to the right
-                my_deque.rotate(8)
-                parameter_true = tuple([i for i, val in enumerate( my_deque) if  val])
-                if parameter_true:
-                    activate_output(self,parameter_true,True)
-                
-                parameter_false = tuple([i for i, val in enumerate( my_deque) if not val])
-                if parameter_false:
-                    activate_output(self,parameter_false,False)
-                for index in range(8,16):
-                    eval(f'self.OUT{index}.setEnabled(True)')
-            except:
+            #try:
+            my_deque = deque(begin_parameter[1:])
+            print(my_deque)
+            # Rotate the deque by 16 positions to the right
+            my_deque.rotate(8)
+            parameter_true = tuple([i for i, val in enumerate( my_deque) if  val])
+            if parameter_true:
+                activate_output(self,parameter_true,True)
+            
+            parameter_false = tuple([i for i, val in enumerate( my_deque) if not val])
+            if parameter_false:
+                activate_output(self,parameter_false,False)
+            for index in range(8,16):
+                eval(f'self.OUT{index}.setEnabled(True)')
+            """except:
                 print('RPI digital input is not implemented works only for 8 input')
                 my_deque = deque(begin_parameter_old[1:])
+                #my_deque = deque(begin_parameter[1:])
                 # Rotate the deque by 16 positions to the right
                 my_deque.rotate(8)
                 parameter_true = tuple([i for i, val in enumerate( my_deque) if  val])
@@ -1915,7 +1959,7 @@ class MainWindow(QMainWindow):
                     activate_output(self,parameter_false,False)
                 self.OUT8.setEnabled(False)
                 for index in range(8,16):
-                    eval(f'self.OUT{index}.setEnabled(False)')
+                    eval(f'self.OUT{index}.setEnabled(False)')"""
    
             if (self.index_out[0] % 2) == 0:
                 change_parameters[1]= 0
@@ -4308,7 +4352,7 @@ class DeviceBio24(QMainWindow):
         self.DeviceConnect.setEnabled(True)
         self.DeviceConnect.setStyleSheet(ButtonStyleOff2)
         self.DeviceConnect.clear()
-        for index in range(22):
+        for index in range(21):
             eval(f'self.RELAY_{index}.setStyleSheet(InputStyleOff)')
         self.DeviceConnect.addItems(listDeviceConnection())
         if self.connected == 1:
