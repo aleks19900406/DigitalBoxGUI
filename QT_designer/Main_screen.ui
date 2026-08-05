@@ -167,7 +167,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1080</x>
-      <y>80</y>
+      <y>70</y>
       <width>201</width>
       <height>31</height>
      </rect>
@@ -255,10 +255,10 @@ p, li { white-space: pre-wrap; }
    <widget class="QLabel" name="date_and_time">
     <property name="geometry">
      <rect>
-      <x>1140</x>
-      <y>10</y>
-      <width>301</width>
-      <height>21</height>
+      <x>1180</x>
+      <y>0</y>
+      <width>451</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -731,7 +731,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1080</x>
-      <y>40</y>
+      <y>30</y>
       <width>201</width>
       <height>31</height>
      </rect>
@@ -2051,8 +2051,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="RefreshingConnection">
     <property name="geometry">
      <rect>
-      <x>1390</x>
-      <y>50</y>
+      <x>1290</x>
+      <y>70</y>
       <width>70</width>
       <height>70</height>
      </rect>
@@ -2745,9 +2745,9 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QLabel" name="BOX_VERSION">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>0</x>
       <y>0</y>
-      <width>1121</width>
+      <width>1171</width>
       <height>31</height>
      </rect>
     </property>
@@ -3109,8 +3109,8 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QPushButton" name="startStopSaving">
     <property name="geometry">
      <rect>
-      <x>1390</x>
-      <y>130</y>
+      <x>1380</x>
+      <y>70</y>
       <width>70</width>
       <height>70</height>
      </rect>
@@ -3137,7 +3137,7 @@ selection-color: rgb(255, 170, 0);</string>
      <rect>
       <x>1290</x>
       <y>160</y>
-      <width>71</width>
+      <width>81</width>
       <height>31</height>
      </rect>
     </property>
@@ -3175,7 +3175,7 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QLabel" name="label_connect_2">
     <property name="geometry">
      <rect>
-      <x>1350</x>
+      <x>1370</x>
       <y>160</y>
       <width>41</width>
       <height>31</height>
@@ -3433,7 +3433,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>1080</x>
-      <y>40</y>
+      <y>30</y>
       <width>241</width>
       <height>31</height>
      </rect>
@@ -3917,10 +3917,10 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QLabel" name="ip_scanning">
     <property name="geometry">
      <rect>
-      <x>1290</x>
-      <y>30</y>
-      <width>81</width>
-      <height>51</height>
+      <x>1320</x>
+      <y>40</y>
+      <width>231</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -3932,7 +3932,7 @@ selection-color: rgb(255, 170, 0);</string>
      </font>
     </property>
     <property name="text">
-     <string>ip_scanning</string>
+     <string>IP_SCANNING : </string>
     </property>
    </widget>
    <zorder>label_digital_pot</zorder>

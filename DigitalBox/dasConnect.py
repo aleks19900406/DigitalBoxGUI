@@ -56,6 +56,7 @@ def convert_digital_in(read_digital_in):
     #print(all_digital_in)
     return all_digital_in
 
+
 class SerialConnect():
     """
     Connect to digital box:
@@ -84,6 +85,42 @@ class SerialConnect():
         self._frequency_out = 0
         self._set_voltage = 0
         self._read_adc = [0,0,0,0]
+    def _send_command(self, command, retries=3, read_attempts=10):
+        """
+        Send command and wait for OK response.
+
+        Returns:
+            bool
+        """
+        for retry in range(retries):
+
+            self.ser.reset_input_buffer()
+
+            t0 = time()
+            self.ser.write(command.encode())
+
+            for read_attempt in range(read_attempts):
+
+                response = self.ser.readline().decode(errors="ignore").strip()
+
+                if response:
+                    print(
+                        f"CMD='{command}' "
+                        f"Retry={retry + 1}/{retries} "
+                        f"Read={read_attempt + 1}/{read_attempts} "
+                        f"Response='{response}'"
+                    )
+
+                if response.startswith("OK"):
+                    print(
+                        f"Command OK in {time() - t0:.3f}s"
+                    )
+                    return True
+
+            print(f"No response -> resend command: {command}")
+
+        print(f"Command failed: {command}")
+        return False
     
     def connect(self):
         """
@@ -99,14 +136,16 @@ class SerialConnect():
             self.ser = serial.Serial()
             self.ser.baudrate = 115200
             self.ser.port = self.comport
-            self.ser.timeout=0.01
+            self.ser.timeout= 0.2
             self.ser.setDTR(False)
             self.ser.setRTS(False)
             self.ser.open()
+            self.ser.reset_input_buffer()
+            self.ser.reset_output_buffer()
             sleep(3)
             ##################check version #############
             self.ser.write(f'{CHECK_VERSION}'.encode())
-            sleep(SEND_TIME)
+            sleep(SEND_TIME*10)
             VERSION = self.ser.readline().decode().strip()
             print('VERZIJA:',VERSION)
         except:
@@ -121,7 +160,6 @@ class SerialConnect():
             self.ser.close()
         return VERSION
         
-    
     def disconnect(self):
         """
         close serial connection
@@ -132,14 +170,12 @@ class SerialConnect():
     def main(self):
         return self._main
     @main.setter
-    def main(self,value):
-        """
-        - set main value
-        - self.box.main = 0 / 1
-        """
-        self.ser.write(f'{MAIN},{value}'.encode())
-        self._main = value
-        sleep(SEND_TIME)
+    def main(self, value):
+
+        if self._send_command(f"{MAIN},{value}"):
+            self._main = value
+        else:
+            raise TimeoutError(f"{MAIN},{value}")
     @main.getter
     def main(self):
         """
@@ -170,25 +206,23 @@ class SerialConnect():
         return self._digital_out
 
     #@digital_out.setter
-    def set_digital_out(self,*parameters):
-        """
-        - number type int or tuple
-        - value type int
-        - self.box.set_digital_out(number,value)
-        - self.box.set_digital_out(0,1) set first output to True
-        - self.box.set_digital_out([0,1,2],0) set output(0,1,2) to False
-        """
-        number,value = parameters
-        if isinstance(number,tuple):
+    def set_digital_out(self, *parameters):
+
+        number, value = parameters
+
+        if isinstance(number, tuple):
             for index in number:
                 self.digital_out_value[index] = int(value)
         else:
             self.digital_out_value[number] = int(value)
+
         convertInt = ''.join(map(str, self.digital_out_value))
-        digital_out_number = int(convertInt,2)
-        self.ser.write(f'{DIGITAL_OUT},{digital_out_number}'.encode())
-        self._digital_out = list(map(bool,self.digital_out_value))
-        sleep(SEND_TIME)
+        digital_out_number = int(convertInt, 2)
+
+        if self._send_command(f"{DIGITAL_OUT},{digital_out_number}"):
+            self._digital_out = list(map(bool, self.digital_out_value))
+        else:
+            raise TimeoutError("DIGITAL_OUT")
         
     @digital_out.getter
     def digital_out(self):
@@ -204,25 +238,19 @@ class SerialConnect():
     def digital_pot(self):
         return self._digital_pot
     #@digital_pot.setter
-    def set_digital_pot(self,chip_output_list,chip_value = 10):
-        """_summary_
+    def set_digital_pot(self, chip_output_list, chip_value=10):
 
-        Args:
-            chip_output_list (_type_): _description_
-            chip_value (int, optional): _description_. Defaults to 10.
-         
-         
-         
-        - self.box.set_digital_pot([chip_select,chip_output],value)
-        fist list number is chip select = 1
-        other list is chip output
-        - self.box.set_digital_pot([1,0,1],45) on first chip in chip number 0 and 1 set value 45
-        """
-        self.LIST_POT_VALUE.insert(0,chip_output_list[0])
+        self.LIST_POT_VALUE.insert(0, chip_output_list[0])
+
         for chip_output in chip_output_list[1:]:
-            self.ser.write(f'{SET_DIGITAL_POT},{chip_output_list[0]},{chip_output},{chip_value}'.encode())
-            sleep(SEND_TIME)
-            self.LIST_POT_VALUE[chip_output+1]= chip_value
+
+            if not self._send_command(
+                f"{SET_DIGITAL_POT},{chip_output_list[0]},{chip_output},{chip_value}"
+            ):
+                raise TimeoutError("SET_DIGITAL_POT")
+
+            self.LIST_POT_VALUE[chip_output + 1] = chip_value
+
         self._digital_pot = self.LIST_POT_VALUE
     @digital_pot.getter
     def digital_pot(self):
@@ -232,16 +260,14 @@ class SerialConnect():
     def set_pwm1(self):
         return self._set_pwm1
     @set_pwm1.setter
-    def set_pwm1(self,parameters):
-        """
-        - self.box.set_pwm1 = (1000,20) set freq(1000) and duty(20)
-        first argument is frequency
-        second argument is duty
-        """
-        frequency,duty = parameters
-        self.ser.write(f'{SET_PWM_1},{frequency},{duty}'.encode())
-        self._set_pwm1 = [frequency,duty]
-        sleep(SEND_TIME)
+    def set_pwm1(self, parameters):
+
+        frequency, duty = parameters
+
+        if self._send_command(f"{SET_PWM_1},{frequency},{duty}"):
+            self._set_pwm1 = [frequency, duty]
+        else:
+            raise TimeoutError("SET_PWM_1")
     @set_pwm1.getter
     def set_pwm1(self):
         """get pwm1
@@ -254,16 +280,14 @@ class SerialConnect():
     def set_pwm2(self):
         return self._set_pwm2
     @set_pwm2.setter
-    def set_pwm2(self,parameters):
-        """
-        - self.box.set_pwm2 = (1000,20) set freq(1000) and duty(20)
-        first argument is frequency
-        second argument is duty
-        """
-        frequency,duty = parameters
-        self.ser.write(f'{SET_PWM_2},{frequency},{duty}'.encode())
-        self._set_pwm2 = [frequency,duty]
-        sleep(SEND_TIME)
+    def set_pwm2(self, parameters):
+
+        frequency, duty = parameters
+
+        if self._send_command(f"{SET_PWM_2},{frequency},{duty}"):
+            self._set_pwm2 = [frequency, duty]
+        else:
+            raise TimeoutError("SET_PWM_2")
     @set_pwm2.getter
     def set_pwm2(self):
         """
@@ -290,13 +314,17 @@ class SerialConnect():
         read_pwm_all[1]['d'] get duty form pwm 2
         """
         self.ser.write(f'{READ_PWM},1'.encode())
-        sleep(SEND_TIME*2)
+        sleep(SEND_TIME*4)
+        raw = self.ser.readline().decode(errors="ignore")
         f1 = self.ser.readline().decode().strip()
         d1 = self.ser.readline().decode().strip()
+        print('read pwm1:',f1,d1)
+        print('test',repr(raw))
         self.ser.write(f'{READ_PWM},2'.encode())
-        sleep(SEND_TIME*2)
+        sleep(SEND_TIME*4)
         f2 = self.ser.readline().decode().strip()
         d2 = self.ser.readline().decode().strip()
+        print('read pwm2:',f2,d2)
         readPwm1 = {"d":d1,"f":f1,}
         readPwm2 = {"d":d2,"f":f2,}
         self._read_pwm = [readPwm1,readPwm2]
@@ -306,7 +334,8 @@ class SerialConnect():
     def analog_out(self):
         return self._analog_out
     #@analog_out.setter
-    def set_analog_out(self,dac_number,chip_value = 10):
+    def set_analog_out(self, dac_number, chip_value=10):
+
         """
         dac_number = int number(0-7) or tuple (0,1,2)
         value  = int value (0-65535) 
@@ -346,13 +375,12 @@ class SerialConnect():
     def duty_cycle_out(self):
         return self._duty_cycle_out
     @duty_cycle_out.setter
-    def duty_cycle_out(self,value):
-        """
-        self.box.duty_cycle_out = 20 - set duty to 20%
-        """
-        self.ser.write(f'{SET_DUTY},{value}'.encode())
-        self._duty_cycle_out = value
-        sleep(SEND_TIME)
+    def duty_cycle_out(self, value):
+
+        if self._send_command(f"{SET_DUTY},{value}"):
+            self._duty_cycle_out = value
+        else:
+            raise TimeoutError("SET_DUTY")
     @duty_cycle_out.getter
     def duty_cycle_out(self):
         """
@@ -367,13 +395,12 @@ class SerialConnect():
     def frequency_out(self):
         return self._frequency_out
     @frequency_out.setter
-    def frequency_out(self,frequency):
-        """
-        self.box.frequency_out = 1500 - set frequency to 1500 Hz
-        """
-        self.ser.write(f'{SET_FREQUENCY},{frequency}'.encode())
-        self._frequency_out = frequency
-        sleep(SEND_TIME)
+    def frequency_out(self, frequency):
+
+        if self._send_command(f"{SET_FREQUENCY},{frequency}"):
+            self._frequency_out = frequency
+        else:
+            raise TimeoutError("SET_FREQUENCY")
     @frequency_out.getter
     def frequency_out(self):
         """
@@ -388,20 +415,16 @@ class SerialConnect():
     def set_voltage(self):
         return self._set_voltage
     @set_voltage.setter
-    def set_voltage(self,parameters):
-        """ 
-        output type int(0-3)
-        value type float(0,5.0)
-        
-        self.box.set_voltage = (output,value)
-        example:
-        self.box.set_voltage = (0,4.3) set first voltage out to 4.3 V
-        
-        """
-        output,value = parameters
-        self.ser.write(f'{SET_VOLTAGE},{output},{value} '.encode())
-        self._set_voltage = [output,value]
-        sleep(SEND_TIME)
+    def set_voltage(self, parameters):
+
+        output, value = parameters
+
+        if self._send_command(
+            f"{SET_VOLTAGE},{output},{value}"
+        ):
+            self._set_voltage = [output, value]
+        else:
+            raise TimeoutError("SET_VOLTAGE")
     @set_voltage.getter
     def set_voltage(self):
         """
@@ -427,7 +450,7 @@ class SerialConnect():
         list [adc0]
         """
         self.ser.write(f'{READ_ADC}#'.encode())
-        sleep(SEND_TIME*3)
+        sleep(SEND_TIME*2)
         for index in range(4):
             self._read_adc[index] = float(self.ser.readline().decode().strip())
         return self._read_adc
@@ -787,30 +810,24 @@ class WifiEsp32Connect():
         sleep(SEND_TIME*2)
         self._read_adc= self.ser.recv(1024).decode().split(' ')
         return self._read_adc
-   
-"""
-box = WifiEsp32Connect("192.168.1.35")
 
-#box = SerialConnect("COM33")
+"""box = WifiEsp32Connect("192.168.1.35")
+box = SerialConnect("COM24")
 box.connect()
 sleep(3)
-for _ in range(10):
-    #box.set_digital_pot([1,0,1],45)
-    #sleep(0.2)
-    print(box.digital_in[:])
-    #box.main = 0
-    sleep(2)
-    #box.main = 1
-    #for a in range(3):
-     #   box.set_voltage = (a,3)
-      #  sleep(0.2)
-    #print(box.digital_in[:])
-    #print('adc read', box.read_adc)
-    #print('pwm read', box.read_pwm)
-    #try:
-     #   print('pwm read', box.read_adc)
-    #except:
-     #   print('no data')
-      #  continue
+for index in range(100):
+    print('index:',index)
+    box.main = 1
+    sleep(0.01)
+    box.main = 0
+    sleep(0.01)
+box.disconnect()
+
+box = SerialConnect("COM24")
+box.connect()
+sleep(3)
+for index in range(20):
+    print('read pwm:',box.read_pwm)
+    sleep(0.3)
 box.disconnect()
 """

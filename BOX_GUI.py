@@ -6,7 +6,7 @@ import subprocess
 import sys
 import traceback
 from pathlib import Path
-from time import sleep, time
+from time import perf_counter, sleep, time
 from collections import deque
 import openpyxl
 import serial.tools.list_ports
@@ -28,6 +28,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.uic import loadUi
 import socket
+import paramiko
 from DigitalBox.Connection import G800,BIO24, data
 from DigitalBox.ElementsConnect import DeviceConnection
 from DigitalBox.dasConnect import SerialConnect, WifiEsp32Connect
@@ -65,6 +66,7 @@ IMAGE_PATH_OTHER =os.path.join("data","images","other")
 DATA_SAVE = os.path.join("data","saveData")
 AUTO_TEST_PATH = os.path.join("data","autoTest")
 ###################### BEGIN PARAMETERS #################################
+PASSWORD = 'aleks1990'
 ALL_LANGUAGES =['EN-English','DE-German','NL-Nederlands','PL-Polish ','FR-French','IT-Italiano','ES-Spanish','SL-Slovenian','DA-Danish','NO-Norwegian','FI-Finnish',
                 'SV-Swedish','RU-Russian','KK-Kazakhstan','UK-Ukraine','CS-Czech','SK-Slovak','HR-Croatian','SR-Serbian','EL-Greek','HU-Hungarian','SCN-Chinese',
                 'PT-Portugese','RO-Romanian','BL-Bulgarian','ET-Estonian','LT-Lithuanian','LV-Latvian']
@@ -119,10 +121,10 @@ VARIANTS = {
     "P_SS_ASKO_X_45": 20,
     "P_SS_ASKO_S_45": 21
 }
-VERZIJA_ESP = "3.20"
+VERZIJA_ESP = "3.40"
 VERZIJA_RPI = "3.20"
 DIGITAL_BOX_VERSION = 'V3.0'
-MAIN_TIME_REFRESHING = 1000
+MAIN_TIME_REFRESHING = 500
 SPACE = '\n'
 DigitalInput = 32
 change_input = []
@@ -230,6 +232,58 @@ class NetworkScanner(QObject):
                     self.found.emit(ip)
                 self.progress.emit(found_count, scanned)
         self.finished.emit()
+
+# ----- SSH-based scan worker for RPI hosts -----
+def get_local_subnet_prefix():
+    try:
+        hostname = socket.gethostname()
+        local_ip = socket.gethostbyname(hostname)
+        parts = local_ip.split('.')
+        if len(parts) == 4:
+            return '.'.join(parts[:3])
+    except Exception:
+        pass
+    return '192.168.1'
+
+class ScanWorker(QObject):
+    finished = pyqtSignal(list)
+    progress = pyqtSignal(str)
+
+    def __init__(self, base_ip, start, end, password='aleks1990'):
+        super().__init__()
+        self.base_ip = base_ip
+        self.start = start
+        self.end = end
+        self.password = password
+        self._running = True
+
+    def stop(self):
+        self._running = False
+
+    def run(self):
+        results = []
+
+        for i in range(self.start, self.end + 1):
+            if not self._running:
+                break
+            ip = f"{self.base_ip}.{i}"
+            self.progress.emit(f"🔎 Scanning IP {ip}...")
+
+            try:
+                ssh = paramiko.SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.connect(ip, username="pi", password=self.password, timeout=0.5)
+
+                stdin, stdout, stderr = ssh.exec_command("hostname")
+                name = stdout.read().decode().strip()
+
+                result = f"{name}@{ip}"
+                results.append(result)
+                ssh.close()
+            except Exception:
+                pass
+
+        self.finished.emit(results)
 class Info(ctypes.BigEndianStructure):
         _pack_ = True
         _fields_ = [
@@ -460,6 +514,28 @@ def listVariantElements():
     for index,lang in enumerate(list(VARIANTS.keys())):
         LIST_VARIANT.append(f'{index}-->{str(lang)}')
     return LIST_VARIANT
+def get_scan_config(ip):
+    #print("🌐 Local IP detected:", ip)
+
+    # ✅ LOCAL LAN
+    if ip.startswith("192.168"):
+        return "192.168.88", 10, 30
+
+    # ✅ VPN
+    if ip.startswith("10.0"):
+        return "10.0.10", 100, 130
+
+    # ✅ fallback
+    return "192.168.1", 10, 30
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except:
+        return "192.168.88.1"
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -475,6 +551,7 @@ class MainWindow(QMainWindow):
         self.index_extras = [0,0,0,0,0,0,0,0,0,0]
         #####################auto button##################
         count = 4
+        self.read_input = [0] * 32   # adjust size to your actual number of inputs
         self.signal_on = [0] * count
         self.signal_off = [0] * count
         self.periode = [0] * count
@@ -657,11 +734,13 @@ class MainWindow(QMainWindow):
             self.BoxConnect.setEditText(typed)
         self.ip_scanning.setText("Scanning network...")
         # create worker and thread
-        self.scanner = NetworkScanner()
+        local_ip = get_local_ip()
+        base_ip, start, end = get_scan_config(local_ip)
+        self.scanner = ScanWorker(base_ip, start, end, PASSWORD)
         self.scan_thread = QThread()
         self.scanner.moveToThread(self.scan_thread)
         self.scan_thread.started.connect(self.scanner.run)
-        self.scanner.found.connect(self.add_ip)
+        self.scanner.finished.connect(self.add_ip)
         self.scanner.progress.connect(self.update_progress)
         self.scanner.finished.connect(self.scan_finished)
         self.scan_thread.start()
@@ -669,13 +748,19 @@ class MainWindow(QMainWindow):
         if self.scanner:
             self.scanner.stop()
 
-    def add_ip(self, ip):
-        # only add once
-        if ip not in [self.BoxConnect.itemText(i) for i in range(self.BoxConnect.count())]:
-            self.BoxConnect.addItem(f'RPI - {ip}')
+    def add_ip(self, results):
+        # only add once for all found hosts
+        for result in results:
+            try:
+                name, ip = result.split("@", 1)
+            except ValueError:
+                ip = result
+            item_text = f'RPI - {ip}'
+            if item_text not in [self.BoxConnect.itemText(i) for i in range(self.BoxConnect.count())]:
+                self.BoxConnect.addItem(item_text)
 
-    def update_progress(self, found, scanned):
-        self.ip_scanning.setText(f"Found: {found} — Scanned: {scanned}")
+    def update_progress(self, message):
+        self.ip_scanning.setText(message)
 
     def scan_finished(self):
         self.RefreshingConnection.setEnabled(True)
@@ -1097,11 +1182,11 @@ class MainWindow(QMainWindow):
                 # increase main time refreshing if function executing to long
                 if  (tend-tbegin)*1000 >= MAIN_TIME_REFRESHING:
                     self.digitalPotChange = 1
-                    MAIN_TIME_REFRESHING += 500
+                    MAIN_TIME_REFRESHING += 100
                     self.DIGITAL_BOX_MAIN.setInterval(MAIN_TIME_REFRESHING)
                 # decrease main time refreshing if execute function is short
                 else:
-                    if (tend-tbegin)*1000 < MAIN_TIME_REFRESHING-200:
+                    if (tend-tbegin)*1000 < MAIN_TIME_REFRESHING - 100:
                         self.DIGITAL_BOX_MAIN.setInterval(MAIN_TIME_REFRESHING)
                         MAIN_TIME_REFRESHING -= 100
                         self.digitalPotChange = 0
@@ -1124,49 +1209,38 @@ class MainWindow(QMainWindow):
                     f.write(traceback.format_exc())
                 f.close()
         
+  
+
     def check_all_input(self):
-        """
-        check all input(read_adc,read_pwm,check_digital_pot, check_DAC_pot)
-        extra timer for long executing function 
-        """
+        from time import perf_counter
+        t0 = perf_counter()
+
         self.digitalPotIndex = 1
-        sleep(0.2)
+
         try:
+            t1 = perf_counter()
             self.read_adc()
+            print(f"read_adc: {perf_counter() - t1:.3f}s")
+
         except Exception:
-            self.read_adc_all = [0,0,0,0]
-            x = datetime.datetime.now()
-            dateAndTime = x.strftime("%c")
-            with open('check_error.txt', 'a') as f:
-                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
-                f.write('!!!Dont get anything from ADC read !!!\n')
-                f.write('Solution:\n')
-                f.write(f'-- Check digital box version(RPI - {VERZIJA_RPI} ESP - {VERZIJA_ESP}) or hardware problems with ADC read\n')
-                f.write(f'{errorNumber*2}\n')
-                f.write(traceback.format_exc())
-                f.write(f'{errorNumber*2}\n')
-            f.close()
-        
-        try:   
+            ...
+
+        try:
+            t1 = perf_counter()
             self.read_pwm()
-            
+            print(f"read_pwm: {perf_counter() - t1:.3f}s")
+
         except Exception:
-            x = datetime.datetime.now()
-            dateAndTime = x.strftime("%c")
-            with open('check_error.txt', 'a') as f:
-                f.write(f'{errorNumber}{dateAndTime}{errorNumber}\n')
-                f.write('!!!Dont get anything from PWM read !!!\n')
-                f.write('Solution:\n')
-                f.write(f'-- Check digital box version(RPI - {VERZIJA_RPI} ESP - {VERZIJA_ESP}) or hardware problems with ADC read\n')
-                f.write(f'{errorNumber*2}\n')
-                f.write(traceback.format_exc())
-                f.write(f'{errorNumber*2}\n')
-            f.close()
-        
+            ...
+
+        t1 = perf_counter()
         self.check_digital_pot()
         self.check_DAC_pot()
-        
+        print(f"check_digital_pot: {perf_counter() - t1:.3f}s")
+
         self.digitalPotIndex = 0
+
+        print(f"TOTAL: {perf_counter() - t0:.3f}s")
                 
     def boxMarks(self,BOXMARKS):
         """
@@ -1886,10 +1960,18 @@ class MainWindow(QMainWindow):
             self.auto_button_parameters_default(0)
         else:
             try:
+                if not isinstance(self.param_auto1, (list, tuple)):
+                    print("Invalid param_auto1:", self.param_auto1, type(self.param_auto1))
+                    return
+
+                if len(self.param_auto1) < 4:
+                    print("param_auto1 has invalid length:", self.param_auto1)
+                    return
+
+                
                 self.auto_button_function(0,int(self.param_auto1[1]),int(self.param_auto1[2]),self.param_auto1[3])
-            except TypeError as e:
-                self.auto_button_function(0,0,0,0)
-                print(f"Error occurred while calling auto_button_function. Problems with reading parameters: {e}")
+            except TypeError as e: 
+                print(f"1 Error occurred while calling auto_button_function. Problems with reading parameters: {e}")
             self.AUTO1.setStyleSheet(ButtonStyleOn2)
             #self.AUTO1.setIcon(self.iconSwitchOn)
         
@@ -1898,7 +1980,19 @@ class MainWindow(QMainWindow):
             #self.AUTO2.setIcon(self.iconSwitchOff)
             self.auto_button_parameters_default(1)
         else:
-            self.auto_button_function(1,int(self.param_auto2[1]),int(self.param_auto2[2]),self.param_auto2[3])
+            try:
+                if not isinstance(self.param_auto2, (list, tuple)):
+                    print("Invalid param_auto2:", self.param_auto2, type(self.param_auto2))
+                    return
+
+                if len(self.param_auto2) < 4:
+                    print("param_auto2 has invalid length:", self.param_auto2)
+                    return
+
+                
+                self.auto_button_function(1,int(self.param_auto2[1]),int(self.param_auto2[2]),self.param_auto2[3])
+            except TypeError as e: 
+                print(f"2 Error occurred while calling auto_button_function. Problems with reading parameters: {e}")
             self.AUTO2.setStyleSheet(ButtonStyleOn2)
             #self.AUTO2.setIcon(self.iconSwitchOn)
         
@@ -1907,7 +2001,18 @@ class MainWindow(QMainWindow):
             #self.AUTO3.setIcon(self.iconSwitchOff)
             self.auto_button_parameters_default(2) 
         else:
-            self.auto_button_function(2,int(self.param_auto3[1]),int(self.param_auto3[2]),self.param_auto3[3])
+            try:
+                if not isinstance(self.param_auto3, (list, tuple)):
+                    print("Invalid param_auto3:", self.param_auto3, type(self.param_auto3))
+                    return
+
+                if len(self.param_auto3) < 4:
+                    print("param_auto3 has invalid length:", self.param_auto3)
+                    return
+                self.auto_button_function(2,int(self.param_auto3[1]),int(self.param_auto3[2]),self.param_auto3[3])
+            except TypeError as e:
+                self.auto_button_function(0,0,0,0)
+                print(f"3 Error occurred while calling auto_button_function. Problems with reading parameters: {e}")
             self.AUTO3.setStyleSheet(ButtonStyleOn2)
             #self.AUTO3.setIcon(self.iconSwitchOn)
         
@@ -1916,7 +2021,19 @@ class MainWindow(QMainWindow):
             #self.AUTO4.setIcon(self.iconSwitchOff)
             self.auto_button_parameters_default(3)
         else:
-            self.auto_button_function(3,int(self.param_auto4[1]),int(self.param_auto4[2]),self.param_auto4[3])
+            try:
+                if not isinstance(self.param_auto4, (list, tuple)):
+                    print("Invalid param_auto4:", self.param_auto4, type(self.param_auto4))
+                    return
+
+                if len(self.param_auto4) < 4:
+                    print("param_auto4 has invalid length:", self.param_auto4)
+                    return
+
+                self.auto_button_function(3,int(self.param_auto4[1]),int(self.param_auto4[2]),self.param_auto4[3])
+            except TypeError as e:
+                self.auto_button_function(0,0,True,0)
+                print(f"4 Error occurred while calling auto_button_function. Problems with reading parameters: {e}")
             self.AUTO4.setStyleSheet(ButtonStyleOn2)
             #self.AUTO4.setIcon(self.iconSwitchOn)
         ###################################################
@@ -2102,8 +2219,7 @@ class MainWindow(QMainWindow):
                 self.OUT15.setStyleSheet(ButtonStyleOn2)
                 self.OUT15.setIcon(self.iconSwitchOn)
             self.connectParameters = 0
-    
-    
+     
     def process_signal(self,index, val, state):
         
         if state =='POSITIVE':
@@ -3624,7 +3740,6 @@ class AutoRunScript(QMainWindow):
       
         self.show()
     
-    
     def runTest(self):
         self.text.clear()
         self.tree.setEnabled(False)
@@ -3634,7 +3749,6 @@ class AutoRunScript(QMainWindow):
         #self.thread_run_test.start(self.runAllTest)
         print('ok')
 
-    
     def runAllTest(self):
         self.listScript =[]
         self.all_processes = []
@@ -3646,7 +3760,6 @@ class AutoRunScript(QMainWindow):
                 res = any(self.item.text(0) in ele for ele in self.DictRunTest[self.listDirectory[index]])
                 if self.fileType in self.item.text(0): 
                     if res is True:
-                        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',self.item.text(0)) 
                         #self.pQ = QProcess(self)
                         #self.pQ.readyReadStandardOutput.connect(self.handle_stdout)
                         #self.pQ.readyReadStandardError.connect(self.handle_stderr)
@@ -4563,14 +4676,15 @@ if __name__ == "__main__":
     ### CREATE AN OBJECT NAMES ###
     mainWindow = MainWindow()
     mainWindow.show()
-    # autoTest = AutoRunScript()
-    # autoTest.show()
+    autoTest = AutoRunScript()
+    #autoTest.show()
     HusaModelWindow = HusaSetModule()
     PyroSetSystem = Bio21PyroSetSystem()
     SetDacValue = SetDacPot()
     PotTableSet = CreatePotTable()
     DacTableCreate = CreateDacTable()
     RunAutoTest = CreateAutoTest()
+    #RunAutoTest.show()
     deviceG800 = DeviceG800()
     deviceBio24 = DeviceBio24()
     #deviceG800.show()

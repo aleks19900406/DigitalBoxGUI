@@ -830,13 +830,15 @@ class DAS(RawClient):
         self.frequency_out = self.FREQUENCY_OUT_DEFAULT
         self.digital_out[:] = [self.DIGITAL_OUT_DEFAULT] * DIGITAL_OUT_CNT
         self.analog_out[:] = [self.ANALOG_OUT_DEFAULT] * ANALOG_OUT_CNT
-
+    
     def _get_digital_out(self, item):
         return self._get_request(
             {ATTR_GROUP: GROUP_DIGITAL_OUT, ATTR_MODE: MODE_GET, ATTR_VALUE: item}
         )
 
     def _set_digital_out(self, item, value):
+        print('item--->',item)
+        print('value--->',value)
         self._request(
             {
                 ATTR_GROUP: GROUP_DIGITAL_OUT,
