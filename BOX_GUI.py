@@ -1,3 +1,26 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+BOX_GUI.py
+==========
+Main graphical user interface for the DIGITAL BOX test system.
+
+This application provides a PyQt5 based GUI to control and monitor a
+"Digital Box" hardware test unit. It supports direct serial connections
+(Arduino Mega / ESP32) as well as network RPI connections, and includes
+windows for setting digital potentiometers, DAC tables, HUSA models,
+pyro systems, and automated testing.
+
+Main functionalities:
+    - Connect to a digital box (serial COM, ESP32, or RPI via DAS).
+    - Control digital inputs / outputs and auto buttons.
+    - Set and read digital potentiometers, DAC values, voltages and PWM.
+    - Save measurement data to .csv files.
+    - Open additional screens (H800/G800, BIO24, HUSA model, pyro system,
+      DAC table, pot table, automation test).
+    - Scan the local network for RPI devices.
+"""
+
 ###################### IMPORTS #########################################
 import ctypes
 import datetime
@@ -1650,8 +1673,13 @@ class MainWindow(QMainWindow):
     
         if self.index_refreshing >=2:
             self.index_refreshing =0
- ################################## ON/OFF AND OUTPUT BUTTONS #################################      
+################################## ON/OFF AND OUTPUT BUTTONS #################################      
     def button_OnOff(self):
+        """
+        Toggle the main ON/OFF switch state.
+        When turned OFF, the G800 device is disconnected; when turned ON
+        it is reconnected again.
+        """
         self.index_on_off +=1
         if self.index_on_off >=2:
             self.index_on_off = 0
@@ -1660,8 +1688,11 @@ class MainWindow(QMainWindow):
         else:
             self.on_off.setIcon(self.iconOn)
             deviceG800.boxOnDeviceDisconnect()
-    
+
     def output0(self):
+        """
+        Toggle digital output OUT0 (ON/OFF) and update its icon/style.
+        """
         self.index_out[0] +=1
         if self.index_out[0] >= 2:
             self.index_out[0] = 0
@@ -1672,6 +1703,9 @@ class MainWindow(QMainWindow):
             self.OUT0.setIcon(self.iconSwitchOn)
     
     def output1(self):
+        """
+        Toggle digital output OUT1 (ON/OFF) and update its icon/style.
+        """
         self.index_out[1] +=1
         if self.index_out[1] >=2:
             self.index_out[1] =0 
@@ -1682,6 +1716,9 @@ class MainWindow(QMainWindow):
             self.OUT1.setIcon(self.iconSwitchOn)
     
     def output2(self):
+        """
+        Toggle digital output OUT2 (ON/OFF) and update its icon/style.
+        """
         self.index_out[2] +=1
         if self.index_out[2] >=2:
             self.index_out[2] =0  
@@ -1692,6 +1729,9 @@ class MainWindow(QMainWindow):
             self.OUT2.setIcon(self.iconSwitchOn)
     
     def output3(self):
+        """
+        Toggle digital output OUT3 (ON/OFF) and update its icon/style.
+        """
         self.index_out[3] +=1
         if self.index_out[3] >=2:
             self.index_out[3] =0  
@@ -1702,6 +1742,9 @@ class MainWindow(QMainWindow):
             self.OUT3.setIcon(self.iconSwitchOn)
     
     def output4(self):
+        """
+        Toggle digital output OUT4 (ON/OFF) and update its icon/style.
+        """
         self.index_out[4] +=1
         if self.index_out[4] >=2:
             self.index_out[4] =0
@@ -1712,6 +1755,9 @@ class MainWindow(QMainWindow):
             self.OUT4.setIcon(self.iconSwitchOn)   
     
     def output5(self):
+        """
+        Toggle digital output OUT5 (ON/OFF) and update its icon/style.
+        """
         self.index_out[5] +=1
         if self.index_out[5] >=2:
             self.index_out[5] =0  
@@ -1722,6 +1768,9 @@ class MainWindow(QMainWindow):
             self.OUT5.setIcon(self.iconSwitchOn)
     
     def output6(self):
+        """
+        Toggle digital output OUT6 (ON/OFF) and update its icon/style.
+        """
         self.index_out[6] +=1
         if self.index_out[6] >=2:
             self.index_out[6] =0
@@ -1732,6 +1781,9 @@ class MainWindow(QMainWindow):
             self.OUT6.setIcon(self.iconSwitchOn) 
     
     def output7(self):
+        """
+        Toggle digital output OUT7 (ON/OFF) and update its icon/style.
+        """
         self.index_out[7] +=1
         if self.index_out[7] >=2:
             self.index_out[7] =0
@@ -1742,6 +1794,9 @@ class MainWindow(QMainWindow):
             self.OUT7.setIcon(self.iconSwitchOn)
  
     def output8(self):
+        """
+        Toggle digital output OUT8 (ON/OFF) and update its icon/style.
+        """
         self.index_out[8] +=1
         if self.index_out[8] >= 2:
             self.index_out[8] = 0
@@ -1752,6 +1807,9 @@ class MainWindow(QMainWindow):
             self.OUT8.setIcon(self.iconSwitchOn)
     
     def output9(self):
+        """
+        Toggle digital output OUT9 (ON/OFF) and update its icon/style.
+        """
         self.index_out[9] +=1
         if self.index_out[9] >=2:
             self.index_out[9] =0 
@@ -1762,6 +1820,9 @@ class MainWindow(QMainWindow):
             self.OUT9.setIcon(self.iconSwitchOn)
     
     def output10(self):
+        """
+        Toggle digital output OUT10 (ON/OFF) and update its icon/style.
+        """
         self.index_out[10] +=1
         if self.index_out[10] >=2:
             self.index_out[10] =0  
@@ -1772,6 +1833,9 @@ class MainWindow(QMainWindow):
             self.OUT10.setIcon(self.iconSwitchOn)
     
     def output11(self):
+        """
+        Toggle digital output OUT11 (ON/OFF) and update its icon/style.
+        """
         self.index_out[11] +=1
         if self.index_out[11] >=2:
             self.index_out[11] = 0  
@@ -1782,6 +1846,9 @@ class MainWindow(QMainWindow):
             self.OUT11.setIcon(self.iconSwitchOn)
     
     def output12(self):
+        """
+        Toggle digital output OUT12 (ON/OFF) and update its icon/style.
+        """
         self.index_out[12] +=1
         if self.index_out[12] >=2:
             self.index_out[12] =0
@@ -1792,6 +1859,9 @@ class MainWindow(QMainWindow):
             self.OUT12.setIcon(self.iconSwitchOn)   
     
     def output13(self):
+        """
+        Toggle digital output OUT13 (ON/OFF) and update its icon/style.
+        """
         self.index_out[13] +=1
         if self.index_out[13] >=2:
             self.index_out[13] =0  
@@ -1802,6 +1872,9 @@ class MainWindow(QMainWindow):
             self.OUT13.setIcon(self.iconSwitchOn)
     
     def output14(self):
+        """
+        Toggle digital output OUT14 (ON/OFF) and update its icon/style.
+        """
         self.index_out[14] +=1
         if self.index_out[14] >=2:
             self.index_out[14] =0
@@ -1812,6 +1885,9 @@ class MainWindow(QMainWindow):
             self.OUT14.setIcon(self.iconSwitchOn) 
     
     def output15(self):
+        """
+        Toggle digital output OUT15 (ON/OFF) and update its icon/style.
+        """
         self.index_out[15] +=1
         if self.index_out[15] >=2:
             self.index_out[15] =0
@@ -1823,6 +1899,9 @@ class MainWindow(QMainWindow):
  
  ########################auto button ###########################################################
     def buttonAuto1(self):
+        """
+        Toggle AUTO button 1 (ON/OFF) and update its style.
+        """
         self.index_auto[0] +=1
         if self.index_auto[0] >=2:
             self.index_auto[0] = 0
@@ -1832,6 +1911,9 @@ class MainWindow(QMainWindow):
             self.AUTO1.setStyleSheet(ButtonStyleOn2)
             #self.AUTO1.setIcon(self.iconSwitchOn)
     def buttonAuto2(self):
+        """
+        Toggle AUTO button 2 (ON/OFF) and update its style.
+        """
         self.index_auto[1] +=1
         if self.index_auto[1] >=2:
             self.index_auto[1] = 0
@@ -1841,6 +1923,9 @@ class MainWindow(QMainWindow):
             self.AUTO2.setStyleSheet(ButtonStyleOn2)
             #self.AUTO2.setIcon(self.iconSwitchOn)
     def buttonAuto3(self):
+        """
+        Toggle AUTO button 3 (ON/OFF) and update its style.
+        """
         self.index_auto[2] +=1
         if self.index_auto[2] >=2:
             self.index_auto[2] = 0
@@ -1850,6 +1935,9 @@ class MainWindow(QMainWindow):
             self.AUTO3.setStyleSheet(ButtonStyleOn2)
             #self.AUTO3.setIcon(self.iconSwitchOn)
     def buttonAuto4(self):
+        """
+        Toggle AUTO button 4 (ON/OFF) and update its style.
+        """
         self.index_auto[3] +=1
         if self.index_auto[3] >=2:
             self.index_auto[3] = 0
@@ -1930,7 +2018,7 @@ class MainWindow(QMainWindow):
             self.digital_pot5.setStyleSheet(f"background-color: rgb({R},{G},{B})")
             self.lcdNumber_digital_pot5.display(self.digital_pot5.value())
         return self.digital_pot5.value()
-  ##############################################################################################  
+##############################################################################################  
     def check_input(self):
         """
         read digital input from digital box
@@ -1941,6 +2029,10 @@ class MainWindow(QMainWindow):
         return input
     
     def auto_button_parameters_default(self,index):
+        """
+        Reset the auto-button state machine parameters at the given index
+        (signal_on, signal_off, period, current_output, output_start).
+        """
         self.signal_on[index] = 0
         self.signal_off[index] = 0
         self.periode[index] = 0

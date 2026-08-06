@@ -314,14 +314,12 @@ class SerialConnect():
         read_pwm_all[1]['d'] get duty form pwm 2
         """
         self.ser.write(f'{READ_PWM},1'.encode())
-        sleep(SEND_TIME*4)
-        raw = self.ser.readline().decode(errors="ignore")
+        sleep(SEND_TIME)
         f1 = self.ser.readline().decode().strip()
         d1 = self.ser.readline().decode().strip()
         print('read pwm1:',f1,d1)
-        print('test',repr(raw))
         self.ser.write(f'{READ_PWM},2'.encode())
-        sleep(SEND_TIME*4)
+        sleep(SEND_TIME)
         f2 = self.ser.readline().decode().strip()
         d2 = self.ser.readline().decode().strip()
         print('read pwm2:',f2,d2)
@@ -812,10 +810,11 @@ class WifiEsp32Connect():
         return self._read_adc
 
 """box = WifiEsp32Connect("192.168.1.35")
+
 box = SerialConnect("COM24")
 box.connect()
 sleep(3)
-for index in range(100):
+for index in range(10):
     print('index:',index)
     box.main = 1
     sleep(0.01)
@@ -829,5 +828,4 @@ sleep(3)
 for index in range(20):
     print('read pwm:',box.read_pwm)
     sleep(0.3)
-box.disconnect()
-"""
+box.disconnect()"""
