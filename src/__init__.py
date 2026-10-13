@@ -1,0 +1,1 @@
+"""Digital Box application modules."""

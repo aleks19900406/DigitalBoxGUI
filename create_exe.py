@@ -1,54 +1,34 @@
-import subprocess
-import os
+"""Build the standalone Windows GUI with the active Python environment."""
+
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 
-# === Base path ===
-home = Path.home()
-documents = home / "Documents" / "Automatic_test_UI" / "DigitalBoxGUI"
 
-# === Paths ===
-script_location = documents / "gui_project" / "BOX_GUI.py"
-icon_path = documents / "gui_application" / "data" / "images" / "other" / "blackBox.ico"
-dist_path = documents / "gui_application"
+def main():
+    project_root = Path(__file__).resolve().parent
+    dist_path = project_root / "dist"
+    subprocess.run(
+        [
+            sys.executable, "-m", "PyInstaller", "--noconfirm", "--clean",
+            "--distpath", str(dist_path),
+            "--workpath", str(project_root / "build"),
+            str(project_root / "BOX_GUI.spec"),
+        ],
+        cwd=str(project_root),
+        check=True,
+    )
+    executable = dist_path / "BOX_GUI.exe"
+    if not executable.is_file():
+        raise FileNotFoundError(str(executable))
+    oven_executable = project_root.parent / "OvenDeviceConnect" / "dist" / "OvenDeviceConnect.exe"
+    if oven_executable.is_file():
+        shutil.copy2(oven_executable, dist_path / oven_executable.name)
+    else:
+        print("WARNING: place OvenDeviceConnect.exe beside BOX_GUI.exe to enable ConnectToDevice.")
+    print(f"Executable created: {executable}")
 
-# Folders to bundle (relative to GUI_Project)
-project_path = documents / "GUI_Project"
-additional_paths = [
-    ("DigitalBox", project_path / "DigitalBox"),
-    ("package", project_path / "package"),
-    ("config_file", project_path / "config_file"),
-    ("data", project_path / "data"),
-    ("QT_designer", project_path / "QT_designer"),
-    ("config_file", project_path / "config_file"),  # included again just in case
-]
 
-# === Convert to PyInstaller --add-data format ===
-add_data_args = []
-for name, full_path in additional_paths:
-    add_data_args.append(f"--add-data={full_path};{name}")
-
-# === PyInstaller Command ===
-cmd = [
-    "pyinstaller",
-    "--noconfirm",
-    "--onefile",
-    "--windowed",
-    f"--icon={icon_path}",
-    f"--distpath={dist_path}",
-    *add_data_args,
-    str(script_location)
-]
-
-# === Run the command ===
-print("Running PyInstaller...\n")
-subprocess.run(cmd)
-
-# === Clean up build and spec ===
-try:
-    shutil.rmtree("build")
-    os.remove("BOX_GUI.spec")
-except Exception:
-    pass
-
-print(f"\n✅ Executable created in: {dist_path}")
+if __name__ == "__main__":
+    main()

@@ -3523,7 +3523,20 @@ selection-color: rgb(255, 170, 0);</string>
      <string>Set environment:</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="ButtonCreateAutoTest">
+    <widget class="QPushButton" name="ConnectToDevice">
+     <property name="geometry">
+      <rect>
+        <x>1410</x>
+        <y>890</y>
+        <width>121</width>
+        <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>ConnectToDevice</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="ButtonCreateAutoTest">
     <property name="geometry">
      <rect>
       <x>1410</x>
@@ -4107,6 +4120,7 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>barOpenAutoTest</zorder>
    <zorder>setEnvironmentText</zorder>
    <zorder>ButtonCreateAutoTest</zorder>
+    <zorder>ConnectToDevice</zorder>
    <zorder>ButtonG800</zorder>
    <zorder>label_connect</zorder>
    <zorder>OUT9</zorder>

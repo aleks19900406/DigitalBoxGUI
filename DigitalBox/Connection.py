@@ -1,7 +1,9 @@
 import ctypes
 import glob
 import os
+import sys
 from enum import Enum, auto
+from pathlib import Path
 from time import sleep,time
 
 import json5
@@ -11,14 +13,16 @@ from stream.specializations.hisense import (
         DeviceFamily,
         HisenseStrem,
 )
-path_to_json = glob.glob("./config_file/G800_configs.json")
+config_root = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent.parent))
+config_path = config_root / "config_file" / "G800_configs.json"
+path_to_json = glob.glob(str(config_path))
 path_to_json.sort(key=os.path.getmtime)
 #print(path_to_json)
 if path_to_json:
     with open(path_to_json[-1]) as file:
         data = json5.load(file)
 else:
-    raise FileNotFoundError("No JSON files found in the specified directory.")
+    raise FileNotFoundError(f"Configuration file not found: {config_path}")
 import serial
 DEVICE_NUMBER = 1
 FRAME_TYPE = 105
