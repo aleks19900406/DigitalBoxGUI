@@ -29,7 +29,7 @@ PROJECT_DESC = "Project consists of stream bases and various stream implementati
 MIN_PY_VERSION = "3.8"
 
 with open("requirements.txt") as f:
-    INSTALL_REQUIREMENTS = list(f.read().split("\n"))
+    INSTALL_REQUIREMENTS = [line.strip() for line in f if line.strip()]
 
 
 setup(

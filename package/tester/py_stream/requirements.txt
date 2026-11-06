@@ -1,2 +1,2 @@
-libscrc>=1.5<2
-pyserial>=3.4<4
+fastcrc
+pyserial

@@ -1,15 +1,14 @@
 import os
 from pathlib import Path
-from PyQt5.QtWidgets import QMainWindow, QPlainTextEdit, QPushButton, QTreeWidget, QTreeWidgetItem, QTreeWidgetItemIterator
-from PyQt5.uic import loadUi
+from PyQt6.QtWidgets import QMainWindow, QPlainTextEdit, QPushButton, QTreeWidget, QTreeWidgetItem, QTreeWidgetItemIterator
+from PyQt6.uic import loadUi
 from DigitalBox.Connection import data
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from DigitalBox.lib import *
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QPushButton
+from PyQt6.QtCore import QProcess, QThreadPool
 from . import state
 from .paths import AUTO_TEST_PATH, QT_DESIGNER
+from .scaling import make_scalable
 from .styles import ButtonStyleOff, ButtonStyleOff2, MainScreenStyle
 
 
@@ -98,15 +97,15 @@ class CreateAutoTest(QMainWindow):
             if (department.find(".") == -1):
                 self.parent.setExpanded(False)
                 self.parent.setText(0,department)
-                self.parent.setFlags(self.parent.flags() | Qt.ItemIsTristate | Qt.ItemIsUserCheckable)
+                self.parent.setFlags(self.parent.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
                 self.listDirectory.append(department)
                 self.listDirectory.sort()
                 try:
                     for self.index_child ,employee in enumerate(self.Dict[department]):
                         self.child = QTreeWidgetItem(self.parent)
-                        self.child.setFlags(self.child.flags() | Qt.ItemIsUserCheckable)
+                        self.child.setFlags(self.child.flags() | Qt.ItemFlag.ItemIsUserCheckable)
                         self.child.setText(0, employee)
-                        self.child.setCheckState(0, Qt.Unchecked)
+                        self.child.setCheckState(0, Qt.CheckState.Unchecked)
                 except KeyError:
                     continue
         # place the tree on the main window
@@ -126,7 +125,7 @@ class CreateAutoTest(QMainWindow):
         self.listScript =[]
         self.all_processes = []
         for index in range(len(self.listDirectory)):
-            iterator = QTreeWidgetItemIterator(self.tree,QTreeWidgetItemIterator.Checked)
+            iterator = QTreeWidgetItemIterator(self.tree,QTreeWidgetItemIterator.IteratorFlag.Checked)
             while iterator.value():
                 self.item = iterator.value()
                 res = any(self.item.text(0) in ele for ele in self.DictRunTest[self.listDirectory[index]])
@@ -173,9 +172,9 @@ class CreateAutoTest(QMainWindow):
 
     def handle_state(self, state):
         states = {
-            QProcess.NotRunning: 'Finish',
-            QProcess.Starting: 'Starting',
-            QProcess.Running: 'Running',
+            QProcess.ProcessState.NotRunning: 'Finish',
+            QProcess.ProcessState.Starting: 'Starting',
+            QProcess.ProcessState.Running: 'Running',
         }
         state_name = states[state]
         self.message(f"State changed: {state_name}")
@@ -200,7 +199,7 @@ class AutoRunScript(QMainWindow):
         self.index = 0
         self.pQ = None
         self.setWindowTitle('AUTOMATION TEST')
-        self.setFixedSize(500, 725)
+        make_scalable(self, 500, 725)
         self.setStyleSheet(MainScreenStyle)
         self.tree.setStyleSheet(MainScreenStyle)
         self.tree.setHidden(False)
@@ -263,15 +262,15 @@ class AutoRunScript(QMainWindow):
             if (department.find(".") == -1):
                 self.parent.setExpanded(False)
                 self.parent.setText(0,department)
-                self.parent.setFlags(self.parent.flags() | Qt.ItemIsTristate | Qt.ItemIsUserCheckable)
+                self.parent.setFlags(self.parent.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
                 self.listDirectory.append(department)
                 self.listDirectory.sort()
                 try:
                     for self.index_child ,employee in enumerate(self.Dict[department]):
                         self.child = QTreeWidgetItem(self.parent)
-                        self.child.setFlags(self.child.flags() | Qt.ItemIsUserCheckable)
+                        self.child.setFlags(self.child.flags() | Qt.ItemFlag.ItemIsUserCheckable)
                         self.child.setText(0, employee)
-                        self.child.setCheckState(0, Qt.Unchecked)
+                        self.child.setCheckState(0, Qt.CheckState.Unchecked)
                 except KeyError:
                     continue
         # place the tree on the main window
@@ -292,7 +291,7 @@ class AutoRunScript(QMainWindow):
         self.listScript =[]
         self.all_processes = []
         for index in range(len(self.listDirectory)):
-            iterator = QTreeWidgetItemIterator(self.tree,QTreeWidgetItemIterator.Checked)
+            iterator = QTreeWidgetItemIterator(self.tree,QTreeWidgetItemIterator.IteratorFlag.Checked)
             while iterator.value():
                 print('ok123')
                 self.item = iterator.value()
@@ -339,9 +338,9 @@ class AutoRunScript(QMainWindow):
 
     def handle_state(self, state):
         states = {
-            QProcess.NotRunning: 'Finish',
-            QProcess.Starting: 'Starting',
-            QProcess.Running: 'Running',
+            QProcess.ProcessState.NotRunning: 'Finish',
+            QProcess.ProcessState.Starting: 'Starting',
+            QProcess.ProcessState.Running: 'Running',
         }
         state_name = states[state]
         self.message(f"State changed: {state_name}")

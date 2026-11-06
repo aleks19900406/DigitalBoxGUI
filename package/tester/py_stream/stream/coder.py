@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Type, Union
+from typing import Callable, Optional, Type, Union
 
-import libscrc
+from fastcrc import crc16
 
 from ._base import AsyncChainingStream, AsyncStreamInternals
 from ._byte_list import (
@@ -34,7 +34,7 @@ class Coder(ABC):
 
     @abstractmethod
     def encode(self, data: ByteBufferType) -> ByteBufferType:
-        "Implements data encoding"
+        """Implements data encoding"""
 
     @abstractmethod
     def decode(self, data: ByteBufferType) -> ByteBufferType:
@@ -51,7 +51,7 @@ class CheckSumCoder(Coder):
         super().__init__()
 
     def encode(self, data: ByteBufferType) -> ByteBufferType:
-        ret = bytearray([*data])
+        ret = bytearray(data)
         ret.extend(
             (sum(data) % self._modulo).to_bytes(self._byte_width, self._endianness)
         )
@@ -59,10 +59,10 @@ class CheckSumCoder(Coder):
 
     def decode(self, data: ByteBufferType) -> ByteBufferType:
         check_sum = data[-self._byte_width :]
-        data = data[: -self._byte_width]
-        if int.from_bytes(check_sum, self._endianness) != sum(data) % self._modulo:
+        payload = data[: -self._byte_width]
+        if int.from_bytes(check_sum, self._endianness) != sum(payload) % self._modulo:
             raise CoderDecodeError("data check-sum does not match")
-        return data
+        return payload
 
 
 class CRCCoder(Coder):
@@ -73,31 +73,48 @@ class CRCCoder(Coder):
     :raises ValueError: in case of missing method parameter
     """
 
-    _size_by_method = {"lte16": 2, "ccitt_aug": 2}
+    _size_by_method = {
+        "lte16": 2,
+        "ccitt_aug": 2,
+    }
+
+    @staticmethod
+    def _crc_lte16(data: ByteBufferType) -> int:
+        """CRC-16/LTE compatible implementation using fastcrc."""
+        return crc16.xmodem(bytes(data))
+
+    @staticmethod
+    def _crc_ccitt_aug(data: ByteBufferType) -> int:
+        """CRC-16/AUG-CCITT compatible implementation using fastcrc."""
+        return crc16.xmodem(bytes(data), 0x1D0F)
+
+    _method_map: dict[str, Callable[[ByteBufferType], int]] = {
+        "lte16": _crc_lte16.__func__,
+        "ccitt_aug": _crc_ccitt_aug.__func__,
+    }
 
     def __init__(self, method: str = None, endianness: str = "little") -> None:
-        """Initializes a new CRCPacker object"""
+        """Initializes a new CRCCoder object."""
         if method is None or method not in self._size_by_method:
             raise ValueError("invalid crc calculation method")
+
         self.method = method
-        self._method_callable = getattr(libscrc, method)
+        self._method_callable = self._method_map[method]
         self._crc_size = self._size_by_method[method]
         self._endianness = endianness
 
-    def encode(self, data: bytearray) -> bytearray:
-        return bytearray(
-            [
-                *data,
-                *self._method_callable(data).to_bytes(self._crc_size, self._endianness),
-            ]
-        )
+    def encode(self, data: ByteBufferType) -> ByteBufferType:
+        payload = bytearray(data)
+        crc_value = self._method_callable(payload)
+        payload.extend(crc_value.to_bytes(self._crc_size, self._endianness))
+        return payload
 
-    def decode(self, data: bytearray) -> bytearray:
+    def decode(self, data: ByteBufferType) -> ByteBufferType:
         crc = int.from_bytes(data[-self._crc_size :], self._endianness)
-        data = data[: -self._crc_size]
-        if crc != self._method_callable(data):
+        payload = data[: -self._crc_size]
+        if crc != self._method_callable(payload):
             raise CoderDecodeError("data crc does not match")
-        return data
+        return payload
 
 
 class CoderStream(
@@ -106,7 +123,7 @@ class CoderStream(
 ):
     """Coder stream class is used to encode or decode data
 
-    :param coder_class: a class to be used for coding anduncoding
+    :param coder_class: a class to be used for coding and uncoding
     :param input_instance: input stream instance
     :param output_instance: output stream instance. If not passed, the input_instance is
                             used also as an output
@@ -124,7 +141,7 @@ class CoderStream(
         output_instance: Optional[ByteListOutputStreamType] = None,
         **kwargs,
     ) -> None:
-        """Initializes a _CoderStream"""
+        """Initializes a CoderStream."""
         self._coder = coder_class(**kwargs)
         super().__init__(input_instance, output_instance)
 
@@ -143,7 +160,8 @@ class CoderStream(
             if len(internal.buffer):
                 decoded_list = internal.buffer[:]
                 internal.buffer.clear()
-        if len(decoded_list):
+
+        if decoded_list:
             self._write_output(
                 [self._coder.encode(decoded) for decoded in decoded_list]
             )

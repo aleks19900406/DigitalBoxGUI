@@ -1,5 +1,5 @@
 from time import sleep
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal
 
 
 class Worker(QObject):
@@ -10,6 +10,7 @@ class Worker(QObject):
             self._step = 0
             self._isRunning = True
             self._maxSteps = 100
+            self.value = 0
     
     def setValue(self,value):
         self.value = value

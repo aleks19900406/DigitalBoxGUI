@@ -2,14 +2,14 @@ import datetime
 import os
 import traceback
 from pathlib import Path
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QMainWindow
-from PyQt5.uic import loadUi
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from DigitalBox.lib import *
+from PyQt6 import QtGui
+from PyQt6.QtWidgets import QMainWindow
+from PyQt6.uic import loadUi
+from PyQt6.QtGui import QFont
+from DigitalBox.lib import dacValueMaxMin
 from . import state
 from .paths import BOX_DIGITAL_DAC_PATH, BOX_DIGITAL_POT_PATH, IMAGE_PATH_OTHER, QT_DESIGNER
+from .scaling import make_scalable
 from .styles import ButtonStyleOff2, ButtonStyleOn, ButtonStyleWhite, MainScreenStyle, PotSlicerLabelStyle
 from .helpers import listDigitalDacTable, listDigitalPotTable, sliderColorDac
 
@@ -21,22 +21,22 @@ class SetDacPot(QMainWindow):
         DacScreen = QT_DESIGNER / 'DacTable.ui'
         loadUi(str(DacScreen),self)
         self.setWindowTitle('SET DAC')
-        self.setFixedSize(960, 705)
+        make_scalable(self, 960, 705)
         self.setStyleSheet(MainScreenStyle)
         ##########################SET SLIDER STYLE #############################
         try:
             for index in range(8):
                 min,max = dacValueMaxMin(self,f'Table{index+1}')
-                eval(f'self.dac_pot{index}.setMinimum(min-10)')
-                eval(f'self.dac_pot{index}.setMaximum(max+10)')
-                eval(f'self.dac_pot{index}.setTickInterval(int((max +(abs(min)))/10))')
-                eval(f'self.DacMax{index}.setText(str(max+10))')
-                eval(f'self.DacMin{index}.setText(str(min-10))')
-                eval(f'self.DacMin{index}.setStyleSheet(PotSlicerLabelStyle)')
-                eval(f'self.DacMax{index}.setStyleSheet(PotSlicerLabelStyle)')
+                getattr(self, f'dac_pot{index}').setMinimum(min-10)
+                getattr(self, f'dac_pot{index}').setMaximum(max+10)
+                getattr(self, f'dac_pot{index}').setTickInterval(int((max +(abs(min)))/10))
+                getattr(self, f'DacMax{index}').setText(str(max+10))
+                getattr(self, f'DacMin{index}').setText(str(min-10))
+                getattr(self, f'DacMin{index}').setStyleSheet(PotSlicerLabelStyle)
+                getattr(self, f'DacMax{index}').setStyleSheet(PotSlicerLabelStyle)
                 R,G,B = sliderColorDac(self,index,min,max)
-                eval(f'self.dac_pot{index}.valueChanged.connect(self.SetDacPot{index})')
-                eval(f'self.labelDac{index}.setStyleSheet(ButtonStyleOn)')
+                getattr(self, f'dac_pot{index}').valueChanged.connect(getattr(self, f'SetDacPot{index}'))
+                getattr(self, f'labelDac{index}').setStyleSheet(ButtonStyleOn)
         except Exception:
             x = datetime.datetime.now()
             dateAndTime = x.strftime("%c")
@@ -152,7 +152,7 @@ class CreatePotTable(QMainWindow):
         PotTable = QT_DESIGNER / 'CreatePotTable.ui'
         loadUi(str(PotTable),self)
         self.setWindowTitle('Create lookup Pot table')
-        self.setFixedSize(470, 210)
+        make_scalable(self, 470, 210)
         #############################################################################
         self.save_index = 0
         self.SelectTable = "Table1.1"
@@ -160,7 +160,7 @@ class CreatePotTable(QMainWindow):
         self.Pot_value.valueChanged.connect(self.ChangeValuePot)
         self.Pot_box_value.valueChanged.connect(self.ReadValuePot)
         self.save_value.clicked.connect(self.savePotValue)
-        self.SelectPotTable.activated[str].connect(self.digitalPotTable)
+        self.SelectPotTable.textActivated.connect(self.digitalPotTable)
         self.SelectPotTable.addItems(listDigitalPotTable())
         self.SelectPotTable.setStyleSheet(ButtonStyleWhite)
         self.save_value.setStyleSheet(ButtonStyleOff2)
@@ -212,7 +212,7 @@ class CreatePotTable(QMainWindow):
         if self.save_index >= 1:
             self.f.close()
         self.save_index = 0
-        #self.f = open(f'{BOX_DIGITAL_POT_PATH}\\{self.SelectTable}.txt', 'w')
+        #self.f = open(f'{BOX_DIGITAL_POT_PATH}/{self.SelectTable}.txt', 'w')
         self.SelectPotTable.setStyleSheet(ButtonStyleOn)
     
     def savePotValue(self):
@@ -220,8 +220,8 @@ class CreatePotTable(QMainWindow):
         - save value to selected txt file
         """
         if self.save_index == 0:
-            self.f = open(f'{BOX_DIGITAL_POT_PATH}\\{self.SelectTable}.txt', 'w')
-        self.f = open(f'{BOX_DIGITAL_POT_PATH}\\{self.SelectTable}.txt', 'a')
+            self.f = open(f'{BOX_DIGITAL_POT_PATH}/{self.SelectTable}.txt', 'w')
+        self.f = open(f'{BOX_DIGITAL_POT_PATH}/{self.SelectTable}.txt', 'a')
         #print('save value',self.save_index,self.SelectTable,self.Pot_box_value.value(),self.Pot_value.value())
         self.f.writelines(f'{self.Pot_box_value.value()} {self.Pot_value.value()}\n')
         self.save_index += 1
@@ -241,13 +241,13 @@ class CreateDacTable(QMainWindow):
         DacTable = QT_DESIGNER / 'CreateDacTable.ui'
         loadUi(str(DacTable),self)
         self.setWindowTitle('Create lookup Dac table ')
-        self.setFixedSize(470, 210)
+        make_scalable(self, 470, 210)
         self.save_index = 0
         self.SelectTable = "Table1"
         self.Dac_value.valueChanged.connect(self.ChangeValueDac)
         self.Dac_box_value.valueChanged.connect(self.ReadValueDac)
         self.save_value.clicked.connect(self.savePotValue)
-        self.SelectDacTable.activated[str].connect(self.digitalDacTable)
+        self.SelectDacTable.textActivated.connect(self.digitalDacTable)
         self.SelectDacTable.addItems(listDigitalDacTable())
         self.SelectDacTable.setStyleSheet(ButtonStyleWhite)
         self.save_value.setStyleSheet(ButtonStyleOff2)
@@ -283,7 +283,7 @@ class CreateDacTable(QMainWindow):
         if self.save_index >= 1:
             self.f.close()
         self.save_index = 0
-        self.f = open(f'{BOX_DIGITAL_DAC_PATH}\\{self.SelectTable}.txt', 'w')
+        self.f = open(f'{BOX_DIGITAL_DAC_PATH}/{self.SelectTable}.txt', 'w')
         self.SelectDacTable.setStyleSheet(ButtonStyleOn)
     
     def tableSelection(self):
@@ -296,7 +296,7 @@ class CreateDacTable(QMainWindow):
         """
         - save value to selected txt file
         """
-        self.f = open(f'{BOX_DIGITAL_DAC_PATH}\\{self.SelectTable}.txt', 'a')
+        self.f = open(f'{BOX_DIGITAL_DAC_PATH}/{self.SelectTable}.txt', 'a')
         #print('save value',self.save_index,self.SelectTable,self.Dac_box_value.value(),self.Dac_value.value())
         self.f.writelines(f'{self.Dac_box_value.value()} {self.Dac_value.value()}\n')
         self.save_index += 1

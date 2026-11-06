@@ -35,15 +35,13 @@ class StreamStack:
     ) -> None:
         """Initializes a StreamStack object"""
         stream_class, args, kwargs = stream_params[0]
-        self._entry = None
         self._stack = [stream_class(*args, **kwargs)]
         for n, (stream_class, args, kwargs) in enumerate(stream_params[1:]):
             self._stack.append(stream_class(*args, self._stack[n], **kwargs))
         self._entry = self._stack[-1]
 
     def __del__(self) -> None:
-        if self._entry is not None:
-            self.close()
+        self.close()
 
     def __getitem__(self, topic):
         return self._entry[topic]

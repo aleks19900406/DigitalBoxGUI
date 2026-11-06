@@ -1,4 +1,6 @@
-PASSWORD = 'aleks1990'
+from .local_settings import load_rpi_password
+
+PASSWORD = load_rpi_password()  # not stored in the code: see local_settings.py
 ALL_LANGUAGES =['EN-English','DE-German','NL-Nederlands','PL-Polish ','FR-French','IT-Italiano','ES-Spanish','SL-Slovenian','DA-Danish','NO-Norwegian','FI-Finnish',
                 'SV-Swedish','RU-Russian','KK-Kazakhstan','UK-Ukraine','CS-Czech','SK-Slovak','HR-Croatian','SR-Serbian','EL-Greek','HU-Hungarian','SCN-Chinese',
                 'PT-Portugese','RO-Romanian','BL-Bulgarian','ET-Estonian','LT-Lithuanian','LV-Latvian']
@@ -56,6 +58,7 @@ VERZIJA_ESP = "3.40"
 VERZIJA_RPI = "3.20"
 DIGITAL_BOX_VERSION = 'V5.0'
 MAIN_TIME_REFRESHING = 500
+MAX_TIME_REFRESHING = 1000
 SPACE = '\n'
 DigitalInput = 32
 change_input = []

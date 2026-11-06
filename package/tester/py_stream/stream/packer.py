@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from threading import Condition
+from threading import Lock
 from typing import AnyStr, Optional, Sequence, Type, Union
 
-from ._base import AsyncChainingStream, AsyncStreamInternals
+from ._base import AsyncChainingStream, AsyncStreamInternals, ChainingStream
 from ._byte_list import (
     AsyncByteListInputStream,
     AsyncByteListIOStream,
@@ -101,27 +100,25 @@ class HisensePacker(StuffingPacker):
     def try_unpack_data(self, packet: ByteBufferType) -> ByteListBufferType:
         packets = []
         for current_byte in packet:
-            if self._previous_byte == self.ESCAPE:
-                self._previous_byte = 0  # Anything but escape
-                if current_byte == self.START:
+            if self._in_packet:
+                if self._previous_byte == self.ESCAPE:
+                    if current_byte == self.ESCAPE:
+                        self._previous_byte = 0
+                    elif current_byte == self.STOP:
+                        packets.append(self._packet[:-1])
+                        self._in_packet = False
+                    else:  # Invalid stuffing
+                        self._in_packet = False
+                else:
+                    self._packet.append(current_byte)
+                    self._previous_byte = current_byte
+            else:
+                if self._previous_byte == self.ESCAPE and current_byte == self.START:
                     self._packet = bytearray()
                     self._in_packet = True
-                elif current_byte == self.ESCAPE:
-                    self._packet.append(current_byte)
-                elif current_byte == self.STOP:
-                    if self._in_packet:
-                        self._in_packet = False
-                        packets.append(self._packet)
-                else:
-                    self._in_packet = False
-                    for b in self._packet:
-                        self.handle_out_of_packet_data(b)
-            elif current_byte == self.ESCAPE:
+                else:  # Out of packet data
+                    self.handle_out_of_packet_data(current_byte)
                 self._previous_byte = current_byte
-            elif self._in_packet:
-                self._packet.append(current_byte)
-            else:
-                self.handle_out_of_packet_data(current_byte)
         return packets
 
 
@@ -223,12 +220,6 @@ class PackerStream(
             self._write_output(packet)
 
 
-@dataclass
-class _PutStreamInternal:
-    buffer: bytearray = field(default_factory=bytearray)
-    buffer_lock: Condition = field(default_factory=Condition)
-
-
 class OutOfPacketStream(AsyncByteListInputStream):
     """Out of packet stream is used for processing data that lays outside a packet."""
 
@@ -238,29 +229,19 @@ class OutOfPacketStream(AsyncByteListInputStream):
         :param packer_class: Packer class to be used for packing out of packed data.
         """
         self._packer = packer_class(**kwargs)
+        self._put_buffer = bytearray()
+        self._put_buffer_lock = Lock()
         super().__init__()
-        self._put_internal = _PutStreamInternal()
-
-    def close(self) -> None:
-        super().close()
-        self._put_internal.buffer_lock.notify_all()
 
     def _read_worker(self, internal: ByteListInternalsType) -> None:
-        data = self._get()
+        data = bytearray()
+        with self._put_buffer_lock:
+            data = self._put_buffer
+            self._put_buffer = bytearray()
         packets = self._packer.try_unpack_data(data)
         if packets:
             with internal.buffer_lock:
                 internal.buffer.extend(packets)
-                internal.buffer_lock.notify_all()
-
-    def _get(self) -> bytearray:
-        result = bytearray()
-        with self._put_internal.buffer_lock:
-            if not len(self._put_internal.buffer):
-                self._put_internal.buffer_lock.wait()
-            result = self._put_internal.buffer
-            self._put_internal.buffer = bytearray()
-        return result
 
     def put(self, data: int) -> None:
         """Puts data byte into an incoming buffer.
@@ -272,6 +253,5 @@ class OutOfPacketStream(AsyncByteListInputStream):
         """
         if not self.is_opened:
             return
-        with self._put_internal.buffer_lock:
-            self._put_internal.buffer.append(data)
-            self._put_internal.buffer_lock.notify_all()
+        with self._put_buffer_lock:
+            self._put_buffer.append(data)

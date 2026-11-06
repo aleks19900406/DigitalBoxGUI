@@ -1,0 +1,54 @@
+{
+    "network": {
+        "ip_scan": {
+            "ranges": [
+                {"prefix": "192.168.", "base_ip": null, "start": 10, "end": 30},
+                {"prefix": "10.0.", "base_ip": "10.0.10", "start": 100, "end": 130}
+            ],
+            "default": {"base_ip": null, "start": 1, "end": 254},
+            "all": {"base_ip": null, "start": 10, "end": 200}
+        }
+    },
+    "ocr": {
+        "candidate_min_percent": 85,
+        "pass_threshold_percent": 95
+    },
+    "Elements": {
+        "path": "elements",
+        "device_ip": "192.168.88.222",
+        "display": [1280, 400],
+        "display_config": [[140.0, 333.0], [1810.0, 320.0], [1813.0, 857.0], [139.0, 870.0]],
+        "calibration_offset": {"x": 0, "y": -10}
+    },
+
+    "CraftF": {
+        "path": "CraftF",
+        "display": [768, 128],
+        "display_config": [[460, 512], [1551, 511], [1551, 701], [459, 700]],
+        "calibration_offset": {"x": 0, "y": -10}
+    },
+    
+    "CraftG": {
+        "path": "CraftG",
+        "display": [768, 128],
+        "display_config": [[447.0, 517.0], [1526.0, 515.0], [1531.0, 699.0], [446.0, 699.0]],
+        "calibration_offset": {"x": 0, "y": -10}
+    },
+    "Hi7": {
+        "path": "Hi7",
+        "display": [320, 124],
+        "display_config": [
+            [387.0, 292.0],
+            [1520.0, 287.0],
+            [1518.0, 743.0],
+            [386.0, 746.0]
+        ],
+        "calibration_offset": {"x": 0, "y": -10}
+    },
+    "G800": {
+        "path": "G800",
+        "display": [320, 124],
+        "display_config": [[407.0, 332.0], [1540.0, 327.0], [1538.0, 783.0], [406.0, 786.0]],
+        "calibration_offset": {"x": 0, "y": -10}
+    }
+}

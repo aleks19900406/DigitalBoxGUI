@@ -3,19 +3,26 @@ import traceback
 from time import sleep
 from DigitalBox.dasConnect import SerialConnect, WifiEsp32Connect
 from package.tester._clients.das import DAS
-from PyQt5.QtCore import QThread
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from DigitalBox.lib import *
+from PyQt6.QtCore import QThread
+from PyQt6.QtCore import QObject, QTimer, pyqtSignal
+from PyQt6.QtGui import QFont
 from . import state
 from .styles import ButtonStyleOff2, ButtonStyleOn, ButtonStyleWhite
 from .discovery import ScanWorker, get_local_ip, get_scan_config
-from .devices import listConnection
+from .devices import listConnection, serial_port_name
 from .helpers import dataFile, listBoxMarks
+
+
+class ConnectSignals(QObject):
+    """The worker thread reports the result of the connection to the GUI thread."""
+    done = pyqtSignal(str, object, object)
 
 
 class ConnectionMixin:
     def start_scan(self):
+        if not state.PASSWORD:
+            self.ip_scanning.setText("RPi password is missing (local_settings.json)")
+            return
         self.RefreshingConnection.setEnabled(False)
         self.BoxConnect.clear()
         if self.index_refreshing == 1:
@@ -78,49 +85,83 @@ class ConnectionMixin:
             self.scan_thread = None
             self.scanner = None
 
-    def animationConnect(self):
+    def start_connect_animation(self):
+        """The progress bar (over the connection list) fills slowly while the connection is being opened."""
+        self.connectBar.setRange(0, 100)
+        self.connectBar.setValue(0)
+        self.connectBar.setFormat("Connecting... %p%")
+        self.connectBar.setTextVisible(True)
         self.connectBar.setVisible(True)
-        for value in range(0,110,5):
-            self.connectBar.setValue(value)
-            sleep(0.05)
+        self.connectBar.raise_()
+        if not hasattr(self, "_connect_timer"):
+            self._connect_timer = QTimer(self)
+            self._connect_timer.setInterval(100)
+            self._connect_timer.timeout.connect(self.advance_connect_animation)
+        self._connect_timer.start()
+
+    def advance_connect_animation(self):
+        value = self.connectBar.value()
+        if value < 95:
+            self.connectBar.setValue(min(95, value + max(1, (95 - value) // 15)))
+
+    def stop_connect_animation(self):
+        self._connect_timer.stop()
         self.connectBar.setVisible(False)
         self.connectBar.setValue(0)
 
     def connectBox(self,CONNECTBOX):
+        """Starts connecting: the connection is opened in a worker thread (the window stays responsive and
+        the progress bar shows that the connecting is in progress)."""
+        if getattr(self, "_connecting", False):
+            return
+        rpi_index = self.BoxConnect.findText(CONNECTBOX)
+        rpi_ip = self.BoxConnect.itemData(rpi_index) if rpi_index >= 0 else None
+        self.backup_save()
+        self.save_session()
+        self.Connection = CONNECTBOX
+        self.startStopSaving.setEnabled(False)
+        self.resetExcelParameters()
+        if self.index_refreshing >= 1:
+            self.DIGITAL_BOX_MAIN.stop()  # a timer can be stopped only in the GUI thread
+            self.thread_check_input.clear()  # readings which did not start yet are not needed any more
+        state.MAIN_TIME_REFRESHING = 500  # the previous connection may have slowed the refreshing down
+        self.DIGITAL_BOX_MAIN.setInterval(state.MAIN_TIME_REFRESHING)
+        if not hasattr(self, "_connect_signals"):
+            self._connect_signals = ConnectSignals(self)
+            self._connect_signals.done.connect(self.connect_finished)
+        self._connecting = True
+        self.start_connect_animation()
+        self.connectAnimation.start(lambda: self.open_box(CONNECTBOX, rpi_ip))
+
+    def open_box(self, CONNECTBOX, rpi_ip):
         """
+        Worker thread (no widget is used here, the result goes to connect_finished):
         - connect digital box with RPI or direct with digital box(serial connection)
         - check if version is correct
         - show warning message if version is not correct  
         """
-        rpi_index = self.BoxConnect.findText(CONNECTBOX)
-        rpi_ip = self.BoxConnect.itemData(rpi_index) if rpi_index >= 0 else None
-        self.backup_save()
-        self.Connection = CONNECTBOX
-        self.startStopSaving.setEnabled(False)
-        self.resetExcelParameters()
-        self.connectAnimation.start(self.animationConnect)
+        save_labels = True  # serial / ESP32: the save labels are reset after connecting
         try:
             if self.index_refreshing >= 1:
+                # wait for the running reading before the old box is closed
+                self.thread_check_input.waitForDone(5000)
+                self.reading_inputs = False
                 sleep(2)
                 self.box.disconnect()
             
-            if CONNECTBOX[0:3] =='COM':
-                self.box = SerialConnect(CONNECTBOX[0:5].replace(' ',''))
+            serial_port = serial_port_name(CONNECTBOX)
+            if serial_port:
+                self.serial_input = None
+                self.box = SerialConnect(serial_port)
                 VERSION = self.box.connect()
-                self.ip_scanning.setVisible(False)
-                self.label_errorSaveFile.setVisible(False)
-                self.label_saveFile.setVisible(True)
             elif CONNECTBOX[0:3] =='ESP':
                 self.box = WifiEsp32Connect(CONNECTBOX.replace('ESP32 - ',''))
                 VERSION = self.box.connect()
-                self.ip_scanning.setVisible(False)
-                self.label_errorSaveFile.setVisible(False)
-                self.label_saveFile.setVisible(True)
 
             elif rpi_ip or CONNECTBOX.startswith("RPI"):
                 VERSION = "0.0"
+                save_labels = False
                 self.box = None
-                self.ip_scanning.setVisible(False)
 
                 try:
                     box_name = rpi_ip or CONNECTBOX.strip()
@@ -163,6 +204,36 @@ class ConnectionMixin:
                     VERSION = "fail to read"
 
             
+            result = (VERSION, save_labels, None)
+        except Exception:
+            result = (None, save_labels, traceback.format_exc())
+        self._connect_signals.done.emit(CONNECTBOX, rpi_ip, result)
+
+    def connect_finished(self, CONNECTBOX, rpi_ip, result):
+        """GUI thread: the connection was opened (or failed) in open_box."""
+        VERSION, save_labels, error = result
+        self._connecting = False
+        self.stop_connect_animation()
+        try:
+            if error:
+                raise ConnectionError(error)
+            if VERSION == "fail to read":
+                # the box does not answer: no periodic reading (every request would wait for a timeout)
+                try:
+                    self.box.disconnect()
+                except Exception:
+                    pass
+                self.BoxConnect.setStyleSheet(ButtonStyleWhite)
+                self.BOX_VERSION.setVisible(False)
+                self.BOX_VERSION.setFont(QFont('Arial', 14))
+                self.BOX_VERSION.setStyleSheet("color: red")
+                self.BOX_VERSION.setVisible(True)
+                self.BOX_VERSION.setText(f"Can not connect to {CONNECTBOX}")
+                raise ConnectionError(f"Can not connect to {CONNECTBOX}")
+            self.ip_scanning.setVisible(False)
+            if save_labels:
+                self.label_errorSaveFile.setVisible(False)
+                self.label_saveFile.setVisible(True)
             if self.box_is_connected == 0:
                 self.box_is_connected = 1
                 self.index_on_off = 1
@@ -174,7 +245,7 @@ class ConnectionMixin:
                     self.warningMessageDac.setVisible(False)
                     self.BoxConnect.setStyleSheet(ButtonStyleOn)
                     self.BOX_VERSION.setFont(QFont('Arial', 10))
-                    self.BOX_VERSION.setStyleSheet("color: black")
+                    self.BOX_VERSION.setStyleSheet("color: palette(window-text)")
                     self.BOX_VERSION.setVisible(True)
                     self.BOX_VERSION.setText(f"ARDUINO MEGA/ESP32 SW = {VERSION}")
             else:
@@ -201,8 +272,12 @@ class ConnectionMixin:
             self.ButtonSetPot.setStyleSheet(ButtonStyleOff2)
             self.ButtonSetDac.setStyleSheet(ButtonStyleOff2)
             self.ButtonAutomation.setStyleSheet(ButtonStyleOff2)
-            self.warningMessageAddFunction.setStyleSheet("color: black")
+            self.warningMessageAddFunction.setStyleSheet("color: palette(window-text)")
             self.warningMessageAddFunction.setText("ADDITIONAL FUNCTIONS")     
+            self.session_connection = {"text": CONNECTBOX, "ip": rpi_ip}
+            self.pots_active = True  # the digital pot sliders get the active look
+            self.apply_pot_tables()
+            self.restore_session()
         except Exception:
             #VERSION = None
             x = datetime.datetime.now()
@@ -231,8 +306,8 @@ class ConnectionMixin:
         self.backup_save()
         self.BoxConnect.setStyleSheet(ButtonStyleWhite)   
         self.BoxMarks.setStyleSheet(ButtonStyleWhite)
-        self.SelectPotTable.setStyleSheet(ButtonStyleWhite)
         self.resetExcelParameters()
+        self.reset_digital_pot_view()
         self.indexButtonSave = 0
         self.repeatSaveData = 0
         self.ip_scanning.setVisible(True)
@@ -269,24 +344,24 @@ class ConnectionMixin:
             self.ExcelFile.addItems(dataFile())
             #self.SelectPotTable.addItems(listDigitalPotTable())
             #for index,TablePot in enumerate(listDigitalPotTable()):
-                #eval(f'self.labelDigitalPot{index}.setStyleSheet(MainScreenStyle)')
-                #eval(f'self.digital_pot{index}.setStyleSheet(MainScreenStyle)')
+                #getattr(self, f'labelDigitalPot{index}').setStyleSheet(MainScreenStyle)
+                #getattr(self, f'digital_pot{index}').setStyleSheet(MainScreenStyle)
             #self.AllTable = listDigitalPotTable()
             #self.on_off.setIcon(self.iconOff)
             """ 
             for index in range(8):
-                eval(f'self.OUT{index}.setStyleSheet(ButtonStyleOff2)')
-                eval(f'self.OUT{index}.setIcon(self.iconSwitchOff)')
+                getattr(self, f'OUT{index}').setStyleSheet(ButtonStyleOff2)
+                getattr(self, f'OUT{index}').setIcon(self.iconSwitchOff)
                 
             for index in range(6):
-                eval(f'self.digital_pot{index}.setStyleSheet(ButtonStyleWhite)')
-                eval(f'self.digital_pot{index}.value()')
-                #eval(f'self.digital_pot{index}.setEnabled(False)')
-                eval(f'self.lcdNumber_digital_pot{index}.display(0)')
+                getattr(self, f'digital_pot{index}').setStyleSheet(ButtonStyleWhite)
+                getattr(self, f'digital_pot{index}').value()
+                #getattr(self, f'digital_pot{index}').setEnabled(False)
+                getattr(self, f'lcdNumber_digital_pot{index}').display(0)
             """
             for index in range(4):
                 self.index_auto[index] = 0
-                eval(f'self.AUTO{index+1}.setStyleSheet(ButtonStyleOff2)')
+                getattr(self, f'AUTO{index+1}').setStyleSheet(ButtonStyleOff2)
             sleep(1)
             self.box.disconnect()
             #print('disconnected')

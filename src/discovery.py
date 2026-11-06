@@ -1,6 +1,6 @@
 import socket
 import paramiko
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
@@ -84,7 +84,7 @@ class ScanWorker(QObject):
     finished = pyqtSignal(list)
     progress = pyqtSignal(str)
 
-    def __init__(self, base_ip, start, end, password='aleks1990'):
+    def __init__(self, base_ip, start, end, password=''):
         super().__init__()
         self.base_ip = base_ip
         self.start = start

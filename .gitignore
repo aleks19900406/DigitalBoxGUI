@@ -12,3 +12,11 @@ build/*
 dist/*
 ALL_ERROR.txt
 check_error.txt
+last_session.json
+# settings and files of this computer
+local_settings.json
+box_layout.json
+light_layout.json
+_edit.png
+*.bak
+!BOX_GUI.py.bak

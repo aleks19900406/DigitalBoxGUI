@@ -1,0 +1,81 @@
+{
+  "INPUT": {
+    "0": "L",
+    "1": "L_SW",
+    "2": "N_SW",
+    "3": "STEAM_GEN",
+    "4": "MW_INV",
+    "5": "H_FAN",
+    "6": "H_INFRA",
+    "7": "H_LOW",
+    "8": "H_UP",
+    "10": "STIRRER",
+    "11": "PYROLOCK",
+    "12": "PUMP_OUT",
+    "13": "PUMP_IN",
+    "14": "FAN_OVEN",
+    "15": "FAN_COOL",
+    "16": "FAN_COOL2",
+    "17": "THERM_ACT",
+    "18": "DOOR_ACT",
+    "19": "LIGHT"
+  },
+  "OUTPUT": {
+    "1": "TANK_REED",
+    "2": "DOOR",
+    "3": "LOCK",
+    "4": "MW_FB",
+    "5": "MEAT_P",
+    "6": "GRILL"
+  },
+  "DIGITAL_POT": {
+    "0": "PT1000",
+    "3": "STEAM_G",
+    "4": "GRILL+MP"
+  },
+  "DAC_POT": {
+    "0": "value0",
+    "1": "value1",
+    "3": "value3"
+  },
+  "READ_ADC": {
+    "0": "NOT",
+    "1": "IN   USE",
+    "2": "NOT",
+    "3": "IN   USE"
+  },
+  "SET_VOLTAGE": {
+    "0": "NOT",
+    "1": "IN   USE",
+    "2": "NOT",
+    "3": "IN   USE"
+  },
+  "READ_PWM1": {
+    "0": "FREQ_INVERTER",
+    "1": "DUTY_INVERTER"
+  },
+  "READ_PWM2": {
+    "0": "NOT IN USE",
+    "1": "NOT IN USE"
+  },
+  "SET_PWM1": {
+    "0": "FREQ_INVERTER",
+    "1": "DUTY_INVERTER"
+  },
+  "SET_PWM2": {
+    "0": "FREQ_FLOW",
+    "1": "DUTY_FLOW"
+  },
+  "SET_FREQ": "NOT in USE",
+  "SET_DUTY": "NOT in USE",
+  "AUTO1": {
+    "name": "PYROLOCK",
+    "input": 11,
+    "output": 3,
+    "mode": "PULSE",
+    "pulse_ms": 1000
+  },
+  "LABELS": {
+    "label_marks_3": "DIGITAL OUTPUT"
+  }
+}

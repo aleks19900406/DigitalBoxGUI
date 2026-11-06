@@ -4,7 +4,10 @@ import serial
 import traceback
 import socket
 import datetime
+import threading
+import re
 SEND_TIME = 0.1
+ACK_MIN_VERSION = 3.20  # boxes with a higher version answer commands with "OK"
 PORT = 9001             #ESP32 Server Port   
 ########################## COMMAND FOR BOX WITH ESP 32 ###########################
 MAIN = "SET_MAIN"
@@ -85,6 +88,10 @@ class SerialConnect():
         self._frequency_out = 0
         self._set_voltage = 0
         self._read_adc = [0,0,0,0]
+        # serial port is used from the GUI thread and from the worker thread
+        self.lock = threading.RLock()
+        # None = unknown, True = box answers "OK", False = box does not answer
+        self.ack = None
     def _send_command(self, command, retries=3, read_attempts=10):
         """
         Send command and wait for OK response.
@@ -92,6 +99,16 @@ class SerialConnect():
         Returns:
             bool
         """
+        with self.lock:
+            return self._send_command_locked(command, retries, read_attempts)
+
+    def _send_command_locked(self, command, retries, read_attempts):
+        # box firmware without acknowledgment: send only (as before)
+        if self.ack is False:
+            self.ser.write(command.encode())
+            sleep(SEND_TIME)
+            return True
+
         for retry in range(retries):
 
             self.ser.reset_input_buffer()
@@ -103,6 +120,11 @@ class SerialConnect():
 
                 response = self.ser.readline().decode(errors="ignore").strip()
 
+                if not response and self.ack is None:
+                    print("Box does not answer with OK -> commands are sent without acknowledgment")
+                    self.ack = False
+                    return True
+
                 if response:
                     print(
                         f"CMD='{command}' "
@@ -112,6 +134,7 @@ class SerialConnect():
                     )
 
                 if response.startswith("OK"):
+                    self.ack = True
                     print(
                         f"Command OK in {time() - t0:.3f}s"
                     )
@@ -148,6 +171,11 @@ class SerialConnect():
             sleep(SEND_TIME*10)
             VERSION = self.ser.readline().decode().strip()
             print('VERZIJA:',VERSION)
+            # box versions <= 3.20 do not answer commands with "OK"
+            match = re.search(r'\d+(\.\d+)?', VERSION)
+            if match:
+                self.ack = float(match.group()) > ACK_MIN_VERSION
+                print('Command feedback:', self.ack)
         except:
             print('Device disconnected')
             x = datetime.datetime.now()
@@ -196,9 +224,10 @@ class SerialConnect():
         - self.box.digital[0,1,2] # get digital in (0,1,2)
         - return type bool
         """
-        self.ser.write(f'{DIGITAL_IN}'.encode())
-        sleep(SEND_TIME)
-        return convert_digital_in(self.ser.readline().decode())
+        with self.lock:
+            self.ser.write(f'{DIGITAL_IN}'.encode())
+            sleep(SEND_TIME)
+            return convert_digital_in(self.ser.readline().decode())
     ########################## digital_out #########################
     @property
 
@@ -313,16 +342,17 @@ class SerialConnect():
        
         read_pwm_all[1]['d'] get duty form pwm 2
         """
-        self.ser.write(f'{READ_PWM},1'.encode())
-        sleep(SEND_TIME)
-        f1 = self.ser.readline().decode().strip()
-        d1 = self.ser.readline().decode().strip()
-        print('read pwm1:',f1,d1)
-        self.ser.write(f'{READ_PWM},2'.encode())
-        sleep(SEND_TIME)
-        f2 = self.ser.readline().decode().strip()
-        d2 = self.ser.readline().decode().strip()
-        print('read pwm2:',f2,d2)
+        with self.lock:
+            self.ser.write(f'{READ_PWM},1'.encode())
+            sleep(SEND_TIME)
+            f1 = self.ser.readline().decode().strip()
+            d1 = self.ser.readline().decode().strip()
+            print('read pwm1:',f1,d1)
+            self.ser.write(f'{READ_PWM},2'.encode())
+            sleep(SEND_TIME)
+            f2 = self.ser.readline().decode().strip()
+            d2 = self.ser.readline().decode().strip()
+            print('read pwm2:',f2,d2)
         readPwm1 = {"d":d1,"f":f1,}
         readPwm2 = {"d":d2,"f":f2,}
         self._read_pwm = [readPwm1,readPwm2]
@@ -447,10 +477,11 @@ class SerialConnect():
         return
         list [adc0]
         """
-        self.ser.write(f'{READ_ADC}#'.encode())
-        sleep(SEND_TIME*2)
-        for index in range(4):
-            self._read_adc[index] = float(self.ser.readline().decode().strip())
+        with self.lock:
+            self.ser.write(f'{READ_ADC}#'.encode())
+            sleep(SEND_TIME*2)
+            for index in range(4):
+                self._read_adc[index] = float(self.ser.readline().decode().strip())
         return self._read_adc
 
 class WifiEsp32Connect():

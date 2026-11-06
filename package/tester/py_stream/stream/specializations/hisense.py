@@ -112,7 +112,7 @@ class _LLFrame(FrameBase):
     id2: Optional[int] = None
     id3: Optional[int] = None
     nl_length: int = 0
-    payload: bytearray = bytearray()
+    payload: bytearray = field(default_factory=bytearray)
 
 
 class LLFrame(_LLFrame):
@@ -357,7 +357,7 @@ class _TLFrame:
     id1: TLId1 = TLId1()
     id2: Optional[int] = None
     id3: Optional[int] = None
-    payload: bytearray = bytearray()
+    payload: bytearray = field(default_factory=bytearray)
 
 
 class TLFrame(_TLFrame):
@@ -419,8 +419,8 @@ class TLFrame(_TLFrame):
 # region Application Layer
 @dataclass
 class _ALFrame:
-    command: bytearray = bytearray()
-    payload: bytearray = bytearray()
+    command: bytearray = field(default_factory=bytearray)
+    payload: bytearray = field(default_factory=bytearray)
 
 
 class ALFrame(_ALFrame):

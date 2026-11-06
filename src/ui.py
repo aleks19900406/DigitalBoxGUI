@@ -1,32 +1,47 @@
 import datetime
+import ipaddress
 import os
+import shlex
 import subprocess
 import traceback
 from pathlib import Path
 from time import sleep, time
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QMainWindow, QMessageBox
-from PyQt5.uic import loadUi
-from PyQt5.QtCore import QThread
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from DigitalBox.lib import *
+from PyQt6 import QtGui
+from PyQt6.QtWidgets import QFrame, QInputDialog, QLabel, QMainWindow, QMessageBox, QPushButton
+from PyQt6.uic import loadUi
+from PyQt6.QtCore import QThread, pyqtSignal
+from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtCore import QDateTime, QSettings, QThreadPool, QTimer, QUrl
+from PyQt6.QtGui import QDesktopServices, QFont
+from DigitalBox.lib import select_model, select_model_LB, select_system
 from . import state
-from .paths import BOX_MARKS_PATH, DATA_SAVE, IMAGE_PATH_OTHER, OVEN_DEVICE_CONNECT_PATHS, QT_DESIGNER
-from .styles import ButtonStyleOff2, ButtonStyleOn, ButtonStyleOn2, ButtonStyleWhite, MainScreenStyle
+from .paths import APPLICATION_ROOT, BOX_MARKS_PATH, DATA_SAVE, IMAGE_PATH_OTHER, OVEN_DEVICE_CONNECT_PATHS, QT_DESIGNER, SERVICES_DEFAULT_IP, SERVICES_PORT, update_command
+from .styles import ButtonStyleOff2, ButtonStyleOn, ButtonStyleOn2, ButtonStyleWhite, MainScreenStyle, apply_theme, saved_theme
 from .workers import Worker
+from .temperature_ramp import TemperatureRampDialog
+from .temperature_regulation import TemperatureRegulationDialog
+from .output_toggle import OutputToggleDialog
 from .devices import listConnection
 from .helpers import dataFile, listBoxMarks, listDigitalPotTable
+from .box_marks import box_mark_name, load_box_mark
 from .connections import ConnectionMixin
 from .saving import SavingMixin
 from .digital_controls import DigitalControlsMixin
 from .analog_controls import AnalogControlsMixin
+from .session import SessionMixin
+from .layout_mode import LayoutModeMixin, FULL_SYSTEMS_LABEL, FULL_WINDOW_WIDTH, FULL_WINDOW_HEIGHT
+from .compact_layout import compact_layout_wanted, enlarge_dialog
+from .layout_editor import LayoutEditMixin
+from .scaling import fit_window_to_screen
+from .heater_systems import load_heater_systems
 
 
-class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogControlsMixin, QMainWindow):
+class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogControlsMixin, SessionMixin, LayoutModeMixin, LayoutEditMixin, QMainWindow):
+    saveFinished = pyqtSignal(str)   # emitted from the save thread, handled in the GUI thread
+
     def __init__(self):
         super().__init__()
+        self.saveFinished.connect(self.onSaveFinished)
         Window1 = QT_DESIGNER / 'Main_screen.ui'
         loadUi(str(Window1),self)
         f = open("check_error.txt", "w")
@@ -40,11 +55,25 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
         #####################auto button##################
         count = 4
         self.read_input = [0] * 32   # adjust size to your actual number of inputs
+        # defaults so saving works before the first successful device read
+        self.read_adc_all = [0, 0, 0, 0]
+        self.read_pwm_all = [{'f': 0, 'd': 0}, {'f': 0, 'd': 0}]
+        self.readVoltage = [0, 0, 0, 0]
+        self.readPwm1 = [0, 0]
+        self.readPwm2 = [0, 0]
+        self.readPwmOld = [0, 0]
+        self.readDigitalPot0 = self.readDigitalPot1 = self.readDigitalPot2 = 0
+        self.readDigitalPot3 = self.readDigitalPot4 = self.readDigitalPot5 = 0
+        self.readDac0 = self.readDac1 = self.readDac2 = self.readDac3 = 0
+        self.readDac4 = self.readDac5 = self.readDac6 = self.readDac7 = 0
         self.signal_on = [0] * count
         self.signal_off = [0] * count
         self.periode = [0] * count
         self.current_output = [None] * count
         self.output_start = [None] * count
+        self.pulse_start = [None] * count
+        self.pulse_ticks = [0] * count
+        self.pulse_last_input = [False] * count
         self.param_auto1 = 0
         self.param_auto2 = 0
         self.param_auto3 = 0
@@ -60,10 +89,39 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
         self.repeatSaveData = 0
         self.indexBackup = 0
         self.indexUpdate = 0
+        self.session_connection = None
+        self.session_box_mark = None
+        self.box_mark_data = None
+        self._pot_connected = set()
+        self.pots_active = False
+        self.active_pots = None  # None = all sliders, otherwise indexes of sliders with a name in the box marks
+        self._restoring_session = False
+        self.heater_systems = []
+        self.serial_input = None
         self.setWindowTitle(f'DIGITAL BOX MAIN {state.DIGITAL_BOX_VERSION}')
         self.setGeometry(150, 40, 1530, 1050)
+        self.enable_screen_scaling()
+        fit_window_to_screen(self, FULL_WINDOW_WIDTH, FULL_WINDOW_HEIGHT, 150, 40)
         #self.setSizeIncrement(1920, 1080)
+        # bigger digital input/output buttons so longer box marks are not cut off
+        for index in range(32):
+            button = getattr(self, f'INPUT_{index}')
+            column = (button.x() - 20) // 70
+            button.setGeometry(15 + column * 76, button.y() - 2, 70, 36)
+        for index in range(16):
+            button = getattr(self, f'OUT{index}')
+            column = (button.x() - 660) // 90
+            button.setGeometry(645 + column * 90, button.y() - 2, 82, 44)
+        lines = [frame for frame in self.findChildren(QFrame)
+                 if type(frame) is QFrame and frame.frameShape() in (QFrame.Shape.HLine, QFrame.Shape.VLine)]
+        for line in lines:
+            line.lower()
+        for label in self.findChildren(QLabel):
+            if label.text() and any(line.geometry().intersects(label.geometry()) for line in lines):
+                label.setProperty("sectionTitle", True)
         self.setStyleSheet(MainScreenStyle)
+        self.setup_theme_button()
+        self.setup_temperature_ramp()
         self.on_off.clicked.connect(self.button_OnOff)
         self.RefreshingConnection.clicked.connect(self.BoxRefreshing)
         self.RefreshingConnection.setStyleSheet(ButtonStyleOff2)
@@ -86,6 +144,11 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
         self.labelTableOpenError.setFont(QFont('Arial', 20))
         self.labelTableOpenError.setStyleSheet("color: red")
         self.connectBar.setVisible(False)
+        self.digital_input_label_geometry = self.label_marks_2.geometry()
+        self.digital_input_systems_geometry = FULL_SYSTEMS_LABEL
+        self.digital_input_label_alignment = self.label_marks_2.alignment()
+        self.digital_input_label_font = self.label_marks_2.font()
+        self.label_marks_2.setWordWrap(True)
         ################## DIGITAL OUTPUT #########################################
         self.OUT0.clicked.connect(self.output0)
         self.OUT1.clicked.connect(self.output1)
@@ -103,11 +166,15 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
         self.OUT13.clicked.connect(self.output13)
         self.OUT14.clicked.connect(self.output14)
         self.OUT15.clicked.connect(self.output15)
+        for index in range(16):
+            getattr(self, f'OUT{index}').clicked.connect(self.save_session)
         #######################AUTO BUTTON #######################################
         self.AUTO1.clicked.connect(self.buttonAuto1)
         self.AUTO2.clicked.connect(self.buttonAuto2)
         self.AUTO3.clicked.connect(self.buttonAuto3)
         self.AUTO4.clicked.connect(self.buttonAuto4)
+        for auto_button in (self.AUTO1, self.AUTO2, self.AUTO3, self.AUTO4):
+            auto_button.setEnabled(False)
         ###################### BUTTON OPEN ADDITIONAL SCREEN ######################
         self.ButtonHusaModel.clicked.connect(self.buttonHusaModel)
         self.ButtonG800.clicked.connect(self.buttonG800)
@@ -131,21 +198,16 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
         self.update_gui.clicked.connect(self.updateGui)
         self.update_gui.setStyleSheet(ButtonStyleOff2)
         ########################### BOX CONNECTED #################################
-        self.BoxConnect.activated[str].connect(self.connectBox)
+        self.BoxConnect.textActivated.connect(self.connectBox)
         self.BoxConnect.setEditable(True)
         self.BoxConnect.setStyleSheet(ButtonStyleWhite)
-        self.BoxMarks.activated[str].connect(self.boxMarks)
+        self.BoxMarks.textActivated.connect(self.boxMarks)
         self.BoxMarks.setEditable(True)
         self.BoxMarks.setStyleSheet(ButtonStyleWhite)
-        self.SelectPotTable.activated[str].connect(self.digitalPotTable)
-        self.SelectPotTable.setEditable(True)
-        self.SelectPotTable.setStyleSheet(ButtonStyleWhite)
         self.BoxMarks.addItems(listBoxMarks())
-        self.SelectPotTable.addItems(listDigitalPotTable())
-        self.AllTable = listDigitalPotTable()
         self.ExcelFile.addItems(dataFile())
         ##################### SAVE DATA ##########################################
-        self.ExcelFile.activated[str].connect(self.excelFile)
+        self.ExcelFile.textActivated.connect(self.excelFile)
         self.ExcelFile.setEditable(True)
         self.ExcelFile.setStyleSheet(ButtonStyleWhite)
         self.startStopSaving.clicked.connect(self.startStopSave)
@@ -159,6 +221,7 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
         self.worker.stepIncreased.connect(self.SaveBarShow)
         self.worker.moveToThread(self.saveBarThread)
         self.saveBarThread.started.connect(self.worker.task)
+        self.worker.finished.connect(self.saveBarThread.quit)
         self.DIGITAL_BOX_MAIN = QTimer()
         self.DIGITAL_BOX_MAIN.timeout.connect(self.timerDigitalBox)  # 
         self.DIGITAL_BOX_MAIN.setInterval(state.MAIN_TIME_REFRESHING)
@@ -172,6 +235,9 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
         self.dateTimeTimer.timeout.connect(self.showTime)  # 
         self.dateTimeTimer.setInterval(state.MAIN_TIME_REFRESHING)
         self.thread_check_input = QThreadPool()
+        # one reader at a time: slow answers of the box must not pile up tasks and threads
+        self.thread_check_input.setMaxThreadCount(1)
+        self.reading_inputs = False
         #self.time_show = QThreadPool()
         self.saveDataThread = QThreadPool()
         self.connectAnimation = QThreadPool()
@@ -211,6 +277,8 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
         self.worker.moveToThread(self.saveBarThread)
         self.saveBarThread.started.connect(self.worker.task)
         self.ip_scanning.setVisible(True)
+        self.setup_layout_mode()
+        self.apply_pot_tables()
         self.start_scan()
         self.BoxConnect.addItems(listConnection())
 
@@ -251,9 +319,10 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
         if not self.indexUpdate:
             close = QMessageBox()
             close.setText("Are you sure you want to close digital box ?")
-            close.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+            close.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel)
             close = close.exec()
-            if  close == QMessageBox.Yes:
+            if  close == QMessageBox.StandardButton.Yes:
+                self.save_session()
                 #close all screen if main app close
                 try:
                     if self.indexButtonSave == 1: #backup
@@ -326,14 +395,16 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
                 self.set_pwm2()
                 self.set_frequency_and_duty_old()
                 self.input_state_indicate()
-                self.thread_check_input.start(self.check_all_input)
+                if not self.reading_inputs:  # the previous reading is still running -> skip this one
+                    self.reading_inputs = True
+                    self.thread_check_input.start(self.check_all_input)
                 tend = time()
                 print('time main box',int((tend-tbegin)*1000),'ms','interval:',state.MAIN_TIME_REFRESHING)
                 
-                # increase main time refreshing if function executing to long
+                # increase main time refreshing if function executing to long (but not without a limit)
                 if  (tend-tbegin)*1000 >= state.MAIN_TIME_REFRESHING:
                     self.digitalPotChange = 1
-                    state.MAIN_TIME_REFRESHING += 100
+                    state.MAIN_TIME_REFRESHING = min(state.MAIN_TIME_REFRESHING + 100, state.MAX_TIME_REFRESHING)
                     self.DIGITAL_BOX_MAIN.setInterval(state.MAIN_TIME_REFRESHING)
                 # decrease main time refreshing if execute function is short
                 else:
@@ -360,158 +431,191 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
                     f.write(traceback.format_exc())
                 f.close()
 
+    def setup_temperature_ramp(self):
+        """Button that opens the temperature ramp (slider moves slowly from the start to the end temperature)."""
+        self.rampButton = QPushButton('TEMP RAMP', self.content_widget)
+        self.rampButton.setObjectName('rampButton')
+        self.rampButton.setGeometry(440, 58, 86, 38)
+        self.rampButton.show()
+        self.rampButton.setStyleSheet(ButtonStyleOff2)
+        self.rampDialog = TemperatureRampDialog(self)
+        self.rampButton.clicked.connect(self.rampDialog.open_dialog)
+        self.rampDialog.runningChanged.connect(
+            lambda running: self.rampButton.setStyleSheet(ButtonStyleOn2 if running else ButtonStyleOff2))
+        # REG TEMP: the slider moves up and down between two temperatures until it is stopped
+        self.regButton = QPushButton('REG TEMP', self.content_widget)
+        self.regButton.setObjectName('regButton')
+        self.regButton.setGeometry(530, 58, 86, 38)
+        self.regButton.show()
+        self.regButton.setStyleSheet(ButtonStyleOff2)
+        self.regDialog = TemperatureRegulationDialog(self)
+        self.regButton.clicked.connect(self.regDialog.open_dialog)
+        self.regDialog.runningChanged.connect(
+            lambda running: self.regButton.setStyleSheet(ButtonStyleOn2 if running else ButtonStyleOff2))
+        # TOGGLE OUTPUT: an output (or the ON/OFF button) is switched on and off again and again until it is stopped
+        self.toggleButton = QPushButton('TOGGLE OUT', self.content_widget)
+        self.toggleButton.setObjectName('toggleButton')
+        self.toggleButton.setGeometry(895, 737, 90, 34)
+        self.toggleButton.show()
+        self.toggleButton.setStyleSheet(ButtonStyleOff2)
+        self.toggleDialog = OutputToggleDialog(self)
+        self.toggleButton.clicked.connect(self.toggleDialog.open_dialog)
+        self.toggleDialog.runningChanged.connect(
+            lambda running: self.toggleButton.setStyleSheet(ButtonStyleOn2 if running else ButtonStyleOff2))
+        # SERVICES: opens the web page where the services of the box can be restarted after an error
+        self.servicesButton = QPushButton('SERVICES', self.content_widget)
+        self.servicesButton.setObjectName('servicesButton')
+        self.servicesButton.setGeometry(1415, 106, 111, 30)
+        self.servicesButton.setToolTip('Choose the box and open its page (restart the services after an error)')
+        self.servicesButton.show()
+        self.servicesButton.setStyleSheet(ButtonStyleOff2)
+        self.servicesButton.clicked.connect(self.open_services)
+
+    def open_services(self):
+        """Ask which box (the scanned ones, the connected one is preselected; an IP can be typed too) and open
+        the page for restarting its services in the browser."""
+        settings = QSettings('DigitalBox', 'BOX_GUI')
+        boxes = {}  # list text -> ip
+        for index in range(self.BoxConnect.count()):
+            ip = self.BoxConnect.itemData(index)
+            if isinstance(ip, str) and ip:
+                boxes[self.BoxConnect.itemText(index)] = ip
+        last_ip = str(settings.value('services_ip', SERVICES_DEFAULT_IP))
+        if last_ip not in boxes.values():
+            boxes[last_ip] = last_ip
+        current = str(getattr(self, 'Connection', ''))
+        names = list(boxes)
+        start = names.index(current) if current in boxes else next(
+            (position for position, name in enumerate(names) if boxes[name] == last_ip), 0)
+        dialog = QInputDialog(self)
+        dialog.setWindowTitle('SERVICES')
+        dialog.setLabelText('Choose the box or type its IP:')
+        dialog.setComboBoxItems(names)
+        dialog.setComboBoxEditable(True)
+        dialog.setTextValue(names[start])
+        if compact_layout_wanted():
+            enlarge_dialog(dialog)
+        if dialog.exec() != QInputDialog.DialogCode.Accepted:
+            return
+        choice = dialog.textValue()
+        ip = boxes.get(choice, choice).strip()
+        try:
+            ip = str(ipaddress.ip_address(ip))
+        except ValueError:
+            QMessageBox.warning(self, 'SERVICES', f'"{ip}" is not a valid IP address.')
+            return
+        settings.setValue('services_ip', ip)
+        url = f'http://{ip}:{SERVICES_PORT}/'
+        if not QDesktopServices.openUrl(QUrl(url)):
+            QMessageBox.warning(self, 'SERVICES', f'The browser could not be opened.\n\n{url}')
+
+    def setup_theme_button(self):
+        """Button for switching between the light and the dark theme (choice is remembered)."""
+        self.themeButton = QPushButton(self.content_widget)
+        self.themeButton.setObjectName('themeButton')
+        self.themeButton.setGeometry(1415, 160, 111, 38)
+        self.themeButton.show()
+        self.themeButton.setStyleSheet(ButtonStyleOff2)
+        self.themeButton.clicked.connect(self.toggle_theme)
+        self.update_theme_button()
+
+    def toggle_theme(self):
+        apply_theme("light" if saved_theme() == "dark" else "dark")
+        self.update_theme_button()
+
+    def update_theme_button(self):
+        self.themeButton.setText("Light theme" if saved_theme() == "dark" else "Dark theme")
+
     def boxMarks(self,BOXMARKS):
         """
-        open folder in data/boxMarks and get all marks name
+        load the box marks data/boxMarks/<name>.json and write its names to the GUI
         """
         try:
-            BOX_MARKS = open(f"{BOX_MARKS_PATH}/{BOXMARKS}.txt", "r")
+            data = load_box_mark(BOXMARKS)
             self.BoxMarks.setStyleSheet(ButtonStyleOn)
-            self.read_all_lines=BOX_MARKS.readlines()
-            for name in self.read_all_lines:
-                if name == f'INPUT{state.SPACE}':
-                    try:
-                        for index in range(state.DigitalInput):
-                            input_text = eval(f'self.INPUT_{index}')
-                            if self.read_all_lines[1].replace('\n','').split(',')[index] == '':
-                                input_text.setText(f'IN{index}')
-                            else:
-                                input_text.setText(self.read_all_lines[1].replace('\n','').split(',')[index])
-                    except IndexError:
-                        input_text.setText(f'IN{index}')
-                        
-                if name == f'OUTPUT{state.SPACE}':
-                    try:
-                        for index in range(16):
-                            output_text = eval(f'self.OUT{index}')
-                            if self.read_all_lines[3].replace('\n','').split(',')[index] == '':
-                                output_text.setText(f'out{index}')
-                            else:
-                                output_text.setText(self.read_all_lines[3].replace('\n','').split(',')[index])
-                    except IndexError:
-                        output_text.setText(f'out{index}')
-                
-                if name == f'DIGITAL_POT{state.SPACE}':
-                    try:
-                        for index in range(6):
-                            digital_pot_text = eval(f'self.labelDigitalPot{index}')
-                            if self.read_all_lines[5].replace('\n','').split(',')[index] == '':
-                                digital_pot_text.setText(f'digitalPot{index}')
-                            else:
-                                digital_pot_text.setText(self.read_all_lines[5].replace('\n','').split(',')[index])
-                            digital_pot_text.setFont(QFont('Arial', 10))
-                    except IndexError:
-                        digital_pot_text.setText(f'digitalPot{index}')
-                    except AttributeError:
-                        print('!!! POT not enough slider !!!')
-                
-                if name == f'DAC_POT{state.SPACE}':
-                    try:
-                        for index in range(8):
-                            digital_pot_text = eval(f'state.SetDacValue.labelDac{index}')
-                            if self.read_all_lines[7].replace('\n','').split(',')[index] == '':
-                                digital_pot_text.setText(f'Table{index}')
-                            else:
-                                digital_pot_text.setText(self.read_all_lines[7].replace('\n','').split(',')[index])
-                            digital_pot_text.setFont(QFont('Arial', 10))
-                    except IndexError:
-                        digital_pot_text.setText(f'Table{index}')
-                    except AttributeError:
-                        print('!!! DAC not enough slider !!!')
-                
-                if name == f'READ_ADC{state.SPACE}':
-                    try:
-                        for index in range(4):
-                            digital_pot_text = eval(f'self.labelADC{index}')
-                            if self.read_all_lines[9].replace('\n','').split(',')[index] == '':
-                                digital_pot_text.setText(f'ADC{index}')
-                            else:
-                                digital_pot_text.setText(self.read_all_lines[9].replace('\n','').split(',')[index])
-                            digital_pot_text.setFont(QFont('Arial', 10))
-                    except IndexError:
-                        digital_pot_text.setText(f'ADC{index}')
-                
-                if name == f'SET_VOLTAGE{state.SPACE}':
-                    try:
-                        for index in range(4):
-                            digital_pot_text = eval(f'self.labelSetVoltage{index}')
-                            if self.read_all_lines[11].replace('\n','').split(',')[index] == '':
-                                digital_pot_text.setText(f'VOLTAGE{index}')
-                            else:    
-                                digital_pot_text.setText(self.read_all_lines[11].replace('\n','').split(',')[index])
-                            digital_pot_text.setFont(QFont('Arial', 10))
-                    except IndexError:
-                        digital_pot_text.setText(f'VOLTAGE{index}')
-            
-                if name == f'READ_PWM1{state.SPACE}':
+            self.box_mark_data = data
+            self.session_box_mark = BOXMARKS
+            self.heater_systems = load_heater_systems(BOXMARKS)
+            self.show_detected_heaters([])
+            for auto_index in range(1, 5):
+                self.index_auto[auto_index - 1] = 0
+                setattr(self, f'param_auto{auto_index}', 0)
+                button = getattr(self, f'AUTO{auto_index}')
+                button.setText(f'AUTO{auto_index}')
+                button.setStyleSheet(ButtonStyleOff2)
+                button.setEnabled(False)
+            self.save_session()
+            self.io_show_all = False
+            self.active_pots = None
+            self.update_digital_pot_visibility()
+            if 'INPUT' in data:
+                for index in range(state.DigitalInput):
+                    getattr(self, f'INPUT_{index}').setText(box_mark_name(data, 'INPUT', index, f'IN{index}'))
+            if 'OUTPUT' in data:
+                for index in range(16):
+                    getattr(self, f'OUT{index}').setText(box_mark_name(data, 'OUTPUT', index, f'out{index}'))
+            if 'DIGITAL_POT' in data:
+                pot_names = data['DIGITAL_POT']
+                self.active_pots = [index for index in range(6) if index < len(pot_names) and pot_names[index]]
+                self.update_digital_pot_visibility()
+                try:
+                    for index in range(6):
+                        label = getattr(self, f'labelDigitalPot{index}')
+                        label.setText(box_mark_name(data, 'DIGITAL_POT', index, f'digitalPot{index}'))
+                        label.setFont(QFont('Arial', 10))
+                except AttributeError:
+                    print('!!! POT not enough slider !!!')
+            if 'DAC_POT' in data:
+                try:
+                    for index in range(8):
+                        label = getattr(state.SetDacValue, f'labelDac{index}')
+                        label.setText(box_mark_name(data, 'DAC_POT', index, f'Table{index}'))
+                        label.setFont(QFont('Arial', 10))
+                except AttributeError:
+                    print('!!! DAC not enough slider !!!')
+            for section, label_name, default, count in (('READ_ADC', 'labelADC', 'ADC', 4),
+                                                        ('SET_VOLTAGE', 'labelSetVoltage', 'VOLTAGE', 4)):
+                if section in data:
+                    for index in range(count):
+                        label = getattr(self, f'{label_name}{index}')
+                        label.setText(box_mark_name(data, section, index, f'{default}{index}'))
+                        label.setFont(QFont('Arial', 10))
+            for section, label_name in (('READ_PWM1', 'labelPwm1_'), ('READ_PWM2', 'labelPwm2_'),
+                                        ('SET_PWM1', 'labelSetPwm1_'), ('SET_PWM2', 'labelSetPwm2_')):
+                if section in data:
                     for index in range(2):
-                        digital_pot_text = eval(f'self.labelPwm1_{index}')
-                        digital_pot_text.setText(self.read_all_lines[13].replace('\n','').split(',')[index])
-                        digital_pot_text.setFont(QFont('Arial', 10))
-                
-                if name == f'READ_PWM2{state.SPACE}':
-                    for index in range(2):
-                        digital_pot_text = eval(f'self.labelPwm2_{index}')
-                        digital_pot_text.setText(self.read_all_lines[15].replace('\n','').split(',')[index])
-                        digital_pot_text.setFont(QFont('Arial', 10)) 
-            
-                if name == f'SET_PWM1{state.SPACE}':
-                    for index in range(2):
-                        digital_pot_text = eval(f'self.labelSetPwm1_{index}')
-                        digital_pot_text.setText(self.read_all_lines[17].replace('\n','').split(',')[index])
-                        digital_pot_text.setFont(QFont('Arial', 10))  
-                
-                if name == f'SET_PWM2{state.SPACE}':
-                    for index in range(2):
-                        digital_pot_text = eval(f'self.labelSetPwm2_{index}')
-                        digital_pot_text.setText(self.read_all_lines[19].replace('\n','').split(',')[index])
-                        digital_pot_text.setFont(QFont('Arial', 10))
-                if name == f'SET_FREQ{state.SPACE}':
-                        digital_pot_text = eval('self.labelSetPwm3_0')
-                        digital_pot_text.setText(self.read_all_lines[21].replace('\n',''))
-                        digital_pot_text.setFont(QFont('Arial', 10))
-                if name == f'SET_DUTY{state.SPACE}':
-                        digital_pot_text = eval('self.labelSetPwm3_1')
-                        digital_pot_text.setText(self.read_all_lines[23].replace('\n',''))
-                        digital_pot_text.setFont(QFont('Arial', 10))
-                if name == f'AUTO1{state.SPACE}':
-                    self.param_auto1 = self.read_all_lines[25].replace('\n','').split(',')
-                    digital_pot_text = eval('self.AUTO1')
-                    digital_pot_text.setText(self.param_auto1[0])
-                    digital_pot_text.setFont(QFont('Arial', 10))
-                if name == f'AUTO2{state.SPACE}':
-                    self.param_auto2 = self.read_all_lines[27].replace('\n','').split(',')
-                    digital_pot_text = eval('self.AUTO2')
-                    digital_pot_text.setText(self.param_auto2[0])
-                    digital_pot_text.setFont(QFont('Arial', 10))
-                if name == f'AUTO3{state.SPACE}':
-                    self.param_auto3 = self.read_all_lines[29].replace('\n','').split(',')
-                    digital_pot_text = eval('self.AUTO3')
-                    digital_pot_text.setText(self.param_auto3[0])
-                    digital_pot_text.setFont(QFont('Arial', 10))
-                if name == f'AUTO4{state.SPACE}':
-                    self.param_auto4 = self.read_all_lines[31].replace('\n','').split(',')
-                    digital_pot_text = eval('self.AUTO4')
-                    digital_pot_text.setText(self.param_auto4[0])
-                    digital_pot_text.setFont(QFont('Arial', 10))
-        except IndexError:
-            
+                        label = getattr(self, f'{label_name}{index}')
+                        label.setText(box_mark_name(data, section, index, label.text()))
+                        label.setFont(QFont('Arial', 10))
+            for section, label_name in (('SET_FREQ', 'labelSetPwm3_0'), ('SET_DUTY', 'labelSetPwm3_1')):
+                if section in data:
+                    label = getattr(self, label_name)
+                    label.setText(data[section])
+                    label.setFont(QFont('Arial', 10))
+            for auto_index in range(1, 5):
+                params = data.get(f'AUTO{auto_index}')
+                if params:
+                    setattr(self, f'param_auto{auto_index}', params)
+                    button = getattr(self, f'AUTO{auto_index}')
+                    button.setText(params[0])
+                    button.setFont(QFont('Arial', 10))
+                    button.setEnabled(len(params) >= 4 and params[1].isdigit() and params[2].isdigit())
+            self.apply_box_mark_labels(data.get('LABELS', {}))
+            self.update_digital_pot_visibility()  # shows only the inputs/outputs/sliders with a name
+        except (IndexError, ValueError):
             x = datetime.datetime.now()
             dateAndTime = x.strftime("%c")
             with open('check_error.txt', 'a') as f:
                 f.write(f'{state.errorNumber}{dateAndTime}{state.errorNumber}\n')
-                f.write('!!!Some name(INPUT,OUTPUT,DIGITAL_POT,...) do not have arguments!!!\n')
+                f.write('!!!Box marks file is not valid!!!\n')
                 f.write('Solution:\n')
-                f.write(f'-- Check data/{BOXMARKS}.txt file and do as instructed(check readMe.txt file) \n')
+                f.write(f'-- Check data/boxMarks/{BOXMARKS}.json file and do as instructed(check readMe.txt file) \n')
                 f.write(f'{state.errorNumber*2}\n')
                 f.write(traceback.format_exc())
                 f.write(f'{state.errorNumber*2}\n')
-            f.close()
-        
         except:
-                with open('check_error.txt', 'a') as f:
-                    f.write(traceback.format_exc())
-                f.close()
+            with open('check_error.txt', 'a') as f:
+                f.write(traceback.format_exc())
 
     def buttonHusaModel(self):
         """
@@ -536,9 +640,9 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
     def updateGui(self):
         update = QMessageBox()
         update.setText("Confirm GUI update ?")
-        update.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+        update.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel)
         response = update.exec()
-        if response == QMessageBox.Yes:
+        if response == QMessageBox.StandardButton.Yes:
             #close all screen if main app close
             self.indexUpdate = 1
             state.mainWindow.close()
@@ -550,9 +654,9 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
             state.DacTableCreate.close()
             state.RunAutoTest.close()
             state.deviceBio24.close()
-            command = 'update.exe'
+            command = update_command()
             # Run the script
-            subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            subprocess.run(command, cwd=str(APPLICATION_ROOT), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
     def buttonG800(self):
         """
@@ -793,7 +897,10 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
         elif self.index_extras[6]  == 1:
             self.SetEnvirement.setVisible(False)
             self.setEnvironmentText.setVisible(False)
-            subprocess.Popen(f"conda activate {self.SetEnvirement.text()} && python -m tester.executables.test", shell=True)
+            if os.name == "nt":
+                subprocess.Popen(f"conda activate {self.SetEnvirement.text()} && python -m tester.executables.test", shell=True)
+            else:
+                subprocess.Popen(["bash", "-ic", f"conda activate {shlex.quote(self.SetEnvirement.text())} && python -m tester.executables.test"])
             self.barOpenAutoTest.setVisible(True)
             for number in range(0,100,5):
                 self.barOpenAutoTest.setValue(number)

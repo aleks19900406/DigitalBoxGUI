@@ -1,5 +1,14 @@
 import ctypes
+import re
 import serial.tools.list_ports
+
+
+def serial_port_name(text):
+    """Return the serial port of a combo entry ("COM3 - ...", "/dev/ttyUSB0 - ..."), or None if it is not a serial port."""
+    port = str(text or "").split(" - ", 1)[0].strip()
+    if re.fullmatch(r"COM\d+", port, re.IGNORECASE) or port.startswith("/dev/"):
+        return port
+    return None
 
 
 class Info(ctypes.BigEndianStructure):
@@ -33,9 +42,9 @@ def listConnection():
     LIST_CONNECT.clear()
     for USB_PORT in serial.tools.list_ports.comports():
         if 'Arduino Mega' in str(USB_PORT):
-            LIST_CONNECT.append(f'{str(USB_PORT)[0:5]} - Arduino Mega 2560') 
+            LIST_CONNECT.append(f'{USB_PORT.device} - Arduino Mega 2560') 
         elif'CP210x' in str(USB_PORT) :
-            LIST_CONNECT.append(f'{str(USB_PORT)[0:5]} - NodeMCU ESP32')
+            LIST_CONNECT.append(f'{USB_PORT.device} - NodeMCU ESP32')
     #LIST_CONNECT.append("")
     #for ip_address in range(10,100,10):
      #   LIST_CONNECT.append(f'RPI - 192.168.88.{ip_address}')

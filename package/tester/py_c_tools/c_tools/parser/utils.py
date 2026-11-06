@@ -75,6 +75,7 @@ class _CtypesEnumMeta(type(ctypes.c_int)):
 
     __base: Optional[Type["CtypesEnum"]] = None
     __classes = set()
+    __pending = {}
 
     @classmethod
     def _get_ctypes_base_type(cls, min: int, max: int) -> IntCtypes:
@@ -138,21 +139,32 @@ class _CtypesEnumMeta(type(ctypes.c_int)):
         bases = (bases[0], _SimpleCData)
         # bases = tuple(new_bases)
         obj = type(ctypes.c_int).__new__(cls, name, bases, class_dict)
+        # Members are created in __init__, because Python 3.13+ initializes the ctypes
+        # type information of the new class there (instances cannot be made before)
+        cls.__pending[obj] = (bases, class_dict, member_names, member_values_map)
+        return obj
+
+    def __init__(cls, name, bases, dct):
+        pending = _CtypesEnumMeta.__pending.pop(cls, None)
+        if pending is None:  # CtypesEnum itself
+            super().__init__(name, bases, dct)
+            return
+        bases, class_dict, member_names, member_values_map = pending
+        super().__init__(name, bases, class_dict)
         member_map = {}
         by_value = {}
         for n, v in member_values_map.items():
-            instance = obj(v)
+            instance = cls(v)
             member_map[n] = instance
             by_value[v] = instance
             setattr(instance, "_name_", n)
-            setattr(obj, n, instance)
+            setattr(cls, n, instance)
         # setattr(obj, "__init__", cls.__base.__subclass_init__)
-        setattr(obj, "_member_map_", MappingProxyType(member_map))
-        setattr(obj, "_member_names_", member_names)
-        setattr(obj, "_member_by_value_", MappingProxyType(by_value))
+        setattr(cls, "_member_map_", MappingProxyType(member_map))
+        setattr(cls, "_member_names_", member_names)
+        setattr(cls, "_member_by_value_", MappingProxyType(by_value))
         # setattr(obj, "__setattr__", cls.__base.)
-        cls.__classes.add(obj)
-        return obj
+        _CtypesEnumMeta.__classes.add(cls)
 
     def __bool__(self) -> Literal[True]:
         return True

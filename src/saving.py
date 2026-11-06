@@ -2,11 +2,9 @@ import os
 import traceback
 from time import sleep
 import openpyxl
-from PyQt5 import QtGui
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from DigitalBox.lib import *
+from PyQt6 import QtGui
 from .paths import DATA_SAVE, IMAGE_PATH_OTHER
+from .box_marks import box_mark_name
 from .styles import ButtonStyleOn, ButtonStyleWhite
 
 
@@ -31,8 +29,7 @@ class SavingMixin:
             self.backupSave.setVisible(True)
             self.ExcelFile.setStyleSheet(ButtonStyleWhite)
             self.refreshSaveData.stop()
-            sleep(1)
-            self.saveDataThread.start(self.saveToCsv)
+            self.startSaveThread()
             self.savingBar.setVisible(True)
             self.backupSave.setVisible(True)
             self.saveBarThread.start()
@@ -45,7 +42,6 @@ class SavingMixin:
                 self.worker.setValue(self.timeSave)
             self.repeatSaveData = 0
             self.indexSaveData = 0
-            self.saveBarThread.terminate()
 
     def SaveBarShow(self,value):
         """
@@ -58,12 +54,20 @@ class SavingMixin:
             if int(value*(100/self.timeSave)) > 100:
                  self.savingBar.setValue(100)
 
+    def startSaveThread(self):
+        """
+        - disable the save button (GUI thread) and write the file in the thread pool
+        """
+        self.startStopSaving.setEnabled(False)
+        self.saveDataThread.start(self.saveToCsv)
+
     def saveToCsv(self):
         """
         - sava to .csv file
+        - runs in a pool thread: must not touch any widget, result goes through saveFinished
         """
-        try: 
-            self.startStopSaving.setEnabled(False)
+        error = ""
+        try:
             if self.repeatSaveData == 0 and self.indexBackup == 0: 
                 self.wb.save(f"{DATA_SAVE}/{self.fileName}.csv")
             elif self.indexBackup == 1:
@@ -71,29 +75,35 @@ class SavingMixin:
                 self.indexBackup = 0
             else:
                 self.wb.save(f"{DATA_SAVE}/{self.fileName}_{self.repeatSaveData}.csv")
-            sleep(self.timeSave/10)
-            self.startStopSaving.setEnabled(True)
-            self.savingBar.setVisible(False)
-            self.backupSave.setVisible(False)
-           
         except PermissionError:
-            self.indexButtonSave = 0
-            self.startStopSaving.setEnabled(True)
-            self.label_errorSaveFile.setVisible(True)
-            self.label_saveFile.setVisible(False)
-            self.savingBar.setVisible(False)
-            self.backupSave.setVisible(False)
-            self.label_errorSaveFile.setText(f"!!! Excel file {self.fileName} is open. Close and try again !!!")
-        
+            error = "permission"
         except AttributeError:
-            self.indexButtonSave = 0
-            self.startStopSaving.setEnabled(True)
-            self.label_errorSaveFile.setVisible(True)
-            self.label_saveFile.setVisible(False)
-            self.savingBar.setVisible(False)
-            self.backupSave.setVisible(False)
+            error = "attribute"
+            traceback.print_exc()
+        except Exception:
+            error = "other"
+            traceback.print_exc()
+        self.saveFinished.emit(error)
+
+    def onSaveFinished(self, error):
+        """
+        - GUI thread: update widgets after the file was written
+        """
+        self.startStopSaving.setEnabled(True)
+        self.savingBar.setVisible(False)
+        self.backupSave.setVisible(False)
+        self.worker.stop()
+        if not error:
+            return
+        self.indexButtonSave = 0
+        self.label_errorSaveFile.setVisible(True)
+        self.label_saveFile.setVisible(False)
+        if error == "permission":
+            self.label_errorSaveFile.setText(f"!!! Excel file {self.fileName} is open. Close and try again !!!")
+        elif error == "attribute":
             self.label_errorSaveFile.setText("!!! File not saved. Write file name and press enter !!!")
-            print(traceback.print_exc())
+        else:
+            self.label_errorSaveFile.setText(f"!!! File {self.fileName} not saved !!!")
 
     def startStopSave(self):
         """
@@ -107,15 +117,13 @@ class SavingMixin:
                 self.savingBar.setVisible(False)
                 self.ExcelFile.setStyleSheet(ButtonStyleOn)
                 self.refreshSaveData.start()
-                self.saveBarThread.terminate()
             else:
                 self.repeatSaveData = 0
                 self.ExcelFile.setStyleSheet(ButtonStyleWhite)
                 self.refreshSaveData.stop()
-                sleep(1)
                 self.iconSaveData.addPixmap(QtGui.QPixmap(os.path.abspath(f'{IMAGE_PATH_OTHER}/SaveOff.png')))
                 self.startStopSaving.setIcon(self.iconSaveData)
-                self.saveDataThread.start(self.saveToCsv)
+                self.startSaveThread()
                 self.timeSave =self.indexSaveData * 0.001     # calculation saving time
                 if self.indexSaveData > 3000:
                     print('saving')
@@ -138,7 +146,7 @@ class SavingMixin:
             self.refreshSaveData.stop()
             sleep(1)
             self.repeatSaveData += 1
-            self.saveDataThread.start(self.saveToCsv)
+            self.startSaveThread()
             self.savingBar.setVisible(True)
             self.backupSave.setVisible(True)
             self.saveBarThread.start()
@@ -151,7 +159,6 @@ class SavingMixin:
             self.refreshSaveData.start()
           
         if self.indexSaveData > 86480:
-            self.saveBarThread.terminate()
             self.indexSaveData = 0
             self.excelFile(self.fileName)
         allParameters = []
@@ -216,10 +223,10 @@ class SavingMixin:
                 sheetNames =[]
                 for index in range(6):
                     try:
-                        if self.read_all_lines[5].replace('\n','').split(',')[index] == '':
+                        if box_mark_name(self.box_mark_data, 'DIGITAL_POT', index, '') == '':
                             digitalPot.append(f'setPot{index}')
                         else:
-                            digitalPot.append(self.read_all_lines[5].replace('\n','').split(',')[index])
+                            digitalPot.append(box_mark_name(self.box_mark_data, 'DIGITAL_POT', index, ''))
                     except IndexError:
                         digitalPot.append(f'setPot{index}')
                     except AttributeError:
@@ -227,10 +234,10 @@ class SavingMixin:
                 digitalOut.append('On/Off')
                 for index in range(16):
                     try:
-                        if self.read_all_lines[3].replace('\n','').split(',')[index] == '':
+                        if box_mark_name(self.box_mark_data, 'OUTPUT', index, '') == '':
                             digitalOut.append(f'switch{index}')
                         else:
-                            digitalOut.append(self.read_all_lines[3].replace('\n','').split(',')[index])
+                            digitalOut.append(box_mark_name(self.box_mark_data, 'OUTPUT', index, ''))
                     except IndexError:
                         digitalOut.append(f'switch{index}')
                     except AttributeError:
@@ -238,20 +245,20 @@ class SavingMixin:
                     
                 for index in range(4):
                     try:
-                        if self.read_all_lines[9].replace('\n','').split(',')[index] == '':
+                        if box_mark_name(self.box_mark_data, 'READ_ADC', index, '') == '':
                             readAdc.append(f'readADC{index}')
                         else:
-                            readAdc.append(self.read_all_lines[9].replace('\n','').split(',')[index])
+                            readAdc.append(box_mark_name(self.box_mark_data, 'READ_ADC', index, ''))
                     except IndexError:
                         readAdc.append(f'readADC{index}')
                     except AttributeError: 
                         readAdc.append(f'readADC{index}')
                 for index in range(4):
                     try:
-                        if self.read_all_lines[11].replace('\n','').split(',')[index] == '':
+                        if box_mark_name(self.box_mark_data, 'SET_VOLTAGE', index, '') == '':
                             setVoltage.append(f'setVoltage{index}')
                         else:
-                            setVoltage.append(self.read_all_lines[11].replace('\n','').split(',')[index])
+                            setVoltage.append(box_mark_name(self.box_mark_data, 'SET_VOLTAGE', index, ''))
                             
                     except IndexError:
                         setVoltage.append(f'setVoltage{index}')
@@ -267,20 +274,20 @@ class SavingMixin:
                 setPwm2.append('setDuty2')
                 for index in range(32):
                     try:
-                        if self.read_all_lines[1].replace('\n','').split(',')[index] == '':
+                        if box_mark_name(self.box_mark_data, 'INPUT', index, '') == '':
                             digitalInput.append(f'IN{index}')
                         else:
-                            digitalInput.append(self.read_all_lines[1].replace('\n','').split(',')[index])
+                            digitalInput.append(box_mark_name(self.box_mark_data, 'INPUT', index, ''))
                     except IndexError:
                         digitalInput.append(f'IN{index}')
                     except AttributeError:         
                         digitalInput.append(f'IN{index}')    
                 for index in range(8):
                     try:
-                        if self.read_all_lines[7].replace('\n','').split(',')[index] == '':
+                        if box_mark_name(self.box_mark_data, 'DAC_POT', index, '') == '':
                             dacSet.append(f'setDac{index}')
                         else:
-                            dacSet.append(self.read_all_lines[7].replace('\n','').split(',')[index])
+                            dacSet.append(box_mark_name(self.box_mark_data, 'DAC_POT', index, ''))
                     except IndexError:
                         dacSet.append(f'setDac{index}')
                     except AttributeError:         

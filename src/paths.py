@@ -6,10 +6,22 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent.parent))
 APPLICATION_ROOT = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else PROJECT_ROOT
+EXECUTABLE_SUFFIX = ".exe" if os.name == "nt" else ""
+# web page of a digital box (RPi) where its services (e.g. das_service) can be restarted after an error
+SERVICES_DEFAULT_IP = "192.168.88.12"
+SERVICES_PORT = 9001
 OVEN_DEVICE_CONNECT_PATHS = (
-	APPLICATION_ROOT / "OvenDeviceConnect.exe",
-	APPLICATION_ROOT.parent / "OvenDeviceConnect" / "dist" / "OvenDeviceConnect.exe",
+	APPLICATION_ROOT / f"OvenDeviceConnect{EXECUTABLE_SUFFIX}",
+	APPLICATION_ROOT.parent / "OvenDeviceConnect" / "dist" / f"OvenDeviceConnect{EXECUTABLE_SUFFIX}",
 )
+
+
+def update_command():
+    """Command that starts the updater: the packaged update program, or update.py when running from source."""
+    packaged = APPLICATION_ROOT / f"update{EXECUTABLE_SUFFIX}"
+    if packaged.is_file():
+        return [str(packaged)]
+    return [sys.executable, str(APPLICATION_ROOT / "update.py")]
 
 QT_DESIGNER = PROJECT_ROOT / "QT_designer"
 

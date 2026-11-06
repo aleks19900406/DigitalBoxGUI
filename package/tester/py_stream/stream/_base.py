@@ -24,6 +24,7 @@ class StreamBase(Generic[IT]):
 
     def __init__(self) -> None:
         """Initializes _Stream object"""
+        super().__init__()
         self._should_stop = Event()
         self._should_stop.set()
         self._internals = {}
@@ -85,7 +86,6 @@ class StreamBase(Generic[IT]):
             try:
                 internal.target(internal)
             except Exception as ex:
-                self._should_stop.set()
                 with internal.exception_lock:
                     internal.exception = ex
                 with internal.buffer_lock:
@@ -133,12 +133,12 @@ class AsyncStreamInternals(Generic[BT]):
 
 
 class AsyncInputInternals(Dict, Generic[BT]):
-    def __getitem__(self, index: Literal["read"]) -> AsyncStreamInternals[BT]:
+    def __getitem__(self, index: Union[Literal["read"]]) -> AsyncStreamInternals[BT]:
         ...
 
 
 class AsyncOutputInternals(Dict, Generic[BT]):
-    def __getitem__(self, index: Literal["write"]) -> AsyncStreamInternals[BT]:
+    def __getitem__(self, index: Union[Literal["write"]]) -> AsyncStreamInternals[BT]:
         ...
 
 
@@ -280,7 +280,7 @@ class SyncStreamInternals(Generic[BT]):
 
 
 class SyncIOInternals(Dict, Generic[BT]):
-    def __getitem__(self, index: Literal["r_w"]) -> SyncStreamInternals[BT]:
+    def __getitem__(self, index: Union[Literal["r_w"]]) -> SyncStreamInternals[BT]:
         ...
 
 

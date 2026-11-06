@@ -1,0 +1,24 @@
+{
+  "INPUT": {
+    "0": "PR1",
+    "1": "FAN",
+    "2": "H_LOW",
+    "3": "INVERTER",
+    "4": "INFRA",
+    "8": "FOVEN",
+    "9": "COOL2",
+    "10": "STIRR",
+    "11": "LIGHT",
+    "12": "COOL",
+    "13": "H_UP"
+  },
+  "OUTPUT": {
+    "0": "LOCK",
+    "1": "DOOR",
+    "2": "MEAR"
+  },
+  "DIGITAL_POT": {
+    "0": "PT1000",
+    "1": "MEAT"
+  }
+}

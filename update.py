@@ -1,24 +1,23 @@
 import sys
 import subprocess
 import os
-import shutil
-import tempfile
-import uuid
 from pathlib import Path
-from PyQt5.QtWidgets import QPushButton, QLabel, QVBoxLayout, QWidget, QApplication
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QWidget, QApplication
+from PyQt6.QtCore import QThread, pyqtSignal
 
 
 APP_DIR = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent
-PROTECTED_DIRECTORIES = ("data", "config_file")
+# only these files/folders (any extension, e.g. BOX_GUI.exe) are taken from git, everything else stays local
+UPDATED_ITEMS = ("BOX_GUI", "OvenDeviceConnect", "update")
 
 
-def run_git(directory, *arguments, check=True):
+def run_git(directory, *arguments, check=True, input=None):
     environment = os.environ.copy()
     environment["GIT_TERMINAL_PROMPT"] = "0"
+    environment["GIT_LITERAL_PATHSPECS"] = "1"
     result = subprocess.run(
         ["git", "-C", str(directory), *arguments],
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, input=input,
         encoding="utf-8", errors="replace", env=environment,
         creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
     )
@@ -27,73 +26,55 @@ def run_git(directory, *arguments, check=True):
     return result
 
 
+def is_updated_item(path):
+    """True when the first part of the path is one of UPDATED_ITEMS (file with any extension or folder)."""
+    first = path.split("/", 1)[0].casefold()
+    return any(first == name.casefold() or first.startswith(name.casefold() + ".") for name in UPDATED_ITEMS)
+
+
+def move_running_executable(repository, files):
+    """A running exe cannot be overwritten on Windows, but it can be renamed."""
+    if not getattr(sys, "frozen", False):
+        return None
+    executable = Path(sys.executable).resolve()
+    try:
+        relative = executable.relative_to(repository).as_posix()
+    except ValueError:
+        return None
+    if relative not in files:
+        return None
+    old = executable.with_name(executable.name + ".old")
+    if old.exists():
+        old.unlink()
+    executable.rename(old)
+    return executable, old
+
+
 def update_repository(directory=APP_DIR, status=None):
     directory = Path(directory).resolve()
-    repository = Path(run_git(directory, "rev-parse", "--show-toplevel").stdout.strip())
-    protected_paths = [(directory / name).relative_to(repository).as_posix() for name in PROTECTED_DIRECTORIES]
-    exclusions = [f":(top,exclude,literal){name}" for name in protected_paths]
-    staged = run_git(repository, "diff", "--cached", "--quiet", check=False)
-    if staged.returncode == 1:
-        raise RuntimeError("Finish or unstage the prepared commit before updating. No files were changed.")
-    if staged.returncode:
-        raise RuntimeError(staged.stderr.strip())
-    dirty = run_git(repository, "diff", "--quiet", "--", ".", *exclusions, check=False)
-    if dirty.returncode == 1:
-        raise RuntimeError("Local code changes outside data/config_file prevent updating. Save or commit them first.")
-    if dirty.returncode:
-        raise RuntimeError(dirty.stderr.strip())
+    repository = Path(run_git(directory, "rev-parse", "--show-toplevel").stdout.strip()).resolve()
+    prefix = directory.relative_to(repository).as_posix()
+    prefix = "" if prefix == "." else prefix + "/"
+    if status:
+        status("Checking the configured GitLab branch for updates...")
     run_git(repository, "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}")
-    for name in PROTECTED_DIRECTORIES:
-        if (directory / name).is_symlink():
-            raise RuntimeError(f"Cannot update with a symbolic link as the protected directory: {name}")
-    backup = Path(tempfile.mkdtemp(prefix="box-gui-update-"))
-    existed = {}
+    run_git(repository, "fetch")
+    upstream = run_git(repository, "rev-parse", "@{upstream}").stdout.strip()
+    tree = run_git(repository, "ls-tree", "-r", "-z", "--name-only", upstream).stdout.split("\0")
+    files = [path for path in tree if path.startswith(prefix) and is_updated_item(path[len(prefix):])]
+    if not files:
+        raise RuntimeError(f"No {', '.join(UPDATED_ITEMS)} files found on the update branch. No files were changed.")
+    if status:
+        status(f"Updating {', '.join(UPDATED_ITEMS)} ({len(files)} files)...")
+    moved = move_running_executable(repository, files)
     try:
-        for name in PROTECTED_DIRECTORIES:
-            source = directory / name
-            existed[name] = source.exists()
-            if source.is_dir():
-                shutil.copytree(source, backup / name, symlinks=True)
-            elif source.exists():
-                shutil.copy2(source, backup / name)
+        run_git(repository, "checkout", upstream, "--pathspec-from-file=-", "--pathspec-file-nul", input="\0".join(files))
     except Exception:
-        shutil.rmtree(backup)
+        if moved and not moved[0].exists():
+            moved[1].rename(moved[0])
         raise
-    previous_stash = run_git(repository, "rev-parse", "--verify", "refs/stash", check=False).stdout.strip()
-    saved_stash = None
-    try:
-        if status:
-            status("Protecting local data and configuration...")
-        run_git(repository, "stash", "push", "--all", "--message", "box-gui-update-" + uuid.uuid4().hex,
-                "--", *[f":(top,literal){name}" for name in protected_paths])
-        current_stash = run_git(repository, "rev-parse", "--verify", "refs/stash", check=False).stdout.strip()
-        if current_stash and current_stash != previous_stash:
-            saved_stash = current_stash
-        if status:
-            status("Checking the configured GitLab branch for updates...")
-        result = run_git(repository, "pull", "--ff-only")
-    finally:
-        try:
-            for name in PROTECTED_DIRECTORIES:
-                target = directory / name
-                if target.is_dir() and not target.is_symlink():
-                    shutil.rmtree(target)
-                elif target.exists() or target.is_symlink():
-                    target.unlink()
-                if existed[name]:
-                    source = backup / name
-                    if source.is_dir():
-                        shutil.copytree(source, target, symlinks=True)
-                    else:
-                        shutil.copy2(source, target)
-        except Exception as error:
-            raise RuntimeError(f"Could not restore local data. Backup retained at {backup}: {error}") from error
-        if saved_stash:
-            stashes = run_git(repository, "stash", "list", "--format=%H").stdout.splitlines()
-            if saved_stash in stashes:
-                run_git(repository, "stash", "drop", f"stash@{{{stashes.index(saved_stash)}}}")
-        shutil.rmtree(backup)
-    return (result.stdout + result.stderr).strip()
+    updated = sorted({path[len(prefix):].split("/", 1)[0] for path in files})
+    return f"Updated to {upstream[:8]}: {', '.join(updated)}"
 
 class GitPullThread(QThread):
     # Define a signal to communicate the result back to the main thread
@@ -104,7 +85,7 @@ class GitPullThread(QThread):
     def run(self):
         try:
             output = update_repository(status=self.update_status.emit)
-            self.update_status.emit(f"Update completed; local data and configuration preserved.\n{output}")
+            self.update_status.emit(f"Update completed; all other local files preserved.\n{output}")
             self.restartBox.emit()
         except Exception as error:
             self.update_status.emit(f"Update failed: {error}")
@@ -156,7 +137,7 @@ class GitPullApp(QWidget):
         self.pull_button.setEnabled(True)
 
     def restart_box(self):
-        if self.restart_program('BOX_GUI.exe'):
+        if self.restart_program('BOX_GUI.exe' if os.name == "nt" else 'BOX_GUI'):
             self.close()
 
     def restart_program(self,exe_path):
@@ -182,23 +163,17 @@ class GitPullApp(QWidget):
             event.accept()
 
 
-def kill_process(exe_name):
-    try:
-        result = subprocess.run(f"taskkill /f /im {exe_name}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        if result.returncode == 0:
-            print(f"Successfully terminated {exe_name}.")
-        else:
-            print(f"Error: {exe_name} could not be terminated. {result.stderr}")
-    except Exception as e:
-        print(f"Error occurred while killing process: {e}")
-
-        
 def main():
+    # remove the old update exe left behind by the previous update
+    try:
+        (APP_DIR / "update.exe.old").unlink()
+    except OSError:
+        pass
     app = QApplication(sys.argv)
     # Create and show the main window
     window = GitPullApp()
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
     # Run the application event loop
 
 # Run the script

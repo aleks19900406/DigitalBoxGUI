@@ -68,7 +68,7 @@ class SerialStream(AsyncByteIOStream):
 
     def __init__(
         self,
-        device_params: Optional[Dict[str, str]] = None,
+        device_params: Dict[str, str] = None,
         baudrate: int = 9600,
         bytesize: int = serial.EIGHTBITS,
         parity: str = serial.PARITY_NONE,
@@ -131,7 +131,10 @@ class SerialStream(AsyncByteIOStream):
         self._serial.flush()
 
     def _read_worker(self, internal: ByteInternalsType) -> None:
-        data = self._serial.read(self._serial.in_waiting or 1)
+        try:
+            data = self._serial.read(self._serial.in_waiting or 1)
+        except serial.SerialException:
+            return
         if data:
             with internal.buffer_lock:
                 internal.buffer.extend(data)

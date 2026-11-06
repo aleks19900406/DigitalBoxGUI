@@ -4,21 +4,21 @@ import traceback
 from pathlib import Path
 from time import sleep
 import openpyxl
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QMainWindow
-from PyQt5.uic import loadUi
+from PyQt6 import QtGui
+from PyQt6.QtWidgets import QMainWindow
+from PyQt6.uic import loadUi
 from DigitalBox.Connection import BIO24
 from DigitalBox.ElementsConnect import DeviceConnection
-from PyQt5.QtCore import QThread
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from DigitalBox.lib import *
+from PyQt6.QtCore import QThread
+from PyQt6.QtCore import QDateTime, QThreadPool, QTimer
+from PyQt6.QtGui import QFont
 from . import state
 from .paths import DATA_SAVE, IMAGE_PATH_OTHER, QT_DESIGNER
+from .scaling import make_scalable
 from .styles import ButtonStyleOff2, ButtonStyleOn, ButtonStyleWhite, InputStyleOff, InputStyleOn
 from .discovery import NetworkScanner
 from .workers import Worker
-from .devices import listDeviceConnection
+from .devices import listDeviceConnection, serial_port_name
 from .helpers import dataFile, listLanguageCraft, listVariantElements
 
 
@@ -33,14 +33,14 @@ class DeviceBio24(QMainWindow):
         DacTable = QT_DESIGNER / 'Bio24.ui'
         loadUi(str(DacTable), self)
         self.setWindowTitle("BIO24")
-        self.setFixedSize(750, 770)
+        make_scalable(self, 750, 770)
         self.device_connect.setText('DEVICE CONNECT:')
         self.device_connect.setStyleSheet("color: gray")
         # Create a QTextCursor object
         self.label_errorSaveFile.setVisible(False)
         self.label_errorSaveFile.setFont(QFont('Arial', 12))
         self.label_errorSaveFile.setStyleSheet("color: red")
-        self.DeviceConnect.activated[str].connect(self.deviceBox)
+        self.DeviceConnect.textActivated.connect(self.deviceBox)
         self.DeviceConnect.setEditable(True)
         self.DeviceConnect.setStyleSheet(ButtonStyleWhite)
         self.DeviceConnect.addItems(listDeviceConnection())
@@ -48,7 +48,7 @@ class DeviceBio24(QMainWindow):
         self.time_lang_change = 1000
         self.lang_index = 0
         self.lang_max_index = 0
-        self.setLanguage.activated[str].connect(self.setlanguage)
+        self.setLanguage.textActivated.connect(self.setlanguage)
         self.setLanguage.setStyleSheet(ButtonStyleWhite)
         self.setLanguage.setEnabled(False)
         self.setLanguage.addItems(listLanguageCraft())
@@ -56,7 +56,7 @@ class DeviceBio24(QMainWindow):
         self.reset_lang.setStyleSheet(ButtonStyleOff2)
         self.device_connect_lang.setText('DEVICE CONNECT:')
         self.device_connect_lang.setStyleSheet("color: gray")
-        self.DeviceConnectLang.activated[str].connect(self.deviceBoxLang)
+        self.DeviceConnectLang.textActivated.connect(self.deviceBoxLang)
         self.DeviceConnectLang.setEditable(True)
         self.DeviceConnectLang.setStyleSheet(ButtonStyleWhite)
         self.DeviceConnectLang.addItems(listDeviceConnection())
@@ -73,7 +73,7 @@ class DeviceBio24(QMainWindow):
         # EXCEL FILE
         self.ExcelFile.addItems(dataFile())
         ##################### SAVE DATA ##########################################
-        self.ExcelFile.activated[str].connect(self.excelFile)
+        self.ExcelFile.textActivated.connect(self.excelFile)
         self.ExcelFile.setEditable(True)
         self.ExcelFile.setStyleSheet(ButtonStyleWhite)
         self.indexButtonSave = 0
@@ -106,7 +106,7 @@ class DeviceBio24(QMainWindow):
         self.worker.stepIncreased.connect(self.SaveBarShow)
         self.worker.moveToThread(self.saveBarThread)
         self.saveBarThread.started.connect(self.worker.task)
-        self.DeviceConnecteElements.activated[str].connect(self.connectElements)
+        self.DeviceConnecteElements.textActivated.connect(self.connectElements)
         self.DeviceConnecteElements.setEditable(True)
         self.DeviceConnecteElements.setStyleSheet(ButtonStyleWhite)
         self.progress_label_IP.setText('Scenning')
@@ -115,7 +115,7 @@ class DeviceBio24(QMainWindow):
         self.reset_lang_elements.pressed.connect(self.resetLangElements)
         self.reset_lang_elements.setStyleSheet(ButtonStyleOff2)
         self.progress_label_IP.setVisible(False)
-        self.setLanguageElemets.activated[str].connect(self.setlanguageElements)
+        self.setLanguageElemets.textActivated.connect(self.setlanguageElements)
         self.setLanguageElemets.setStyleSheet(ButtonStyleWhite)
         self.setLanguageElemets.setEnabled(False)
         self.setLanguageElemets.addItems(state.ALL_LANG_CRAFT)
@@ -125,7 +125,7 @@ class DeviceBio24(QMainWindow):
         self.AutoLanguageElements.timeout.connect(self.change_lang_elements)  # 
         self.AutoLanguageElements.setInterval(state.MAIN_TIME_REFRESHING)
         ################ set variant ############
-        self.setVariantElements.activated[str].connect(self.setVariant)
+        self.setVariantElements.textActivated.connect(self.setVariant)
         self.setVariantElements.setStyleSheet(ButtonStyleWhite)
         self.setVariantElements.setEnabled(False)
         self.setVariantElements.addItems(listVariantElements())
@@ -191,11 +191,11 @@ class DeviceBio24(QMainWindow):
         for index,state in enumerate(list(self.device.check_relay().values())):
             try:
                 if state == 'ON':
-                    eval(f'self.RELAY_{index}.setStyleSheet(InputStyleOn)')
+                    getattr(self, f'RELAY_{index}').setStyleSheet(InputStyleOn)
                     state.change_input[index] = True
 
                 elif state == '/':
-                    eval(f'self.RELAY_{index}.setStyleSheet(InputStyleOff)')
+                    getattr(self, f'RELAY_{index}').setStyleSheet(InputStyleOff)
                     state.change_input[index] = False       
             except Exception:
                 print('error box')
@@ -207,8 +207,9 @@ class DeviceBio24(QMainWindow):
         - show warning message if device is disconnected
         """
         try:
-            if CONNECTBOX[0:3] =='COM':
-                self.device = BIO24(CONNECTBOX[0:5].replace(' ',''),baudrate=115200)
+            serial_port = serial_port_name(CONNECTBOX)
+            if serial_port:
+                self.device = BIO24(serial_port,baudrate=115200)
                 self.device.connect()
                 self.connected = 1
                 sleep(1)
@@ -250,8 +251,9 @@ class DeviceBio24(QMainWindow):
         - show warning message if device is disconnected
         """
         try:
-            if CONNECTBOX[0:3] =='COM':
-                self.device = BIO24(CONNECTBOX[0:5].replace(' ',''),baudrate=921600)
+            serial_port = serial_port_name(CONNECTBOX)
+            if serial_port:
+                self.device = BIO24(serial_port,baudrate=921600)
                 self.device.connect()
                 self.connected = 1
                 sleep(1)
@@ -412,7 +414,7 @@ class DeviceBio24(QMainWindow):
         self.DeviceConnect.setStyleSheet(ButtonStyleOff2)
         self.DeviceConnect.clear()
         for index in range(21):
-            eval(f'self.RELAY_{index}.setStyleSheet(InputStyleOff)')
+            getattr(self, f'RELAY_{index}').setStyleSheet(InputStyleOff)
         self.DeviceConnect.addItems(listDeviceConnection())
         if self.connected == 1:
             self.connected = 0

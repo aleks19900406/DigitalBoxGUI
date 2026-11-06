@@ -1,0 +1,15 @@
+{
+  "INPUT": {
+    "7": "hot air",
+    "6": "dd",
+    "5": "aa"
+  },
+  "OUTPUT": {
+    "0": "door",
+    "5": "test",
+    "6": "watter"
+  },
+  "DIGITAL_POT": {
+    "0": "Pt1200"
+  }
+}

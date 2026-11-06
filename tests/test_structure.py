@@ -10,16 +10,18 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import ExitStack
 from pathlib import Path
 from unittest.mock import MagicMock, call, patch
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication
 
 from src import launcher, paths, state, styles
 from src.analog_controls import AnalogControlsMixin
 from src.automation import AutoRunScript
+from src.bio24 import DeviceBio24
 from src.connections import ConnectionMixin
 from src.digital_controls import DigitalControlsMixin
 from src.paths import AUTO_TEST_PATH, PROJECT_ROOT
@@ -32,8 +34,8 @@ from src.ui import MainWindow
 class ProjectStructureTests(unittest.TestCase):
     def test_qt_forms_resolve_inside_bundle(self):
         with tempfile.TemporaryDirectory() as directory:
-            bundled = Path(directory) / "bundled"
-            installed = Path(directory) / "installed"
+            bundled = Path(directory).resolve() / "bundled"
+            installed = Path(directory).resolve() / "installed"
             with patch.object(sys, "frozen", True, create=True), patch.object(sys, "_MEIPASS", str(bundled), create=True), patch.object(sys, "executable", str(installed / "BOX_GUI.exe")):
                 resolved = runpy.run_path(str(PROJECT_ROOT / "src" / "paths.py"))
             self.assertEqual(resolved["QT_DESIGNER"], bundled / "QT_designer")
@@ -113,7 +115,7 @@ class ProjectStructureTests(unittest.TestCase):
             return original_open(filename, *args, **kwargs)
 
         try:
-            with patch.object(launcher, "QApplication", return_value=application), patch.object(application, "exec_", return_value=0), patch.object(launcher, "copy_application_resources"), patch.object(MainWindow, "start_scan"), patch.object(MainWindow, "show"), patch.object(launcher.DeviceBio24, "start_scan"), patch("serial.tools.list_ports.comports", return_value=[]), patch("builtins.open", side_effect=open_without_log_changes):
+            with patch.object(launcher, "QApplication", return_value=application), patch.object(launcher, "acquire_single_instance", return_value=True), patch.object(application, "exec", return_value=0), patch.object(launcher, "copy_application_resources"), patch.object(MainWindow, "start_scan"), patch.object(MainWindow, "show"), patch.object(DeviceBio24, "start_scan"), patch("serial.tools.list_ports.comports", return_value=[]), patch("builtins.open", side_effect=open_without_log_changes):
                 self.assertEqual(launcher.launch(), 0)
                 for name in names:
                     self.assertIsNotNone(getattr(state, name))
@@ -215,18 +217,31 @@ class ProjectStructureTests(unittest.TestCase):
             "DacTableCreate": "CreateDacTable", "RunAutoTest": "CreateAutoTest",
             "deviceG800": "DeviceG800", "deviceBio24": "DeviceBio24",
         }
+        modules = {
+            "MainWindow": "ui", "AutoRunScript": "automation", "CreateAutoTest": "automation",
+            "HusaSetModule": "setup_windows", "Bio21PyroSetSystem": "setup_windows",
+            "SetDacPot": "tables", "CreatePotTable": "tables", "CreateDacTable": "tables",
+            "DeviceG800": "g800", "DeviceBio24": "bio24",
+        }
         constructors = {name: MagicMock() for name in names.values()}
         application = MagicMock()
-        application.exec_.return_value = 0
+        application.exec.return_value = 0
         original = {name: getattr(state, name) for name in names}
         try:
-            with patch.multiple(launcher, **constructors), patch.object(launcher, "QApplication", return_value=application), patch.object(launcher, "copy_application_resources"), patch.object(launcher.os, "chdir"):
+            with ExitStack() as stack:
+                for name, constructor in constructors.items():
+                    stack.enter_context(patch(f"src.{modules[name]}.{name}", constructor))
+                stack.enter_context(patch.object(launcher, "QApplication", return_value=application))
+                stack.enter_context(patch.object(launcher, "acquire_single_instance", return_value=True))
+                stack.enter_context(patch.object(launcher, "apply_theme"))
+                stack.enter_context(patch.object(launcher, "copy_application_resources"))
+                stack.enter_context(patch.object(launcher.os, "chdir"))
                 self.assertEqual(launcher.launch(), 0)
                 for name, constructor in names.items():
                     self.assertIs(getattr(state, name), constructors[constructor].return_value)
                     constructors[constructor].assert_called_once_with()
                 state.mainWindow.show.assert_called_once_with()
-                application.exec_.assert_called_once_with()
+                application.exec.assert_called_once_with()
         finally:
             for name, value in original.items():
                 setattr(state, name, value)
@@ -269,7 +284,7 @@ class ProjectStructureTests(unittest.TestCase):
                 window.check_device_connect()
                 self.assertTrue(window.isVisible())
                 self.assertEqual(window.ConnectToDevice.styleSheet(), ButtonStyleOff2)
-                window.BoxConnect.activated[str].emit("test-device - 192.168.1.10")
+                window.BoxConnect.textActivated.emit("test-device - 192.168.1.10")
                 connect.assert_called_once_with("test-device - 192.168.1.10")
         finally:
             if window is not None:

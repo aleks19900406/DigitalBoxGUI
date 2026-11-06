@@ -26,7 +26,7 @@ def dacValueMaxMin(self,TablePot):
     """
     Get min and max from dacTable
     """
-    OPEN_TABLE = open(f'{DAC_TABLE}\\{TablePot}.txt')
+    OPEN_TABLE = open(f'{DAC_TABLE}/{TablePot}.txt')
     dict_temp = {}
     for line in OPEN_TABLE:
         if len(line)> 1:
@@ -40,7 +40,7 @@ def set_DAC(self,temp: int,tableIndex,slider = 1):
     """
     Get value from lookup table and send to Dac value.
     """
-    OPEN_TABLE = open(f'{DAC_TABLE}\\Table{slider}.txt')
+    OPEN_TABLE = open(f'{DAC_TABLE}/Table{slider}.txt')
     dict_table = {}
     for line in OPEN_TABLE:
         if len(line)> 1:
@@ -54,7 +54,7 @@ def tableValueMaxMin(self,TablePot):
     """
     Get min and max from digitalPotTable
     """
-    OPEN_TABLE = open(f'{POT_TABLE}\\{TablePot}.txt')
+    OPEN_TABLE = open(f'{POT_TABLE}/{TablePot}.txt')
     dict_temp = {}
     for line in OPEN_TABLE:
         if len(line)> 1:
@@ -67,7 +67,7 @@ def tablePotMaxMin(self,TablePot):
     """
     Get min and max from digitalPotTable
     """
-    OPEN_TABLE = open(f'{POT_TABLE}\\{TablePot}.txt')
+    OPEN_TABLE = open(f'{POT_TABLE}/{TablePot}.txt')
     dict_temp = {}
     for line in OPEN_TABLE:
         if len(line)> 1:

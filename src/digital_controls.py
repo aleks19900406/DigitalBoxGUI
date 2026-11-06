@@ -1,10 +1,14 @@
 from time import perf_counter
 from collections import deque
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from DigitalBox.lib import *
+from PyQt6.QtCore import QRect, Qt
+from PyQt6.QtGui import QFont
+from DigitalBox.lib import activate_output
+from DigitalBox.dasConnect import SerialConnect
 from . import state
 from .styles import ButtonStyleOff2, ButtonStyleOn2, InputStyleOff, InputStyleOn
+from .heater_systems import detect_systems, display_name
+
+AUTO_PULSE_TIME = 1.0  # s, default pulse length for AUTO buttons in PULSE mode
 
 
 class DigitalControlsMixin:
@@ -13,6 +17,26 @@ class DigitalControlsMixin:
         t0 = perf_counter()
 
         self.digitalPotIndex = 1
+
+        try:
+            self._check_all_input()
+        except Exception as ex:
+            # an exception escaping a QThreadPool task aborts the whole process
+            print(f"check_all_input failed: {ex}")
+        finally:
+            self.digitalPotIndex = 0
+            self.reading_inputs = False
+
+        print(f"TOTAL: {perf_counter() - t0:.3f}s")
+
+    def _check_all_input(self):
+        # serial (COM) digital inputs are read here, in the worker thread,
+        # so the GUI thread does not block on the serial port
+        if isinstance(self.box, SerialConnect):
+            try:
+                self.serial_input = self.box.digital_in[:]
+            except Exception:
+                ...
 
         try:
             t1 = perf_counter()
@@ -34,10 +58,6 @@ class DigitalControlsMixin:
         self.check_digital_pot()
         self.check_DAC_pot()
         print(f"check_digital_pot: {perf_counter() - t1:.3f}s")
-
-        self.digitalPotIndex = 0
-
-        print(f"TOTAL: {perf_counter() - t0:.3f}s")
 
     def button_OnOff(self):
         """
@@ -273,6 +293,7 @@ class DigitalControlsMixin:
             #self.AUTO1.setIcon(self.iconSwitchOff)
         else:
             self.AUTO1.setStyleSheet(ButtonStyleOn2)
+        self.save_session()
 
     def buttonAuto2(self):
         """
@@ -285,6 +306,7 @@ class DigitalControlsMixin:
             #self.AUTO2.setIcon(self.iconSwitchOff)
         else:
             self.AUTO2.setStyleSheet(ButtonStyleOn2)
+        self.save_session()
 
     def buttonAuto3(self):
         """
@@ -297,6 +319,7 @@ class DigitalControlsMixin:
             #self.AUTO3.setIcon(self.iconSwitchOff)
         else:
             self.AUTO3.setStyleSheet(ButtonStyleOn2)
+        self.save_session()
 
     def buttonAuto4(self):
         """
@@ -309,12 +332,16 @@ class DigitalControlsMixin:
             #self.AUTO4.setIcon(self.iconSwitchOff)
         else:
             self.AUTO4.setStyleSheet(ButtonStyleOn2)
+        self.save_session()
 
     def check_input(self):
         """
         read digital input from digital box
         """
-        
+        if isinstance(self.box, SerialConnect):
+            # value read by the worker thread (check_all_input)
+            state.input = self.serial_input or [False] * state.DigitalInput
+            return state.input
         state.input = self.box.digital_in[:]
         #print('input--->',input)
         return state.input
@@ -329,6 +356,9 @@ class DigitalControlsMixin:
         self.periode[index] = 0
         self.current_output[index] = None
         self.output_start[index] = None
+        self.pulse_start[index] = None
+        self.pulse_ticks[index] = 0
+        self.pulse_last_input[index] = False
 
     def check_output(self):
         """
@@ -443,7 +473,7 @@ class DigitalControlsMixin:
             if parameter_false:
                 activate_output(self,parameter_false,False)
             for index in range(8,16):
-                eval(f'self.OUT{index}.setEnabled(True)')
+                getattr(self, f'OUT{index}').setEnabled(True)
             """except:
                 print('RPI digital input is not implemented works only for 8 input')
                 my_deque = deque(begin_parameter_old[1:])
@@ -459,7 +489,7 @@ class DigitalControlsMixin:
                     activate_output(self,parameter_false,False)
                 self.OUT8.setEnabled(False)
                 for index in range(8,16):
-                    eval(f'self.OUT{index}.setEnabled(False)')"""
+                    getattr(self, f'OUT{index}').setEnabled(False)"""
    
             if (self.index_out[0] % 2) == 0:
                 state.change_parameters[1]= 0
@@ -651,6 +681,9 @@ class DigitalControlsMixin:
         return self.current_output[index] if self.current_output[index] is not None else val
 
     def auto_button_function(self,index,input_number,output_relay,state):
+        if state == 'PULSE':
+            self.auto_pulse(index, bool(self.read_input[input_number]), output_relay)
+            return
         state_output = self.process_signal(index,self.read_input[input_number],state)
         #print('stanje',index,self.read_input[input_number],state)
         #print('state',state_output)
@@ -659,16 +692,68 @@ class DigitalControlsMixin:
         else:
             self.index_out[output_relay] = 0
 
+    def auto_pulse(self, index, input_value, output_relay):
+        """
+        PULSE mode: every time the input goes to True, switch the output ON and OFF again.
+        Pulse length in ms is the optional 5th AUTO parameter (default AUTO_PULSE_TIME).
+        """
+        params = getattr(self, f'param_auto{index + 1}')
+        pulse_time = int(params[4]) / 1000 if len(params) > 4 and params[4].isdigit() else AUTO_PULSE_TIME
+        if self.pulse_start[index] is None:
+            if input_value and not self.pulse_last_input[index]:
+                self.pulse_start[index] = perf_counter()
+                self.pulse_ticks[index] = 0
+                self.index_out[output_relay] = 1
+        else:
+            self.pulse_ticks[index] += 1
+            # output stays ON for at least one tick, so the change is sent to the box
+            if self.pulse_ticks[index] >= 2 and perf_counter() - self.pulse_start[index] >= pulse_time:
+                self.pulse_start[index] = None
+                self.index_out[output_relay] = 0
+        self.pulse_last_input[index] = input_value
+
     def input_state_indicate(self):
         """
         color digital input state
         """
         self.read_input = self.check_input()
         for index in range(state.DigitalInput):
+            button = getattr(self, f'INPUT_{index}')
             if self.read_input[index]== True:
-                eval(f'self.INPUT_{index}.setStyleSheet(InputStyleOn)')
+                if button.styleSheet() != InputStyleOn:
+                    button.setStyleSheet(InputStyleOn)
                 state.change_input[index] = True
 
             elif self.read_input[index]== False:
-                eval(f'self.INPUT_{index}.setStyleSheet(InputStyleOff)')
+                if button.styleSheet() != InputStyleOff:
+                    button.setStyleSheet(InputStyleOff)
                 state.change_input[index] = False
+        active_inputs = {index for index, value in enumerate(self.read_input) if value == True}
+        self.show_detected_heaters(detect_systems(self.heater_systems, active_inputs))
+
+    def show_detected_heaters(self, systems):
+        """
+        show the detected system instead of the DIGITAL INPUT label
+        """
+        if systems:
+            text = 'System detected: ' + ' / '.join(display_name(name) for name in systems)
+            style = 'color: red'
+            geometry = self.digital_input_systems_geometry
+            alignment = Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop
+        else:
+            text = 'DIGITAL INPUT'
+            style = 'color: palette(window-text)'
+            geometry = self.digital_input_label_geometry
+            alignment = self.digital_input_label_alignment
+        if self.label_marks_2.text() != text:
+            self.label_marks_2.setGeometry(geometry)
+            self.label_marks_2.setAlignment(alignment)
+            self.label_marks_2.setText(text)
+            self.label_marks_2.setToolTip(text)
+            self.label_marks_2.setStyleSheet(style)
+            # smaller font if the text does not fit above the input buttons
+            font = QFont(self.digital_input_label_font)
+            self.label_marks_2.setFont(font)
+            while systems and font.pointSize() > 7 and self.label_marks_2.heightForWidth(geometry.width()) > geometry.height():
+                font.setPointSize(font.pointSize() - 1)
+                self.label_marks_2.setFont(font)

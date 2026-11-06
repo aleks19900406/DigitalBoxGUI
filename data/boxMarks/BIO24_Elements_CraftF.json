@@ -1,0 +1,105 @@
+{
+  "INPUT": {
+    "0": "L",
+    "1": "N1",
+    "2": "N2",
+    "3": "H_INFRA",
+    "4": "H_BOT",
+    "5": "H_UP",
+    "6": "H_FAN",
+    "7": "FAN_OVEN",
+    "8": "INVERTER",
+    "9": "STEAM_ACT",
+    "10": "PUMP_IN",
+    "11": "PUMP_OUT",
+    "12": "COOL_FAN1",
+    "13": "COOL_FAN2",
+    "14": "BLDCfanC",
+    "15": "BLDCfanC",
+    "16": "DRAW_IN",
+    "17": "DRAW_OUT",
+    "18": "AQUA",
+    "19": "VENT_FLAP",
+    "20": "STEAM_RED",
+    "21": "AQUA2",
+    "22": "UNLOCK",
+    "23": "LOCK",
+    "24": "ST_PUMP",
+    "25": "HUMIDITY",
+    "26": "STAGE",
+    "27": "SIDE",
+    "28": "TOP",
+    "29": "CAMfan",
+    "30": "STEAM_H1",
+    "31": "STEAM_H2"
+  },
+  "OUTPUT": {
+    "0": "DOOR",
+    "1": "LOCK",
+    "2": "MW_FB",
+    "3": "W_TANK",
+    "4": "W_OPEN",
+    "5": "W_CLOSE",
+    "6": "HUMIDITY",
+    "7": "STEAM_RED",
+    "8": "GRILL",
+    "9": "WATERsw",
+    "12": "MEAT_P",
+    "13": "GRILL",
+    "15": "FLAP"
+  },
+  "DIGITAL_POT": {
+    "0": "PT1000",
+    "4": "GRILL/MP"
+  },
+  "DAC_POT": {
+    "0": "value0",
+    "1": "value1",
+    "3": "value3"
+  },
+  "READ_ADC": {
+    "0": "NOT_IN_USE",
+    "1": "NOT_IN_USE",
+    "2": "NOT_IN_USE",
+    "3": "NOT_IN_USE"
+  },
+  "SET_VOLTAGE": {
+    "0": "Water_Level",
+    "1": "NOT_IN_USE",
+    "2": "NOT_IN_USE",
+    "3": "NOT_IN_USE"
+  },
+  "READ_PWM1": {
+    "0": "FREQ_INVERTER",
+    "1": "DUTY_INVERTER"
+  },
+  "READ_PWM2": {
+    "0": "NOT_IN_USE",
+    "1": "NOT_IN_USE"
+  },
+  "SET_PWM1": {
+    "0": "NOT_IN_USE",
+    "1": "NOT_IN_USE"
+  },
+  "SET_PWM2": {
+    "0": "HEAT_FAN_freq",
+    "1": "HEAT_FAN_dc"
+  },
+  "SET_FREQ": "NOT_IN_USE",
+  "SET_DUTY": "NOT_IN_USE",
+  "AUTO1": {
+    "name": "FLAPauto",
+    "input": 19,
+    "output": 15,
+    "mode": "POSITIVE"
+  },
+  "AUTO2": {
+    "name": "DOORauto",
+    "input": 20,
+    "output": 7,
+    "mode": "POSITIVE"
+  },
+  "LABELS": {
+    "RefreshingConnection": "_"
+  }
+}

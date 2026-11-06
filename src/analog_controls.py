@@ -1,43 +1,50 @@
 import datetime
 import traceback
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from DigitalBox.lib import *
+from PyQt6.QtGui import QFont
+from DigitalBox.lib import set_DAC, set_digital_pot, tablePotMaxMin, tableValueMaxMin
 from . import state
 from .styles import InputStyleOn, PotSlicerLabelStyle
+from .box_marks import box_mark_name
+from .compact_layout import POT_SLIDER_STYLE, compact_inputs_arranged, compact_layout_wanted, pack_inputs
 from .helpers import listDigitalPotTable, sliderColor
 
 
 class AnalogControlsMixin:
+    def color_pot_slider(self, index, R, G, B):
+        """Background color of an active slider; the compact layout keeps its large groove and handle."""
+        slider = getattr(self, f'digital_pot{index}')
+        color = f"background-color: rgb({R},{G},{B})"
+        if slider.property('compact_slider'):
+            slider.setStyleSheet(POT_SLIDER_STYLE + f"QSlider {{ {color}; }}")
+        else:
+            slider.setStyleSheet(color)
+
     def digitalPotTable(self,potTable):
         """
-        - activate selected digital pot slider
-        - set min,max and interval for selected slider
+        - set min,max and interval for the slider of the given pot table
         """
-        #print(self.AllTable)
-        for index,allPotTable in enumerate(self.AllTable):
-            if allPotTable == potTable:
-                self.AllTable.pop(index)
-                self.SelectPotTable.clear()
-                self.SelectPotTable.addItems(self.AllTable)
-            
-        for index,TablePot in enumerate(listDigitalPotTable()):
+        for index,TablePot in enumerate(listDigitalPotTable()[:6]):
             try:
                 if TablePot == potTable:
                     min,max = tableValueMaxMin(self,TablePot)
-                    eval(f'self.digital_pot{index}.setMinimum(min-10)')
-                    eval(f'self.digital_pot{index}.setMaximum(max+10)')
-                    eval(f'self.digital_pot{index}.setTickInterval(int((max +(abs(min)))/20))')
-                    eval(f'self.PotMax{index}.setText(str(max+10))')
-                    eval(f'self.PotMin{index}.setText(str(min-10))')
-                    eval(f'self.PotMin{index}.setStyleSheet(PotSlicerLabelStyle)')
-                    eval(f'self.PotMax{index}.setStyleSheet(PotSlicerLabelStyle)')
+                    getattr(self, f'digital_pot{index}').setMinimum(min-10)
+                    getattr(self, f'digital_pot{index}').setMaximum(max+10)
+                    getattr(self, f'digital_pot{index}').setTickInterval(int((max +(abs(min)))/20))
+                    getattr(self, f'PotMax{index}').setText(str(max+10))
+                    getattr(self, f'PotMin{index}').setText(str(min-10))
+                    if self.pots_active:  # the sliders look inactive until a box is connected
+                        getattr(self, f'PotMin{index}').setStyleSheet(PotSlicerLabelStyle)
+                        getattr(self, f'PotMax{index}').setStyleSheet(PotSlicerLabelStyle)
                     R,G,B = sliderColor(self,index,min,max)
-                    eval(f'self.digital_pot{index}.valueChanged.connect(self.SetDigitalPot{index})')
-                    eval(f'self.labelDigitalPot{index}.setStyleSheet(InputStyleOn)')
-                    eval(f'self.lcdNumber_digital_pot{index}.display(self.digital_pot{index}.value())')
-                    eval(f'self.digital_pot{index}.setValue(min+20)')
-                    eval(f'self.digital_pot{index}.setStyleSheet(f"background-color: rgb({R},{G},{B})")')
+                    if index not in self._pot_connected:
+                        self._pot_connected.add(index)
+                        getattr(self, f'digital_pot{index}').valueChanged.connect(getattr(self, f'SetDigitalPot{index}'))
+                    if self.pots_active:
+                        getattr(self, f'labelDigitalPot{index}').setStyleSheet(InputStyleOn)
+                    getattr(self, f'lcdNumber_digital_pot{index}').display(getattr(self, f'digital_pot{index}').value())
+                    getattr(self, f'digital_pot{index}').setValue(min+20)
+                    if self.pots_active:
+                        self.color_pot_slider(index, R, G, B)
             except Exception:
                 x = datetime.datetime.now()
                 dateAndTime = x.strftime("%c")
@@ -52,6 +59,100 @@ class AnalogControlsMixin:
                     f.write(f'{state.errorNumber*2}\n')
                 f.close()
 
+    def apply_pot_tables(self):
+        """Set the range of every digital pot slider from its table (Table1.1 ... Table3.2)."""
+        self.update_digital_pot_visibility()  # remembers the default state of the sliders first
+        for table in listDigitalPotTable()[:6]:
+            self.digitalPotTable(table)
+        self.update_digital_pot_visibility()
+
+    def update_digital_io_visibility(self):
+        """When the box marks define INPUT / OUTPUT names only the inputs / outputs with a name are shown
+        (all of them while the layout is edited, so they can be named; deleted ones stay hidden)."""
+        data = getattr(self, 'box_mark_data', None)
+        editing = getattr(self, 'layout_edit', False)
+        deleted = getattr(self, 'hidden_controls', set())
+        show_all = getattr(self, 'io_show_all', False)  # RESET LAYOUT: all inputs / outputs until marks are selected again
+        for section, prefix, count in (('INPUT', 'INPUT_', 32), ('OUTPUT', 'OUT', 16)):
+            defined = bool(data) and section in data
+            shown_inputs = []
+            for index in range(count):
+                widget = getattr(self, f'{prefix}{index}')
+                named = not defined or editing or show_all or box_mark_name(data, section, index, '') != ''
+                if section == 'INPUT' and compact_layout_wanted():  # no room: only the named inputs, never all of them
+                    named = editing or (defined and box_mark_name(data, section, index, '') != '')
+                visible = named and widget.objectName() not in deleted
+                widget.setVisible(visible)
+                if visible:
+                    shown_inputs.append(index)
+            if section == 'INPUT' and compact_inputs_arranged(self):
+                pack_inputs(self, list(range(count)) if editing else shown_inputs)
+
+    def update_digital_pot_visibility(self):
+        """All digital potentiometers are shown until a box mark is selected; then only the sliders
+        with a name in the box marks are shown, next to each other without gaps."""
+        self.update_digital_io_visibility()
+        prefixes = ('digital_pot', 'PotMin', 'PotMax', 'lcdNumber_digital_pot', 'labelDigitalPot')
+        if not hasattr(self, '_pot_base_x'):
+            self._pot_base_x = {f'{prefix}{index}': getattr(self, f'{prefix}{index}').x()
+                                for prefix in prefixes for index in range(6)}
+            self._pot_default_labels = [(getattr(self, f'labelDigitalPot{index}').text(),
+                                         QFont(getattr(self, f'labelDigitalPot{index}').font()))
+                                        for index in range(6)]
+            self._pot_default_state = [{
+                'slider': (getattr(self, f'digital_pot{index}').minimum(), getattr(self, f'digital_pot{index}').maximum(),
+                           getattr(self, f'digital_pot{index}').tickInterval(), getattr(self, f'digital_pot{index}').value()),
+                **{prefix: (getattr(self, f'{prefix}{index}').styleSheet(),
+                            getattr(self, f'{prefix}{index}').text() if prefix in ('PotMin', 'PotMax') else None)
+                   for prefix in ('digital_pot', 'PotMin', 'PotMax', 'lcdNumber_digital_pot', 'labelDigitalPot')},
+                'lcd': getattr(self, f'lcdNumber_digital_pot{index}').value(),
+            } for index in range(6)]
+        editing = getattr(self, 'layout_edit', False)  # all sliders are shown while the layout is edited
+        active = list(range(6)) if self.active_pots is None or editing else self.active_pots
+        deleted = getattr(self, 'hidden_controls', set())  # sliders deleted by the user ("digital_pot<index>")
+        active = [index for index in active if f'digital_pot{index}' not in deleted]
+        for index in range(6):
+            slot = active.index(index) if index in active else index
+            for prefix in prefixes:
+                widget = getattr(self, f'{prefix}{index}')
+                widget.move(self._pot_base_x[f'{prefix}{slot}'], widget.y())
+        if self.active_pots is None and not editing:
+            # box marks do not define the sliders yet: show only those that do not overlap the controls
+            # the user has moved
+            active = [index for index in active if not self.pot_overlaps_controls(index)]
+        for index in range(6):
+            for prefix in prefixes:
+                getattr(self, f'{prefix}{index}').setVisible(index in active)
+        if getattr(self, '_crop_ready', False) and not self.layout_edit:
+            self.change_view_area()
+
+    def reset_digital_pot_view(self):
+        """Show all digital potentiometers again with their default names (Table1.1, Table1.2, ...)."""
+        self.pots_active = False
+        self.active_pots = None
+        self.update_digital_pot_visibility()
+        for index, (text, font) in enumerate(self._pot_default_labels):
+            label = getattr(self, f'labelDigitalPot{index}')
+            label.setText(text)
+            label.setFont(font)
+        for index, state_values in enumerate(self._pot_default_state):
+            slider = getattr(self, f'digital_pot{index}')
+            minimum, maximum, tick, value = state_values['slider']
+            slider.blockSignals(True)
+            slider.setMinimum(minimum)
+            slider.setMaximum(maximum)
+            slider.setTickInterval(tick)
+            slider.setValue(value)
+            slider.blockSignals(False)
+            getattr(self, f'lcdNumber_digital_pot{index}').display(state_values['lcd'])
+            for prefix in ('digital_pot', 'PotMin', 'PotMax', 'lcdNumber_digital_pot', 'labelDigitalPot'):
+                style, text = state_values[prefix]
+                widget = getattr(self, f'{prefix}{index}')
+                widget.setStyleSheet(style)
+                if text is not None:
+                    widget.setText(text)
+        self.apply_pot_tables()
+
     def SetDigitalPot0(self):
         """
         - if box is connected then slider is activated
@@ -60,7 +161,7 @@ class AnalogControlsMixin:
         if self.index_refreshing >= 1:
             min,max = tableValueMaxMin(self,'Table1.1')
             R,G,B = sliderColor(self,0,min,max)
-            self.digital_pot0.setStyleSheet(f"background-color: rgb({R},{G},{B})")
+            self.color_pot_slider(0, R, G, B)
             self.lcdNumber_digital_pot0.display(self.digital_pot0.value())
         return self.digital_pot0.value()
 
@@ -72,7 +173,7 @@ class AnalogControlsMixin:
         if self.index_refreshing >= 1:
             min,max = tableValueMaxMin(self,'Table1.2')
             R,G,B = sliderColor(self,1,min,max)
-            self.digital_pot1.setStyleSheet(f"background-color: rgb({R},{G},{B})")
+            self.color_pot_slider(1, R, G, B)
             self.lcdNumber_digital_pot1.display(self.digital_pot1.value())
         return self.digital_pot1.value()
 
@@ -84,7 +185,7 @@ class AnalogControlsMixin:
         if self.index_refreshing >= 1:
             min,max = tableValueMaxMin(self,'Table2.1')
             R,G,B = sliderColor(self,2,min,max)
-            self.digital_pot2.setStyleSheet(f"background-color: rgb({R},{G},{B})")
+            self.color_pot_slider(2, R, G, B)
             self.lcdNumber_digital_pot2.display(self.digital_pot2.value())
         return self.digital_pot2.value()
 
@@ -96,7 +197,7 @@ class AnalogControlsMixin:
         if self.index_refreshing >= 1:
             min,max = tableValueMaxMin(self,'Table2.2')
             R,G,B = sliderColor(self,3,min,max)
-            self.digital_pot3.setStyleSheet(f"background-color: rgb({R},{G},{B})")
+            self.color_pot_slider(3, R, G, B)
             self.lcdNumber_digital_pot3.display(self.digital_pot3.value())
         return self.digital_pot3.value()
 
@@ -108,7 +209,7 @@ class AnalogControlsMixin:
         if self.index_refreshing >= 1:
             min,max = tableValueMaxMin(self,'Table3.1')
             R,G,B = sliderColor(self,4,min,max)
-            self.digital_pot4.setStyleSheet(f"background-color: rgb({R},{G},{B})")
+            self.color_pot_slider(4, R, G, B)
             self.lcdNumber_digital_pot4.display(self.digital_pot4.value())
         return self.digital_pot4.value()
 
@@ -120,7 +221,7 @@ class AnalogControlsMixin:
         if self.index_refreshing >= 1:
             min,max = tableValueMaxMin(self,'Table3.2')
             R,G,B = sliderColor(self,5,min,max)
-            self.digital_pot5.setStyleSheet(f"background-color: rgb({R},{G},{B})")
+            self.color_pot_slider(5, R, G, B)
             self.lcdNumber_digital_pot5.display(self.digital_pot5.value())
         return self.digital_pot5.value()
 

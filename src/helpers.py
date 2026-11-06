@@ -1,6 +1,13 @@
 import os
+import re
 from . import state
+from .box_marks import list_box_marks
 from .paths import BOX_DIGITAL_DAC_PATH, BOX_DIGITAL_POT_PATH, BOX_MARKS_PATH, DATA_SAVE
+
+
+def _natural_key(name):
+    """Table1.2 < Table2.1 < Table10.1 (os.listdir order is arbitrary on Linux, the slider index is the list index)."""
+    return [int(part) if part.isdigit() else part.casefold() for part in re.split(r'(\d+)', name)]
 
 
 def listDigitalDacTable():
@@ -9,7 +16,7 @@ def listDigitalDacTable():
     """
     DigitalDacList =[]
     DigitalDacList.clear()
-    for file_name in os.listdir(BOX_DIGITAL_DAC_PATH):
+    for file_name in sorted(os.listdir(BOX_DIGITAL_DAC_PATH), key=_natural_key):
         if file_name == "readMe.txt":
             continue
         if file_name.endswith('.txt'):
@@ -23,24 +30,16 @@ def dataFile():
     dataSave =[]
     dataSave.clear()
     #dataSave.append('')
-    for file_name in os.listdir(DATA_SAVE):
+    for file_name in sorted(os.listdir(DATA_SAVE), key=_natural_key):
         if file_name.endswith('.csv'):
             dataSave.append(file_name.replace('.csv',''))
     return dataSave
 
 def listBoxMarks():
     """
-    Convert all boxMarks file name to list except readMe.txt
+    Names of all box marks in data/boxMarks (.json files)
     """
-    boxMarkList =[]
-    boxMarkList.clear()
-    for file_name in os.listdir(BOX_MARKS_PATH):
-        #print(file_name)
-        if file_name == "readMe.txt":
-            continue
-        if file_name.endswith('.txt'):
-            boxMarkList.append(file_name.replace('.txt',''))
-    return boxMarkList
+    return list_box_marks()
 
 def listDigitalPotTable():
     """
@@ -48,7 +47,7 @@ def listDigitalPotTable():
     """
     DigitalPotList =[]
     DigitalPotList.clear()
-    for file_name in os.listdir(BOX_DIGITAL_POT_PATH):
+    for file_name in sorted(os.listdir(BOX_DIGITAL_POT_PATH), key=_natural_key):
         if file_name == "readMe.txt":
             continue
         if file_name.endswith('.txt'):
@@ -61,7 +60,7 @@ def deliteListDigitalPotTable():
     """
     DigitalPotList =[]
     DigitalPotList.clear()
-    for file_name in os.listdir(BOX_DIGITAL_POT_PATH):
+    for file_name in sorted(os.listdir(BOX_DIGITAL_POT_PATH), key=_natural_key):
         if file_name.endswith('.txt'):
             DigitalPotList.append(file_name.replace('.txt',''))
     return DigitalPotList
@@ -81,7 +80,7 @@ def sliderColor(self,sliderIndex,minValue,maxValue):
     Color digital pot slider depends value set
     
     """
-    sliderValue = eval(f'self.digital_pot{sliderIndex}.value()')
+    sliderValue = getattr(self, f'digital_pot{sliderIndex}').value()
     setColorMax = maxValue/255
     if (sliderValue/setColorMax)>=255:
         G=B=0
@@ -108,7 +107,7 @@ def sliderColorDac(self,sliderIndex,minValue,maxValue):
         
     Color Dac slider depends value set   
     """
-    colorSlider = eval(f'self.dac_pot{sliderIndex}.value()')
+    colorSlider = getattr(self, f'dac_pot{sliderIndex}').value()
     setColorMax = maxValue/255
     if (colorSlider/setColorMax)>=255:
         G=B=0

@@ -1,6 +1,6 @@
 # Digital Box GUI
 
-PyQt5 aplikacija za Digital Box, RPi, ESP32 in povezane naprave.
+PyQt6 aplikacija za Digital Box, RPi, ESP32 in povezane naprave.
 Struktura sledi sosednjemu projektu OvenDeviceConnect.
 
 ## Struktura
@@ -51,7 +51,7 @@ ob manjkajocem EXE-ju ali napaki zagona se prikaze opozorilo.
 
 ## Zagon
 
-Uporabi obstojece okolje `testOven`, v katerem so na voljo PyQt5 in interne
+Uporabi obstojece okolje `testOven`, v katerem so na voljo PyQt6 in interne
 knjiznice. Namestitev v novo okolje zahteva odvisnosti iz `requirements.txt`
 ter ustrezno interno knjiznico `stream`; istoimenski paket iz PyPI ni nujno pravilen.
 
@@ -79,7 +79,7 @@ Preverjanje s fizicnimi napravami je se vedno potrebno.
 
 ## Windows EXE
 
-Iz okolja z namescenimi PyInstaller, PyQt5 in internimi knjiznicami zazeni:
+Iz okolja z namescenimi PyInstaller, PyQt6 in internimi knjiznicami zazeni:
 
 ```powershell
 conda activate testOven
@@ -106,6 +106,14 @@ nastavitev tako ostanejo tudi po zaprtju. EXE postavi v mapo, v katero imas
 pravico pisanja. Za prenos obstojecih nastavitev in meritev prenesi tudi te mape.
 Python za osnovni zagon ni potreben; obstojeci avtomatizacijski skripti,
 ki posebej zaganjajo conda/Python okolje, to okolje se vedno potrebujejo.
+
+## Lokalne nastavitve (geslo RPi)
+
+Geslo za iskanje naprav v omrezju ni vec v kodi. Aplikacija ga prebere iz
+spremenljivke okolja `DIGITAL_BOX_PASSWORD` ali iz `local_settings.json`
+(kljuc `rpi_password`) poleg aplikacije/EXE. Predloga je
+`local_settings.example.json`; `local_settings.json` je v `.gitignore`.
+Brez gesla iskanje v omrezju izpise "RPi password is missing".
 
 ## GitLab Posodobitev
 

@@ -136,7 +136,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1080</x>
-      <y>120</y>
+      <y>70</y>
       <width>201</width>
       <height>31</height>
      </rect>
@@ -161,24 +161,6 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="text">
      <string>IN26</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="SelectPotTable">
-    <property name="geometry">
-     <rect>
-      <x>1080</x>
-      <y>70</y>
-      <width>201</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="SetVoltage0">
@@ -2181,27 +2163,6 @@ p, li { white-space: pre-wrap; }
      <string>ADC3</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_digital_pot">
-    <property name="geometry">
-     <rect>
-      <x>890</x>
-      <y>80</y>
-      <width>181</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>ACTIVATE DIGITAL POT TABLE:</string>
-    </property>
-   </widget>
    <widget class="QSlider" name="digital_pot1">
     <property name="geometry">
      <rect>
@@ -2638,9 +2599,9 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>970</x>
-      <y>110</y>
+      <y>70</y>
       <width>101</width>
-      <height>51</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -3034,7 +2995,7 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>1080</x>
-      <y>160</y>
+      <y>110</y>
       <width>201</width>
       <height>31</height>
      </rect>
@@ -3055,9 +3016,9 @@ selection-color: rgb(255, 170, 0);</string>
     <property name="geometry">
      <rect>
       <x>970</x>
-      <y>150</y>
+      <y>110</y>
       <width>101</width>
-      <height>51</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -3589,10 +3550,10 @@ selection-color: rgb(255, 170, 0);</string>
    <widget class="QLabel" name="label_connect">
     <property name="geometry">
      <rect>
-      <x>960</x>
+      <x>970</x>
       <y>30</y>
-      <width>81</width>
-      <height>51</height>
+      <width>101</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -3948,7 +3909,6 @@ selection-color: rgb(255, 170, 0);</string>
      <string>IP_SCANNING : </string>
     </property>
    </widget>
-   <zorder>label_digital_pot</zorder>
    <zorder>labelPwm1_0</zorder>
    <zorder>label_connect_2</zorder>
    <zorder>label_connect_3</zorder>
@@ -3958,7 +3918,6 @@ selection-color: rgb(255, 170, 0);</string>
    <zorder>INPUT_21</zorder>
    <zorder>BoxMarks</zorder>
    <zorder>INPUT_26</zorder>
-   <zorder>SelectPotTable</zorder>
    <zorder>SetVoltage0</zorder>
    <zorder>labelSetPwm3_0</zorder>
    <zorder>date_and_time</zorder>
