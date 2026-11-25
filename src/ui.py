@@ -640,7 +640,7 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
     def updateGui(self):
         """Check GitHub for updates and update application."""
         from .simple_update import check_github_updates
-        check_github_updates(self, current_version="")
+        check_github_updates(self, current_version="5.2.0")
 
     def perform_github_update(self, update_info: dict):
         """Download and apply update from GitHub."""
