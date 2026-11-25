@@ -70,7 +70,7 @@ class CheckUpdateThread(QThread):
             self.quit()
 
 
-def check_github_updates(parent_window, current_version: str = "5.2.0") -> bool:
+def check_github_updates(parent_window, current_version: str = "5.3.0") -> bool:
     """Check GitHub for updates and show dialog."""
     if requests is None or version is None:
         QMessageBox.warning(
