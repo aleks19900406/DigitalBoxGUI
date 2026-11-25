@@ -638,25 +638,40 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
             self.index_extras[0] =0
 
     def updateGui(self):
-        update = QMessageBox()
-        update.setText("Confirm GUI update ?")
-        update.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel)
-        response = update.exec()
-        if response == QMessageBox.StandardButton.Yes:
-            #close all screen if main app close
-            self.indexUpdate = 1
-            state.mainWindow.close()
-            state.HusaModelWindow.close()
-            state.deviceG800.close()
-            state.PyroSetSystem.close()
-            state.SetDacValue.close()
-            state.PotTableSet.close()
-            state.DacTableCreate.close()
-            state.RunAutoTest.close()
-            state.deviceBio24.close()
-            command = update_command()
-            # Run the script
-            subprocess.run(command, cwd=str(APPLICATION_ROOT), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        """Check GitHub for updates and update application."""
+        from .simple_update import check_github_updates
+        check_github_updates(self, current_version="")
+
+    def perform_github_update(self, update_info: dict):
+        """Download and apply update from GitHub."""
+        from .simple_update import download_and_update
+        from pathlib import Path
+
+        download_url = update_info.get("download_url")
+        if not download_url:
+            QMessageBox.warning(self, "Error", "No download URL found")
+            return
+
+        # Close all windows
+        self.indexUpdate = 1
+        state.mainWindow.close()
+        state.HusaModelWindow.close()
+        state.deviceG800.close()
+        state.PyroSetSystem.close()
+        state.SetDacValue.close()
+        state.PotTableSet.close()
+        state.DacTableCreate.close()
+        state.RunAutoTest.close()
+        state.deviceBio24.close()
+
+        # Download and update
+        exe_path = Path(sys.executable)
+        if download_and_update(download_url, exe_path):
+            # Restart application
+            subprocess.Popen([str(exe_path)])
+            sys.exit(0)
+        else:
+            QMessageBox.critical(self, "Update Failed", "Could not download update")
 
     def buttonG800(self):
         """
