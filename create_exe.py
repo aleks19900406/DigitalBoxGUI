@@ -21,7 +21,7 @@ class BuildConfig:
     """Build configuration for DigitalBoxGUI application."""
 
     APP_NAME = "DigitalBoxGUI"
-    APP_VERSION = "5.3.0"
+    APP_VERSION = "5.4.0"
 
     PROJECT_ROOT = Path(__file__).resolve().parent
     BUILD_DIR = PROJECT_ROOT / "build"

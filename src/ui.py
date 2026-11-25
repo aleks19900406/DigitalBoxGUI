@@ -640,12 +640,13 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
     def updateGui(self):
         """Check GitHub for updates and update application."""
         from .simple_update import check_github_updates
-        check_github_updates(self, current_version="5.3.0")
+        check_github_updates(self, current_version="5.4.0")
 
     def perform_github_update(self, update_info: dict):
         """Download and apply update from GitHub."""
         from .simple_update import download_and_update
         from pathlib import Path
+        import time
 
         download_url = update_info.get("download_url")
         if not download_url:
@@ -667,9 +668,18 @@ class MainWindow(ConnectionMixin, SavingMixin, DigitalControlsMixin, AnalogContr
         # Download and update
         exe_path = Path(sys.executable)
         if download_and_update(download_url, exe_path):
-            # Restart application
-            subprocess.Popen([str(exe_path)])
-            sys.exit(0)
+            # Wait for file to be ready before launching
+            time.sleep(2)
+
+            # Restart application with new exe
+            try:
+                subprocess.Popen([str(exe_path)])
+                time.sleep(1)
+            except Exception as e:
+                print(f"Failed to restart: {e}")
+            finally:
+                # Exit current process
+                sys.exit(0)
         else:
             QMessageBox.critical(self, "Update Failed", "Could not download update")
 
